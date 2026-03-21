@@ -158,6 +158,7 @@ function PillarCard({ icon: Icon, title, items, delay = 0, accent = C.blue, tagl
   const accentBg = accent === C.blue ? C.blueLight : accent === "#C7A500" ? "#FFFBEB" : "#ECFDF5";
   return (
     <div
+      data-clickable="true"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => setExpanded(!expanded)}
@@ -422,7 +423,7 @@ function LandscapeSlide() {
         </div>
         <div style={{ ...fadeUp(0.3), display: "flex", flexDirection: "column", gap: 10 }}>
           {insights.map((item, i) => (
-            <div key={i} onClick={() => setActiveInsight(i)} style={{
+            <div key={i} data-clickable="true" onClick={() => setActiveInsight(i)} style={{
               background: i === activeInsight ? item.color + "08" : C.card, borderRadius: 10, padding: "14px 18px",
               border: `1px solid ${i === activeInsight ? item.color + "33" : C.border}`, borderLeft: `3px solid ${item.color}`,
               cursor: "pointer", transition: "all 0.25s", boxShadow: i === activeInsight ? `0 2px 8px ${item.color}10` : "none",
@@ -810,8 +811,8 @@ export default function DATAITransformation() {
 
   const handlePresClick = (e) => {
     if (!presenting) return;
-    const tag = e.target.tagName?.toLowerCase();
-    if (tag === "button" || tag === "a" || tag === "input" || tag === "select" || e.target.closest("[data-clickable]")) return;
+    // Don't advance if clicking any interactive element or its children
+    if (e.target.closest("button") || e.target.closest("a") || e.target.closest("input") || e.target.closest("select") || e.target.closest("[data-clickable]")) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     if (x < rect.width * 0.25) goTo(current - 1); else goTo(current + 1);
@@ -838,8 +839,8 @@ export default function DATAITransformation() {
       <div ref={presRef} onClick={handlePresClick} style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif", background: C.bg, color: C.textPrimary, width: "100vw", height: "100vh", display: "flex", flexDirection: "column", cursor: cursorIdle ? "none" : "default", overflow: "hidden", position: "relative" }}>
         <style>{keyframes}</style>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-        <div ref={containerRef} style={{ flex: 1, overflowY: "auto", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "48px 64px 64px 64px" }}>
-          <div key={slideKey} style={{ width: "100%", maxWidth: 1200, animation: "scaleIn 0.3s ease-out forwards" }}><SlideComponent /></div>
+        <div ref={containerRef} style={{ flex: 1, overflowY: "auto", display: "flex", alignItems: "center", justifyContent: "center", padding: "48px 64px 64px 64px" }}>
+          <div key={slideKey} style={{ width: "100%", maxWidth: 1200, margin: "auto 0", animation: "scaleIn 0.3s ease-out forwards" }}><SlideComponent /></div>
         </div>
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, height: 3, background: C.border, zIndex: 100 }}>
           <div style={{ height: "100%", background: C.blue, width: `${((current + 1) / slides.length) * 100}%`, transition: "width 0.4s ease" }} />
