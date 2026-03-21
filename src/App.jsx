@@ -157,7 +157,8 @@ function PhaseCard({ phase, title, quarter, items, delay = 0, active = false }) 
   return (
     <div style={{ opacity: 0, transform: "translateY(24px)", animation: `fadeUp 0.6s ease-out ${delay}s forwards` }}>
       <div
-        onClick={() => setExpanded(!expanded)}
+        data-clickable="true"
+        onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}
         style={{
           background: expanded ? C.cardHover : C.card,
           border: `1px solid ${expanded ? accent + "55" : accent + "18"}`,
@@ -748,7 +749,13 @@ const slideComponents = {
 export default function DATAITransformation() {
   const [current, setCurrent] = useState(0);
   const [slideKey, setSlideKey] = useState(0);
+  const [presenting, setPresenting] = useState(false);
+  const [hudVisible, setHudVisible] = useState(false);
+  const [cursorIdle, setCursorIdle] = useState(false);
   const containerRef = useRef(null);
+  const presRef = useRef(null);
+  const hudTimer = useRef(null);
+  const cursorTimer = useRef(null);
 
   const goTo = (idx) => {
     if (idx >= 0 && idx < slides.length) {
@@ -758,19 +765,197 @@ export default function DATAITransformation() {
     }
   };
 
+  // Enter presentation mode
+  const enterPresentation = () => {
+    setPresenting(true);
+    setCursorIdle(false);
+    if (presRef.current?.requestFullscreen) {
+      presRef.current.requestFullscreen().catch(() => {});
+    } else if (presRef.current?.webkitRequestFullscreen) {
+      presRef.current.webkitRequestFullscreen();
+    }
+  };
+
+  // Exit presentation mode
+  const exitPresentation = () => {
+    setPresenting(false);
+    setCursorIdle(false);
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    } else if (document.webkitFullscreenElement) {
+      document.webkitExitFullscreen?.();
+    }
+  };
+
+  // Sync fullscreen exit with state
+  useEffect(() => {
+    const handler = () => {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        setPresenting(false);
+        setCursorIdle(false);
+      }
+    };
+    document.addEventListener("fullscreenchange", handler);
+    document.addEventListener("webkitfullscreenchange", handler);
+    return () => {
+      document.removeEventListener("fullscreenchange", handler);
+      document.removeEventListener("webkitfullscreenchange", handler);
+    };
+  }, []);
+
+  // Keyboard controls
   useEffect(() => {
     const handler = (e) => {
-      if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); goTo(current + 1); }
-      if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); goTo(current - 1); }
+      if (e.key === "ArrowRight" || e.key === "ArrowDown" || (presenting && e.key === " ")) {
+        e.preventDefault(); goTo(current + 1);
+      }
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault(); goTo(current - 1);
+      }
+      if (e.key === "Escape" && presenting) {
+        exitPresentation();
+      }
+      if ((e.key === "f" || e.key === "F") && !presenting) {
+        enterPresentation();
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [current]);
+  }, [current, presenting]);
+
+  // Click-to-advance in presentation mode
+  const handlePresClick = (e) => {
+    if (!presenting) return;
+    // Don't advance if clicking on interactive elements
+    const tag = e.target.tagName?.toLowerCase();
+    const isInteractive = tag === "button" || tag === "a" || tag === "input" || tag === "select";
+    const hasClickHandler = e.target.closest("[data-clickable]");
+    if (isInteractive || hasClickHandler) return;
+
+    // Right third = forward, left third = back
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    if (x < rect.width * 0.25) {
+      goTo(current - 1);
+    } else {
+      goTo(current + 1);
+    }
+  };
+
+  // Hide cursor after 3s idle in presentation mode
+  useEffect(() => {
+    if (!presenting) { setCursorIdle(false); return; }
+    const handleMove = () => {
+      setCursorIdle(false);
+      setHudVisible(true);
+      clearTimeout(cursorTimer.current);
+      clearTimeout(hudTimer.current);
+      cursorTimer.current = setTimeout(() => setCursorIdle(true), 3000);
+      hudTimer.current = setTimeout(() => setHudVisible(false), 3000);
+    };
+    window.addEventListener("mousemove", handleMove);
+    // Start idle timer
+    cursorTimer.current = setTimeout(() => setCursorIdle(true), 3000);
+    hudTimer.current = setTimeout(() => setHudVisible(false), 3000);
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      clearTimeout(cursorTimer.current);
+      clearTimeout(hudTimer.current);
+    };
+  }, [presenting]);
 
   const SlideComponent = slideComponents[slides[current].id];
 
+  // ── PRESENTATION MODE ──
+  if (presenting) {
+    return (
+      <div
+        ref={presRef}
+        onClick={handlePresClick}
+        style={{
+          fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+          background: C.bg, color: C.textPrimary,
+          width: "100vw", height: "100vh",
+          display: "flex", flexDirection: "column",
+          cursor: cursorIdle ? "none" : "default",
+          overflow: "hidden", position: "relative",
+        }}
+      >
+        <style>{keyframes}</style>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+        {/* Slide content - centered and scaled */}
+        <div
+          ref={containerRef}
+          style={{
+            flex: 1, overflowY: "auto", display: "flex", alignItems: "flex-start", justifyContent: "center",
+            padding: "48px 64px 64px 64px",
+          }}
+        >
+          <div key={slideKey} style={{ width: "100%", maxWidth: 1200, animation: "scaleIn 0.35s ease-out forwards" }}>
+            <SlideComponent />
+          </div>
+        </div>
+
+        {/* HUD - progress bar (always visible but subtle) */}
+        <div style={{
+          position: "fixed", bottom: 0, left: 0, right: 0, height: 3,
+          background: `${C.greyDark}22`, zIndex: 100,
+        }}>
+          <div style={{
+            height: "100%", background: C.blue,
+            width: `${((current + 1) / slides.length) * 100}%`,
+            transition: "width 0.4s ease",
+          }} />
+        </div>
+
+        {/* HUD - controls (visible on mouse move) */}
+        <div style={{
+          position: "fixed", bottom: 16, left: "50%", transform: "translateX(-50%)",
+          display: "flex", alignItems: "center", gap: 12,
+          background: `${C.black}DD`, backdropFilter: "blur(12px)",
+          borderRadius: 12, padding: "8px 16px",
+          opacity: hudVisible ? 1 : 0,
+          transition: "opacity 0.4s ease",
+          pointerEvents: hudVisible ? "auto" : "none",
+          zIndex: 101,
+        }}>
+          <button onClick={(e) => { e.stopPropagation(); goTo(current - 1); }} disabled={current === 0} style={{
+            background: "none", border: "none", color: current === 0 ? C.textMuted : C.white,
+            fontSize: 16, cursor: current === 0 ? "default" : "pointer", opacity: current === 0 ? 0.3 : 1, padding: "4px 8px",
+          }}>←</button>
+          <span style={{ fontSize: 12, color: C.textSecondary, fontWeight: 600, minWidth: 50, textAlign: "center" }}>
+            {current + 1} / {slides.length}
+          </span>
+          <button onClick={(e) => { e.stopPropagation(); goTo(current + 1); }} disabled={current === slides.length - 1} style={{
+            background: "none", border: "none", color: current === slides.length - 1 ? C.textMuted : C.white,
+            fontSize: 16, cursor: current === slides.length - 1 ? "default" : "pointer", opacity: current === slides.length - 1 ? 0.3 : 1, padding: "4px 8px",
+          }}>→</button>
+          <div style={{ width: 1, height: 16, background: C.greyDark + "55", margin: "0 4px" }} />
+          <button onClick={(e) => { e.stopPropagation(); exitPresentation(); }} style={{
+            background: "none", border: "none", color: C.textSecondary, fontSize: 11, cursor: "pointer", padding: "4px 8px",
+            fontFamily: "'Inter', system-ui", fontWeight: 600,
+          }}>ESC</button>
+        </div>
+
+        {/* Click zone indicators (brief flash on first enter) */}
+        <div style={{
+          position: "fixed", top: "50%", left: 20, transform: "translateY(-50%)",
+          color: C.textMuted, fontSize: 11, opacity: hudVisible ? 0.4 : 0, transition: "opacity 0.4s",
+          pointerEvents: "none",
+        }}>◂ back</div>
+        <div style={{
+          position: "fixed", top: "50%", right: 20, transform: "translateY(-50%)",
+          color: C.textMuted, fontSize: 11, opacity: hudVisible ? 0.4 : 0, transition: "opacity 0.4s",
+          pointerEvents: "none",
+        }}>next ▸</div>
+      </div>
+    );
+  }
+
+  // ── EDITOR MODE (default) ──
   return (
-    <div style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif", background: C.bg, color: C.textPrimary, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <div ref={presRef} style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif", background: C.bg, color: C.textPrimary, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <style>{keyframes}</style>
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
@@ -780,8 +965,21 @@ export default function DATAITransformation() {
           <div style={{ width: 28, height: 28, background: C.blue, borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 900, color: C.white }}>D</div>
           <span style={{ fontSize: 13, fontWeight: 700, color: C.textSecondary }}>AI Transformation Strategy</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontSize: 12, color: C.textMuted, fontWeight: 600 }}>{current + 1} / {slides.length}</span>
+          <button
+            onClick={enterPresentation}
+            style={{
+              padding: "6px 14px", borderRadius: 8, border: `1px solid ${C.blue}44`,
+              background: `${C.blue}15`, color: C.blueOnBlack, fontSize: 12, fontWeight: 700,
+              cursor: "pointer", transition: "all 0.2s", display: "flex", alignItems: "center", gap: 6,
+              fontFamily: "'Inter', system-ui",
+            }}
+            onMouseEnter={e => { e.target.style.background = C.blue; e.target.style.color = C.white; }}
+            onMouseLeave={e => { e.target.style.background = `${C.blue}15`; e.target.style.color = C.blueOnBlack; }}
+          >
+            <span style={{ fontSize: 14 }}>▶</span> Present
+          </button>
         </div>
       </div>
 
@@ -807,6 +1005,14 @@ export default function DATAITransformation() {
               {s.label}
             </div>
           ))}
+          <div style={{ padding: "16px 20px 8px", borderTop: `1px solid ${C.greyDark}22`, marginTop: 12 }}>
+            <div style={{ fontSize: 10, color: C.textMuted, lineHeight: 1.6 }}>
+              <span style={{ fontWeight: 700, color: C.textSecondary }}>Shortcuts</span><br />
+              <span style={{ color: C.blue }}>F</span> — Present<br />
+              <span style={{ color: C.blue }}>← →</span> — Navigate<br />
+              <span style={{ color: C.blue }}>ESC</span> — Exit
+            </div>
+          </div>
         </div>
 
         {/* ── Slide Content ── */}
@@ -822,7 +1028,7 @@ export default function DATAITransformation() {
         <button onClick={() => goTo(current - 1)} disabled={current === 0} style={{
           padding: "7px 18px", borderRadius: 8, border: `1px solid ${C.greyDark}44`, background: "transparent",
           color: current === 0 ? C.textMuted : C.textSecondary, fontSize: 13, fontWeight: 600, cursor: current === 0 ? "default" : "pointer",
-          opacity: current === 0 ? 0.4 : 1, transition: "all 0.2s",
+          opacity: current === 0 ? 0.4 : 1, transition: "all 0.2s", fontFamily: "'Inter', system-ui",
         }}>← Previous</button>
         <div style={{ display: "flex", gap: 4 }}>
           {slides.map((_, i) => (
@@ -836,7 +1042,7 @@ export default function DATAITransformation() {
         <button onClick={() => goTo(current + 1)} disabled={current === slides.length - 1} style={{
           padding: "7px 18px", borderRadius: 8, border: "none", background: current === slides.length - 1 ? C.greyDark + "33" : C.blue,
           color: C.white, fontSize: 13, fontWeight: 600, cursor: current === slides.length - 1 ? "default" : "pointer",
-          opacity: current === slides.length - 1 ? 0.4 : 1, transition: "all 0.2s",
+          opacity: current === slides.length - 1 ? 0.4 : 1, transition: "all 0.2s", fontFamily: "'Inter', system-ui",
         }}>Next →</button>
       </div>
     </div>
