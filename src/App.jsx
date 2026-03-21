@@ -8,18 +8,22 @@ import {
   ArrowRight, Play, Minimize2, Clock, CheckCircle2, Wrench,
   TrendingUp, Users, Building2, Layers, AlertTriangle, Sparkles,
   ChevronLeft, Monitor, BookOpen, Search, CalendarCheck, Award, ArrowLeftRight,
-  DollarSign, UserX, Database, Cpu, Hammer, RefreshCcw, HeartPulse
+  DollarSign, UserX, Database, Cpu, Hammer, RefreshCcw, HeartPulse,
+  Quote, ExternalLink, Lightbulb, GraduationCap, Workflow
 } from "lucide-react";
 
 const C = {
   blue:"#0046DD",blueOnBlack:"#0056FF",blueLight:"#E8EEFF",blueMuted:"rgba(0,70,221,0.06)",
+  blueGlow:"rgba(0,70,221,0.12)",blueSoft:"#F0F4FF",
   black:"#000000",white:"#FFFFFF",bg:"#F8F9FA",bgAlt:"#F0F2F5",
   card:"#FFFFFF",border:"#E2E5EA",borderLight:"#ECEEF1",
   grey:"#8A8D8F",greyMed:"#6E6B68",greyDark:"#565657",
-  red:"#E10600",yellow:"#FFD700",yellowDark:"#C7A500",
+  red:"#E10600",redSoft:"#FEF2F2",yellow:"#FFD700",yellowDark:"#C7A500",yellowSoft:"#FFFBEB",
   textPrimary:"#111827",textSecondary:"#4B5563",textMuted:"#9CA3AF",
+  green:"#059669",greenSoft:"#ECFDF5",
 };
 const FW={engage:C.blue,enable:C.greyDark,redesign:C.red,reinvest:C.black};
+const IMG={network:"/img/network.jpg",threads:"/img/threads.jpg",waves:"/img/waves.jpg",graph:"/img/graph.jpg",volume:"/img/volume.jpg",landscape:"/img/landscape.jpg"};
 
 const slides=[
   {id:"title",label:"Title"},{id:"cost",label:"Yesterwork"},{id:"flywheel",label:"The Flywheel"},
@@ -38,10 +42,9 @@ const keyframes=`
 @keyframes pulseGlow{0%,100%{opacity:.3}50%{opacity:.7}}
 `;
 
-// ── Image Banner ──
-function ImageBanner({src,height=180,children,overlay="rgba(0,0,0,0.55)",style:s}) {
+function ImageBanner({src,height=180,children,overlay="rgba(0,0,0,0.55)",style:s,borderRadius=14}) {
   return (
-    <div style={{position:"relative",borderRadius:14,overflow:"hidden",height,...s}}>
+    <div style={{position:"relative",borderRadius,overflow:"hidden",height,...s}}>
       <img src={src} alt="" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
       <div style={{position:"absolute",inset:0,background:overlay}}/>
       {children&&<div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",zIndex:1}}>{children}</div>}
@@ -68,7 +71,7 @@ function BigStat({value,suffix="",prefix="",label,sub,delay=0,accent=C.blue}){
     <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{
       ...fadeUp(delay),background:C.card,border:`1px solid ${h?accent+"44":C.border}`,borderRadius:14,padding:"24px 20px",textAlign:"center",
       transition:"all 0.25s",boxShadow:h?`0 8px 30px ${accent}12`:"0 1px 3px rgba(0,0,0,0.04)",position:"relative",overflow:"hidden"}}>
-      <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:`linear-gradient(90deg,${accent},${accent}66)`,transform:h?"scaleX(1)":"scaleX(0.3)",transition:"transform 0.4s ease"}}/>
+      <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:`linear-gradient(90deg,${accent},${accent}66)`,transform:h?"scaleX(1)":"scaleX(0.3)",transition:"transform 0.4s ease",transformOrigin:"left"}}/>
       <div style={{fontSize:42,fontWeight:900,color:accent,letterSpacing:"-0.03em",lineHeight:1}}><AnimNum value={parseInt(String(value).replace(/\D/g,""))} suffix={suffix} prefix={prefix}/></div>
       <div style={{fontSize:13,color:C.textPrimary,marginTop:8,fontWeight:700,lineHeight:1.3}}>{label}</div>
       {sub&&<div style={{fontSize:11,color:C.textMuted,marginTop:3,lineHeight:1.3}}>{sub}</div>}
@@ -78,12 +81,12 @@ function BigStat({value,suffix="",prefix="",label,sub,delay=0,accent=C.blue}){
 function PhaseCard({phase,title,quarter,items,delay=0,active=false}){
   const [expanded,setExpanded]=useState(active);
   const accent=phase===1?C.blue:phase===2?C.red:C.greyDark;
-  const accentBg=phase===1?C.blueLight:phase===2?"#FEF2F2":"#F3F4F6";
+  const accentBg=phase===1?C.blueLight:phase===2?C.redSoft:"#F3F4F6";
   const PI=phase===1?Wrench:phase===2?Layers:Target;
   return (<div style={{...fadeUp(delay)}}>
     <div data-clickable="true" onClick={e=>{e.stopPropagation();setExpanded(!expanded);}}
       style={{background:C.card,border:`1px solid ${expanded?accent+"44":C.border}`,borderRadius:14,padding:"20px 24px",cursor:"pointer",transition:"all 0.3s",boxShadow:expanded?`0 4px 16px ${accent}10`:"0 1px 3px rgba(0,0,0,0.04)"}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:expanded?16:0}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:expanded?16:0,transition:"margin 0.3s"}}>
         <div style={{display:"flex",alignItems:"center",gap:14}}>
           <div style={{width:42,height:42,borderRadius:10,background:accentBg,display:"flex",alignItems:"center",justifyContent:"center"}}><PI size={20} color={accent}/></div>
           <div><div style={{fontSize:15,fontWeight:800,color:C.textPrimary}}>{title}</div><div style={{fontSize:12,color:C.textMuted,fontWeight:500,marginTop:2,display:"flex",alignItems:"center",gap:4}}><Clock size={12}/>{quarter}</div></div>
@@ -101,7 +104,29 @@ function PhaseCard({phase,title,quarter,items,delay=0,active=false}){
   </div>);
 }
 
-// ── Flywheel SVG (hand-crafted bezier paths) ──
+function QuoteBlock({quote,source,accent=C.black,delay=0}){
+  return (
+    <div style={{...fadeUp(delay),padding:"14px 18px",background:C.card,borderRadius:10,border:`1px solid ${C.border}`,borderLeft:`3px solid ${accent}`,display:"flex",gap:12,alignItems:"flex-start",marginTop:10}}>
+      <Quote size={16} color={accent} style={{flexShrink:0,marginTop:2,opacity:0.5}}/>
+      <div>
+        <div style={{fontSize:13,color:C.textPrimary,lineHeight:1.5,fontStyle:"italic",fontWeight:500}}>{quote}</div>
+        <div style={{fontSize:10,color:C.textMuted,marginTop:4,fontWeight:600}}>— {source}</div>
+      </div>
+    </div>
+  );
+}
+
+function DATMark({size=24,color=C.blue}){
+  const s=size/3;const g=s*0.12;
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      {[0,1,2].map(r=>[0,1,2].map(c=>(
+        <rect key={`${r}-${c}`} x={c*s+g} y={r*s+g} width={s-g*2} height={s-g*2} rx={s*0.08} fill={color}/>
+      )))}
+    </svg>
+  );
+}
+
 function FlywheelDiagram({activeStage,setActiveStage}) {
   const cx=200,cy=200,R=115;
   const nodes=[
@@ -110,81 +135,48 @@ function FlywheelDiagram({activeStage,setActiveStage}) {
     {id:"redesign",label:"REDESIGN",sub:"Automate",color:FW.redesign,x:cx,y:cy+R},
     {id:"reinvest",label:"REINVEST",sub:"Grow",color:FW.reinvest,x:cx-R,y:cy},
   ];
-  // Hand-crafted quadratic bezier arrow paths (clockwise, arcing outward)
   const arrows=[
     {from:"engage",to:"enable",color:FW.engage,d:"M 222 90 Q 315 75, 310 178"},
     {from:"enable",to:"redesign",color:FW.enable,d:"M 310 222 Q 325 315, 222 310"},
     {from:"redesign",to:"reinvest",color:FW.redesign,d:"M 178 310 Q 75 325, 90 222"},
     {from:"reinvest",to:"engage",color:FW.reinvest,d:"M 90 178 Q 75 75, 178 90"},
   ];
-
+  const mids=["ah-blue","ah-grey","ah-red","ah-black"];
   return (
     <svg viewBox="0 0 400 400" style={{width:"100%",maxWidth:380,display:"block",margin:"0 auto"}}>
       <defs>
-        <marker id="ah-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M 0 1 L 9 5 L 0 9 z" fill={FW.engage}/></marker>
-        <marker id="ah-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M 0 1 L 9 5 L 0 9 z" fill={FW.enable}/></marker>
-        <marker id="ah-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M 0 1 L 9 5 L 0 9 z" fill={FW.redesign}/></marker>
-        <marker id="ah-black" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M 0 1 L 9 5 L 0 9 z" fill={FW.reinvest}/></marker>
+        {[{id:"ah-blue",c:FW.engage},{id:"ah-grey",c:FW.enable},{id:"ah-red",c:FW.redesign},{id:"ah-black",c:FW.reinvest}].map(m=>(
+          <marker key={m.id} id={m.id} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill={m.c}/></marker>
+        ))}
         <filter id="ns"><feDropShadow dx="0" dy="2" stdDeviation="6" floodOpacity="0.06"/></filter>
       </defs>
-
-      {/* Outer decorative ring */}
-      <circle cx={cx} cy={cy} r={R+48} fill="none" stroke={C.border} strokeWidth="0.5" strokeDasharray="2 8"
-        style={{animation:"spinSlow 120s linear infinite",transformOrigin:`${cx}px ${cy}px`}}/>
-
-      {/* Track ring (subtle) */}
+      <circle cx={cx} cy={cy} r={R+48} fill="none" stroke={C.border} strokeWidth="0.5" strokeDasharray="2 8" style={{animation:"spinSlow 120s linear infinite",transformOrigin:`${cx}px ${cy}px`}}/>
       <circle cx={cx} cy={cy} r={R} fill="none" stroke={C.blue} strokeWidth="1" opacity="0.06"/>
-
-      {/* Arrows */}
-      {arrows.map((a,i)=>{
-        const isA=activeStage===a.from||activeStage===a.to;
-        const mid=["ah-blue","ah-grey","ah-red","ah-black"][i];
-        return <g key={i}>
-          {/* Shadow path */}
-          <path d={a.d} fill="none" stroke={a.color} strokeWidth={isA?3:1.5} strokeLinecap="round"
-            opacity={isA?0.8:0.2} markerEnd={`url(#${mid})`} style={{transition:"all 0.3s"}}/>
-          {/* Animated flow dots */}
-          <path d={a.d} fill="none" stroke={a.color} strokeWidth="2" strokeDasharray="3 21" strokeLinecap="round"
-            opacity={isA?0.5:0.1} style={{animation:"flowDash 2s linear infinite"}}/>
-        </g>;
-      })}
-
-      {/* Center emblem */}
+      {arrows.map((a,i)=>{const isA=activeStage===a.from||activeStage===a.to;return <g key={i}>
+        <path d={a.d} fill="none" stroke={a.color} strokeWidth={isA?3:1.5} strokeLinecap="round" opacity={isA?0.8:0.2} markerEnd={`url(#${mids[i]})`} style={{transition:"all 0.3s"}}/>
+        <path d={a.d} fill="none" stroke={a.color} strokeWidth="2" strokeDasharray="3 21" strokeLinecap="round" opacity={isA?0.5:0.1} style={{animation:"flowDash 2s linear infinite"}}/>
+      </g>;})}
       <circle cx={cx} cy={cy} r={42} fill={C.blue}/>
       <circle cx={cx} cy={cy} r={42} fill="none" stroke={C.white} strokeWidth="0.5" opacity="0.2"/>
       <text x={cx} y={cy-6} textAnchor="middle" fill={C.white} fontSize="14" fontWeight="900" fontFamily="Inter,system-ui" letterSpacing="0.08em">ONE</text>
       <text x={cx} y={cy+12} textAnchor="middle" fill={C.white} fontSize="14" fontWeight="900" fontFamily="Inter,system-ui" letterSpacing="0.08em">DAT</text>
-
-      {/* Nodes */}
-      {nodes.map(n=>{
-        const isA=activeStage===n.id;
-        const nr=isA?28:24;
-        return <g key={n.id} style={{cursor:"pointer"}}
-          onMouseEnter={()=>setActiveStage(n.id)} onMouseLeave={()=>setActiveStage(null)}>
-          {isA&&<circle cx={n.x} cy={n.y} r={nr+12} fill={n.color} opacity="0.08" style={{animation:"pulseGlow 2s ease-in-out infinite"}}/>}
-          <circle cx={n.x} cy={n.y} r={nr} fill={C.white} stroke={isA?n.color:C.border} strokeWidth={isA?2.5:1.5} filter="url(#ns)" style={{transition:"all 0.3s"}}/>
-          <text x={n.x} y={n.y-2} textAnchor="middle" dominantBaseline="middle" fill={isA?n.color:C.greyDark}
-            fontSize={isA?"9":"8"} fontWeight="800" fontFamily="Inter,system-ui" letterSpacing="0.06em" style={{transition:"fill 0.3s"}}>{n.label}</text>
-          <text x={n.x} y={n.y+9} textAnchor="middle" dominantBaseline="middle" fill={C.textMuted}
-            fontSize="7" fontWeight="500" fontFamily="Inter,system-ui">{n.sub}</text>
-        </g>;
-      })}
+      {nodes.map(n=>{const isA=activeStage===n.id;const nr=isA?28:24;return <g key={n.id} style={{cursor:"pointer"}} onMouseEnter={()=>setActiveStage(n.id)} onMouseLeave={()=>setActiveStage(null)}>
+        {isA&&<circle cx={n.x} cy={n.y} r={nr+12} fill={n.color} opacity="0.08" style={{animation:"pulseGlow 2s ease-in-out infinite"}}/>}
+        <circle cx={n.x} cy={n.y} r={nr} fill={C.white} stroke={isA?n.color:C.border} strokeWidth={isA?2.5:1.5} filter="url(#ns)" style={{transition:"all 0.3s"}}/>
+        <text x={n.x} y={n.y-2} textAnchor="middle" dominantBaseline="middle" fill={isA?n.color:C.greyDark} fontSize={isA?"9":"8"} fontWeight="800" fontFamily="Inter,system-ui" letterSpacing="0.06em" style={{transition:"fill 0.3s"}}>{n.label}</text>
+        <text x={n.x} y={n.y+9} textAnchor="middle" dominantBaseline="middle" fill={C.textMuted} fontSize="7" fontWeight="500" fontFamily="Inter,system-ui">{n.sub}</text>
+      </g>;})}
     </svg>
   );
 }
-
-// ── SLIDES ──
 
 function TitleSlide() {
   return (
     <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",minHeight:"100%",textAlign:"center"}}>
       <div style={{maxWidth:800}}>
         <div style={{...fadeUp(0),display:"inline-flex",alignItems:"center",gap:10,marginBottom:32}}>
-          <div style={{width:36,height:36,background:C.blue,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,fontWeight:900,color:C.white}}>D</div>
+          <DATMark size={32} color={C.blue}/>
           <div style={{fontSize:12,fontWeight:700,color:C.grey,letterSpacing:"0.1em",textTransform:"uppercase"}}>DAT Freight & Analytics · People Team</div>
         </div>
         <h1 style={{...fadeUp(0.15),fontSize:"clamp(36px,5vw,58px)",fontWeight:900,color:C.black,lineHeight:1.08,letterSpacing:"-0.03em",margin:0}}>Everyone Has the<br/>Same Tools.</h1>
@@ -194,9 +186,8 @@ function TitleSlide() {
           <div style={{padding:"10px 22px",background:C.blue,borderRadius:8,fontSize:13,fontWeight:700,color:C.white,display:"flex",alignItems:"center",gap:6}}><Sparkles size={14}/>Talent Operations</div>
           <div style={{padding:"10px 22px",background:C.white,border:`1.5px solid ${C.border}`,borderRadius:8,fontSize:13,fontWeight:600,color:C.greyDark,display:"flex",alignItems:"center",gap:6}}><Clock size={14}/>March 2026</div>
         </div>
-        {/* Mission-connected opening */}
         <div style={{...fadeUp(0.9),marginTop:28}}>
-          <ImageBanner src="/img/network.jpg" height={90} overlay="linear-gradient(90deg,rgba(0,70,221,0.7),rgba(0,0,0,0.5))">
+          <ImageBanner src={IMG.network} height={90} overlay="linear-gradient(90deg,rgba(0,70,221,0.7),rgba(0,0,0,0.5))">
             <div style={{textAlign:"center",padding:"0 32px"}}>
               <div style={{fontSize:13,fontWeight:900,color:C.white,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:6}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
               <div style={{fontSize:12,color:"rgba(255,255,255,0.8)",lineHeight:1.5,maxWidth:480}}>Now the People Team is taking the uncertainty out of how we work. Same mission. New frontier.</div>
@@ -209,27 +200,25 @@ function TitleSlide() {
 }
 
 function CostSlide() {
+  const hours=[{label:"Comp verification & offer matching",hours:25,color:C.blue},{label:"Recruiter scheduling & coordination",hours:20,color:C.red},{label:"Manual reporting & data pulls",hours:15,color:C.yellowDark},{label:"Routing questions to the right person",hours:12,color:C.grey},{label:"Onboarding process management",hours:8,color:C.greyDark}];
   return (
     <div>
       <SectionLabel>The Burning Platform</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>80 Hours of Yesterwork</h2>
-      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:16}}>
-        Peter Hinssen calls it <span style={{fontWeight:700,color:C.black}}>yesterwork</span>: outdated processes designed before AI existed that silently eat organizational capacity. These are DAT's numbers.
-      </p>
+      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:16}}>Peter Hinssen calls it <span style={{fontWeight:700,color:C.black}}>yesterwork</span>: outdated processes designed before AI existed that silently eat organizational capacity. These are DAT's numbers.</p>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:12}}>
         <BigStat value="80" suffix=" hrs" label="Admin work per week" sub="Across all People pillars" delay={0.2} accent={C.red}/>
         <BigStat value="110" prefix="$" suffix="K" label="Annual tool spend at risk" sub="TalentWall, Crosschq, scheduling, recognition, reporting" delay={0.3} accent={C.yellowDark}/>
         <BigStat value="40" suffix=" reqs" label="Supported by 3 recruiters" sub="Full-lifecycle. Admin eats capacity meant for candidates" delay={0.4} accent={C.blue}/>
       </div>
-      {/* Threads image accent */}
       <div style={{...fadeUp(0.45),marginBottom:10}}>
-        <ImageBanner src="/img/waves.jpg" height={44} overlay="linear-gradient(90deg,rgba(225,6,0,0.55),rgba(0,0,0,0.5))">
+        <ImageBanner src={IMG.threads} height={44} overlay="linear-gradient(90deg,rgba(225,6,0,0.55),rgba(0,0,0,0.5))">
           <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>80 hours/week = 2 full-time teammates doing work AI can handle</div>
         </ImageBanner>
       </div>
       <div style={{...fadeUp(0.5),background:C.card,borderRadius:12,padding:"16px 18px",border:`1px solid ${C.border}`}}>
         <div style={{fontSize:10,fontWeight:700,color:C.greyDark,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.12em"}}>Where the 80 Hours Go</div>
-        {[{label:"Comp verification & offer matching",hours:25,color:C.blue},{label:"Recruiter scheduling & coordination",hours:20,color:C.red},{label:"Manual reporting & data pulls",hours:15,color:C.yellowDark},{label:"Routing questions to the right person",hours:12,color:C.grey},{label:"Onboarding process management",hours:8,color:C.greyDark}].map((item,i)=>(
+        {hours.map((item,i)=>(
           <div key={i} style={{display:"flex",alignItems:"center",gap:10,marginBottom:5}}>
             <div style={{width:70,fontSize:11,fontWeight:600,color:C.greyDark,textAlign:"right",flexShrink:0}}>{item.hours} hrs</div>
             <div style={{flex:1,height:24,background:C.bgAlt,borderRadius:6,overflow:"hidden",position:"relative"}}>
@@ -238,10 +227,7 @@ function CostSlide() {
             </div>
           </div>
         ))}
-        <div style={{marginTop:8,padding:"10px 14px",background:C.card,borderRadius:8,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.black}`}}>
-          <div style={{fontSize:12,color:C.textPrimary,lineHeight:1.4,fontStyle:"italic"}}>"Yesterwork is the silent killer of organizations. We all have to become yesterwork hunters."</div>
-          <div style={{fontSize:10,color:C.textMuted,marginTop:2}}>— Peter Hinssen, Unleash America 2026</div>
-        </div>
+        <QuoteBlock quote="Yesterwork is the silent killer of organizations. We all have to become yesterwork hunters." source="Peter Hinssen, Unleash America 2026" accent={C.red} delay={0.7}/>
       </div>
     </div>
   );
@@ -253,30 +239,24 @@ function FlywheelSlide() {
     {id:"engage",icon:HeartPulse,color:FW.engage,label:"Engage",desc:"Measure what matters",detail:"Gallup Q12 reveals where teammates struggle. Coaching frameworks surface real blockers.",evidence:"97% survey participation. Live dashboard. PBP coaching deployed."},
     {id:"enable",icon:Brain,color:FW.enable,label:"Enable",desc:"Build fluency and confidence",detail:"AI training, approved tools, self-service platforms. Teammates gain capability to redesign their own work.",evidence:"Claude access backlog growing. Teammates asking for enablement now."},
     {id:"redesign",icon:Hammer,color:FW.redesign,label:"Redesign",desc:"Hunt the yesterwork",detail:"Systematically eliminate processes designed before AI. Automated comp verification, intelligent routing, scheduling agents.",evidence:"Targeting 80 hrs/wk of admin work. $110K in tool spend addressable."},
-    {id:"reinvest",icon:RefreshCcw,color:FW.reinvest,label:"Reinvest",desc:"Freed capacity → higher-value work",detail:"Better hiring decisions. Deeper coaching. Strategic workforce planning. Meaningful work drives engagement up.",evidence:"Every tool built becomes a template for Eng, Product, Finance."},
+    {id:"reinvest",icon:RefreshCcw,color:FW.reinvest,label:"Reinvest",desc:"Freed capacity -> higher-value work",detail:"Better hiring decisions. Deeper coaching. Strategic workforce planning. Meaningful work drives engagement up.",evidence:"Every tool built becomes a template for Eng, Product, Finance."},
   ];
   return (
     <div>
       <SectionLabel>Strategic Model</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>The One DAT Flywheel</h2>
-      <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:640,lineHeight:1.7,marginBottom:20}}>
-        One DAT is the destination. We get there through a cycle that compounds: measure engagement, enable AI fluency, hunt the yesterwork, and reinvest freed capacity into work that matters.
-      </p>
-      {/* Waves image behind flywheel */}
+      <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:640,lineHeight:1.7,marginBottom:20}}>One DAT is the destination. We get there through a cycle that compounds: measure engagement, enable AI fluency, hunt the yesterwork, and reinvest freed capacity into work that matters.</p>
       <div style={{...fadeUp(0.2),position:"relative",borderRadius:14,overflow:"hidden",marginBottom:18}}>
-        <img src="/img/waves.jpg" alt="" style={{width:"100%",height:370,objectFit:"cover",display:"block",borderRadius:14}}/>
+        <img src={IMG.waves} alt="" style={{width:"100%",height:370,objectFit:"cover",display:"block",borderRadius:14}}/>
         <div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(248,249,250,0.92),rgba(248,249,250,0.85))",borderRadius:14}}/>
         <div style={{position:"absolute",inset:0,display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,alignItems:"center",padding:"20px 24px",zIndex:1}}>
           <FlywheelDiagram activeStage={activeStage} setActiveStage={setActiveStage}/>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
             {stages.map(s=>{const Icon=s.icon;const isA=activeStage===s.id;return(
               <div key={s.id} data-clickable="true" onMouseEnter={()=>setActiveStage(s.id)} onMouseLeave={()=>setActiveStage(null)}
-                style={{padding:"12px 14px",borderRadius:10,cursor:"pointer",background:isA?"rgba(255,255,255,0.95)":"rgba(255,255,255,0.75)",
-                  border:`1px solid ${isA?s.color+"44":C.border}`,borderLeft:`3px solid ${s.color}`,transition:"all 0.25s",
-                  boxShadow:isA?`0 2px 12px ${s.color}10`:"none",backdropFilter:"blur(4px)"}}>
+                style={{padding:"12px 14px",borderRadius:10,cursor:"pointer",background:isA?"rgba(255,255,255,0.95)":"rgba(255,255,255,0.75)",border:`1px solid ${isA?s.color+"44":C.border}`,borderLeft:`3px solid ${s.color}`,transition:"all 0.25s",boxShadow:isA?`0 2px 12px ${s.color}10`:"none",backdropFilter:"blur(4px)"}}>
                 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:isA?6:0}}>
-                  <div style={{width:28,height:28,borderRadius:6,background:s.color+"10",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                    <Icon size={14} color={s.color}/></div>
+                  <div style={{width:28,height:28,borderRadius:6,background:s.color+"10",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Icon size={14} color={s.color}/></div>
                   <div><div style={{fontSize:13,fontWeight:800,color:s.color}}>{s.label}</div><div style={{fontSize:10,color:C.textMuted}}>{s.desc}</div></div>
                 </div>
                 {isA&&<div style={{paddingTop:6,borderTop:`1px solid ${C.borderLight}`,marginTop:2}}>
@@ -288,11 +268,7 @@ function FlywheelSlide() {
         </div>
       </div>
       <div style={{...fadeUp(0.5),display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
-        {[{from:"Engage",to:"Enable",how:"Gallup data reveals capability gaps → shapes training",c:C.blue},
-          {from:"Enable",to:"Redesign",how:"AI-fluent teammates become yesterwork hunters",c:C.greyDark},
-          {from:"Redesign",to:"Reinvest",how:"Reclaimed hours shift to strategic work",c:C.red},
-          {from:"Reinvest",to:"Engage",how:"Meaningful work → engagement rises → cycle accelerates",c:C.black},
-        ].map((l,i)=>(
+        {[{from:"Engage",to:"Enable",how:"Gallup data reveals capability gaps -> shapes training",c:C.blue},{from:"Enable",to:"Redesign",how:"AI-fluent teammates become yesterwork hunters",c:C.greyDark},{from:"Redesign",to:"Reinvest",how:"Reclaimed hours shift to strategic work",c:C.red},{from:"Reinvest",to:"Engage",how:"Meaningful work -> engagement rises -> cycle accelerates",c:C.black}].map((l,i)=>(
           <div key={i} style={{background:C.card,borderRadius:8,padding:"10px 12px",border:`1px solid ${C.border}`,borderTop:`2px solid ${l.c}`}}>
             <div style={{fontSize:9,fontWeight:800,color:l.c,marginBottom:2,display:"flex",alignItems:"center",gap:3,letterSpacing:"0.05em"}}>{l.from}<ArrowRight size={8}/>{l.to}</div>
             <div style={{fontSize:10,color:C.textSecondary,lineHeight:1.4}}>{l.how}</div>
@@ -306,46 +282,46 @@ function LandscapeSlide() {
   const [ai,setAi]=useState(0);
   const rd=[{subject:"Self-Service",DAT:65,Industry:45},{subject:"Predictive Analytics",DAT:55,Industry:35},{subject:"Process Automation",DAT:70,Industry:50},{subject:"AI Routing & Triage",DAT:75,Industry:25},{subject:"Workforce Intelligence",DAT:60,Industry:40},{subject:"Teammate Experience",DAT:50,Industry:45}];
   const ins=[
-    {source:"Gartner",insight:"Only 21% of CHROs are closely involved in AI strategy. The People function that builds fluency first defines the new standard.",color:C.blue},
-    {source:"Peter Hinssen",insight:"HR needs a 'yesterwork hunter' mentality. Not just adding new systems, but deciding which processes to drop.",color:C.red},
-    {source:"Josh Bersin",insight:"2026 marks the shift from record-keeping to agentic action. The People function is becoming 'full-stack.'",color:C.greyDark},
-    {source:"DAT Signal",insight:"The Claude access backlog tells the story. Teammates are hungry for AI enablement. Demand outpacing our ability to train.",color:C.blue},
+    {source:"Gartner",insight:"Only 21% of CHROs are closely involved in AI strategy. The People function that builds fluency first defines the new standard.",color:C.blue,icon:BarChart3},
+    {source:"Peter Hinssen",insight:"HR needs a 'yesterwork hunter' mentality. Not just adding new systems, but deciding which processes to drop.",color:C.red,icon:Hammer},
+    {source:"Ethan Mollick",insight:"The apprenticeship model broke last summer. It's on us to rebuild it. Nobody knows anything, including the labs.",color:C.greyDark,icon:GraduationCap},
+    {source:"DAT Signal",insight:"The Claude access backlog tells the story. Teammates are hungry for AI enablement. Demand outpacing our ability to train.",color:C.blue,icon:Lightbulb},
   ];
   return (
     <div>
       <SectionLabel>Industry Context</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>Where We Stand</h2>
       <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:640,lineHeight:1.7,marginBottom:20}}>Self-assessed maturity against industry benchmarks. Ahead where we've built. Behind where we haven't invested yet.</p>
-      {/* Graph image accent */}
       <div style={{...fadeUp(0.18),marginBottom:18}}>
-        <ImageBanner src="/img/waves.jpg" height={42} overlay="linear-gradient(90deg,rgba(0,70,221,0.65),rgba(0,0,0,0.5))">
+        <ImageBanner src={IMG.graph} height={42} overlay="linear-gradient(90deg,rgba(0,70,221,0.65),rgba(0,0,0,0.5))">
           <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>2026: The year People functions move from experimentation to infrastructure</div>
         </ImageBanner>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20}}>
         <div style={{...fadeUp(0.2),background:C.card,borderRadius:14,padding:24,border:`1px solid ${C.border}`}}>
           <div style={{fontSize:11,fontWeight:700,color:C.greyDark,marginBottom:8,textTransform:"uppercase",letterSpacing:"0.12em"}}>DAT vs. Industry Avg</div>
-          <ResponsiveContainer width="100%" height={250}>
-            <RadarChart data={rd}><PolarGrid stroke={C.border}/><PolarAngleAxis dataKey="subject" tick={{fill:C.textMuted,fontSize:10}}/><PolarRadiusAxis tick={false} domain={[0,100]} axisLine={false}/>
-              <Radar name="DAT" dataKey="DAT" stroke={C.blue} fill={C.blue} fillOpacity={0.12} strokeWidth={2}/>
-              <Radar name="Industry" dataKey="Industry" stroke={C.grey} fill={C.grey} fillOpacity={0.04} strokeWidth={1.5} strokeDasharray="4 4"/>
-              <Tooltip contentStyle={{background:C.card,border:`1px solid ${C.border}`,borderRadius:8,fontSize:12,color:C.textPrimary}}/>
-            </RadarChart>
+          <ResponsiveContainer width="100%" height={220}>
+            <RadarChart data={rd}><PolarGrid stroke={C.border}/><PolarAngleAxis dataKey="subject" tick={{fill:C.textMuted,fontSize:9}}/>
+              <PolarRadiusAxis tick={false} axisLine={false} domain={[0,100]}/>
+              <Radar name="Industry" dataKey="Industry" stroke={C.border} fill={C.border} fillOpacity={0.3}/>
+              <Radar name="DAT" dataKey="DAT" stroke={C.blue} fill={C.blue} fillOpacity={0.15} strokeWidth={2}/>
+              <Tooltip contentStyle={{background:C.card,border:`1px solid ${C.border}`,borderRadius:8,fontSize:11}}/></RadarChart>
           </ResponsiveContainer>
-          <div style={{display:"flex",gap:20,justifyContent:"center",marginTop:4}}>
-            <div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:12,height:3,background:C.blue,borderRadius:2}}/><span style={{fontSize:10,color:C.textMuted}}>DAT</span></div>
-            <div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:12,height:3,background:C.grey,borderRadius:2}}/><span style={{fontSize:10,color:C.textMuted}}>Industry</span></div>
+          <div style={{display:"flex",gap:16,justifyContent:"center"}}>
+            <div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:10,height:10,background:C.blue,borderRadius:2}}/><span style={{fontSize:10,color:C.textMuted}}>DAT</span></div>
+            <div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:10,height:10,background:C.border,borderRadius:2}}/><span style={{fontSize:10,color:C.textMuted}}>Industry</span></div>
           </div>
         </div>
-        <div style={{...fadeUp(0.3),display:"flex",flexDirection:"column",gap:8}}>
-          {ins.map((item,i)=>(
-            <div key={i} data-clickable="true" onClick={()=>setAi(i)} style={{
-              background:i===ai?item.color+"05":C.card,borderRadius:10,padding:"14px 16px",
-              border:`1px solid ${i===ai?item.color+"33":C.border}`,borderLeft:`3px solid ${item.color}`,
-              cursor:"pointer",transition:"all 0.25s"}}>
-              <div style={{fontSize:10,fontWeight:800,color:item.color,textTransform:"uppercase",letterSpacing:"0.12em",marginBottom:3}}>{item.source}</div>
-              <div style={{fontSize:12,color:C.textSecondary,lineHeight:1.5,maxHeight:i===ai?100:18,overflow:"hidden",transition:"max-height 0.4s ease"}}>{item.insight}</div>
-            </div>))}
+        <div style={{...fadeUp(0.3),display:"flex",flexDirection:"column",gap:10}}>
+          <div style={{fontSize:11,fontWeight:700,color:C.greyDark,textTransform:"uppercase",letterSpacing:"0.12em"}}>What the Research Says</div>
+          {ins.map((item,i)=>{const Icon=item.icon;const isA=ai===i;return(
+            <div key={i} data-clickable="true" onClick={()=>setAi(i)} style={{padding:"12px 14px",borderRadius:10,background:isA?C.card:C.bgAlt,border:`1px solid ${isA?item.color+"33":"transparent"}`,borderLeft:`3px solid ${item.color}`,cursor:"pointer",transition:"all 0.25s",boxShadow:isA?`0 2px 8px ${item.color}08`:"none"}}>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:isA?6:0}}>
+                <Icon size={13} color={item.color} style={{flexShrink:0}}/>
+                <span style={{fontSize:12,fontWeight:700,color:item.color}}>{item.source}</span>
+              </div>
+              {isA&&<div style={{fontSize:11,color:C.textSecondary,lineHeight:1.5,paddingLeft:21}}>{item.insight}</div>}
+            </div>);})}
         </div>
       </div>
     </div>
@@ -355,28 +331,35 @@ function LandscapeSlide() {
 function ProofSlide() {
   const [filter,setFilter]=useState("all");
   const proofs=[
-    {name:"Engagement Intelligence Suite",desc:"Gallup Q12 dashboard (6 tabs, 97% participation) + PBP Coaching + Manager Actions.",status:"Live",accent:"#059669",icon:BarChart3},
-    {name:"#ask-people-team Bot",desc:"n8n + Claude Sonnet routing. Auto-classifies and routes. V2 self-training.",status:"Live",accent:"#059669",icon:Bot},
-    {name:"Comp Verification Engine",desc:"Automated Radford matching. Targets 25 hrs/wk of manual process.",status:"Prototype",accent:C.yellowDark,icon:Target},
-    {name:"Merit Cycle App",desc:"React app with role-based views. Replaced a 14-tab spreadsheet.",status:"Prototype",accent:C.yellowDark,icon:Monitor},
-    {name:"TA Sourcing Agent",desc:"AI pipeline building. Could replace TalentWall/Crosschq ($30K/yr).",status:"Planned",accent:C.blue,icon:Search},
-    {name:"TA Scheduling Agent",desc:"Automated interview coordination. Targets 20 hrs/wk savings.",status:"Planned",accent:C.blue,icon:CalendarCheck},
-    {name:"TA Analytics Dashboards",desc:"Real-time hiring velocity, pipeline health, source-of-hire.",status:"Planned",accent:C.blue,icon:TrendingUp},
-    {name:"Recognition Platform",desc:"AI-assisted teammate recognition for Workplace Experience.",status:"Planned",accent:C.blue,icon:Award},
-    {name:"Integration Builder",desc:"Custom Greenhouse → UKG integrations. Vendor quotes: $50K+ each.",status:"Planned",accent:C.blue,icon:ArrowLeftRight},
+    {name:"Engagement Dashboard",desc:"Live Gallup Q12 data, Supervisor View, Cross-Analysis heatmaps. Deployed on Render.",status:"Live",accent:C.green,icon:BarChart3},
+    {name:"PBP Coaching Framework",desc:"Interactive tool for HRBPs to lead manager coaching conversations around Gallup items.",status:"Live",accent:C.green,icon:Users},
+    {name:"#ask-people-team Bot",desc:"n8n Slack routing bot. Claude Sonnet classifies and routes teammate questions in real time.",status:"Live",accent:C.green,icon:Bot},
+    {name:"Merit Cycle Automation",desc:"Caught $740K exposure gap. Built XLT architecture with IMPORTRANGE. Retrospective documented.",status:"Live",accent:C.green,icon:DollarSign},
+    {name:"Comp Verification Engine",desc:"Automated matching of hiring requests to Radford codes, salary ranges, and exempt status.",status:"Prototype",accent:C.yellowDark,icon:Search},
+    {name:"TA Intelligence Dashboard",desc:"Pipeline health, recruiter velocity, QoC calibration metric, hiring manager scorecards.",status:"Planned",accent:C.blue,icon:TrendingUp},
+    {name:"People Hub",desc:"Google Sites + HTML embeds. DAT design system. Onboarding, visa, referral, interview guides.",status:"Live",accent:C.green,icon:BookOpen},
+    {name:"Automated Onboarding",desc:"Multi-location onboarding workflow. Six offices, four acquired populations.",status:"Planned",accent:C.blue,icon:CalendarCheck},
+    {name:"AI Fluency Program",desc:"Three-tier training: Foundations -> Practitioner -> Builder. For all 700 teammates.",status:"Planned",accent:C.blue,icon:GraduationCap},
   ];
   const filtered=filter==="all"?proofs:proofs.filter(p=>p.status.toLowerCase()===filter);
   return (
     <div>
-      <SectionLabel>Proof + Pipeline</SectionLabel>
-      <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>Built, Proven, and Growing</h2>
+      <SectionLabel>Evidence</SectionLabel>
+      <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>Built, Not Planned</h2>
       <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:640,lineHeight:1.7,marginBottom:18}}>Live tools in use. Planned tools target specific cost and capacity problems.</p>
+      <div style={{...fadeUp(0.17),marginBottom:14}}>
+        <ImageBanner src={IMG.volume} height={40} overlay="linear-gradient(90deg,rgba(5,150,105,0.55),rgba(0,0,0,0.5))">
+          <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase",display:"flex",alignItems:"center",gap:8}}>
+            <CheckCircle2 size={12}/>{proofs.filter(p=>p.status==="Live").length} tools live · {proofs.filter(p=>p.status!=="Live").length} in pipeline
+          </div>
+        </ImageBanner>
+      </div>
       <div style={{...fadeUp(0.2),display:"flex",gap:8,marginBottom:16}}>
         {["all","live","prototype","planned"].map(f=>(
           <button key={f} data-clickable="true" onClick={()=>setFilter(f)} style={{padding:"6px 16px",borderRadius:20,border:filter===f?"none":`1px solid ${C.border}`,background:filter===f?C.blue:C.white,color:filter===f?C.white:C.textMuted,fontSize:11,fontWeight:600,cursor:"pointer",transition:"all 0.2s",fontFamily:"'Inter',system-ui",textTransform:"capitalize"}}>{f==="all"?`All (${proofs.length})`:`${f} (${proofs.filter(p=>p.status.toLowerCase()===f).length})`}</button>))}
       </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
-        {filtered.map((p,i)=>{const Icon=p.icon;const sbg=p.accent==="#059669"?"#ECFDF5":p.accent===C.yellowDark?"#FFFBEB":C.blueLight;return(
+        {filtered.map((p,i)=>{const Icon=p.icon;const sbg=p.accent===C.green?C.greenSoft:p.accent===C.yellowDark?C.yellowSoft:C.blueLight;return(
           <div key={p.name} style={{...fadeUp(0.2+i*0.04),background:C.card,borderRadius:12,padding:"18px 16px",border:`1px solid ${C.border}`,position:"relative",overflow:"hidden"}}>
             <div style={{position:"absolute",top:10,right:10,background:sbg,color:p.accent,fontSize:9,fontWeight:800,padding:"2px 8px",borderRadius:10,textTransform:"uppercase",display:"flex",alignItems:"center",gap:2}}>
               {p.status==="Live"?<CheckCircle2 size={9}/>:p.status==="Prototype"?<Clock size={9}/>:<Sparkles size={9}/>}{p.status}</div>
@@ -385,8 +368,8 @@ function ProofSlide() {
             <div style={{fontSize:11,color:C.textSecondary,lineHeight:1.5}}>{p.desc}</div>
           </div>);})}
       </div>
-      <div style={{...fadeUp(0.6),marginTop:14,padding:"10px 16px",background:"#ECFDF5",borderRadius:10,border:"1px solid #05966920",display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
-        <DollarSign size={14} color="#059669"/><span style={{fontSize:12,color:C.textSecondary}}>Tool spend addressable: </span><span style={{fontSize:12,color:"#059669",fontWeight:800}}>$110K/year</span>
+      <div style={{...fadeUp(0.6),marginTop:14,padding:"10px 16px",background:C.greenSoft,borderRadius:10,border:`1px solid ${C.green}20`,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+        <DollarSign size={14} color={C.green}/><span style={{fontSize:12,color:C.textSecondary}}>Tool spend addressable: </span><span style={{fontSize:12,color:C.green,fontWeight:800}}>$110K/year</span>
       </div>
     </div>
   );
@@ -399,14 +382,14 @@ function RoadmapSlide() {
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>12-Month Roadmap</h2>
       <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:600,lineHeight:1.7,marginBottom:16}}>Quick wins first to build trust. Then scale.</p>
       <div style={{...fadeUp(0.18),marginBottom:16}}>
-        <ImageBanner src="/img/network.jpg" height={42} overlay="linear-gradient(90deg,rgba(0,0,0,0.55),rgba(0,70,221,0.5))">
-          <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>Q2 Foundation → Q3 Scale → Q4 Optimize · Phase 1 already underway</div>
+        <ImageBanner src={IMG.landscape} height={42} overlay="linear-gradient(90deg,rgba(0,0,0,0.55),rgba(0,70,221,0.5))">
+          <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>Q2 Foundation -> Q3 Scale -> Q4 Optimize · Phase 1 already underway</div>
         </ImageBanner>
       </div>
       <div style={{display:"flex",flexDirection:"column",gap:12}}>
-        <PhaseCard phase={1} title="Foundation & Quick Wins" quarter="Q2 2026 (Now → June)" active={true} delay={0.2} items={["Publish AI usage policy to People Hub","Formalize live tools: Engagement Suite, routing bot","Launch 'AI at DAT' resource page","Pilot bot self-training loop (V2)","First cross-functional AI sprint: one impossible task, 6-week timebox","Milestone: 3 visible wins at All Hands. Trust established."]}/>
-        <PhaseCard phase={2} title="Scale & Integrate" quarter="Q3 2026 (July → Sept)" delay={0.35} items={["Comp verification engine live — 25 hrs/wk savings target","TA dashboards V1 — pipeline health and hiring velocity","AI fluency program launches: Foundations → Practitioner → Builder","Automated onboarding across all 6 locations","Milestone: 50% of repetitive processes automated."]}/>
-        <PhaseCard phase={3} title="Optimize & Extend" quarter="Q4 2026 (Oct → Dec)" delay={0.5} items={["Predictive retention modeling → proactive manager alerts","Skills inventory across all locations and acquired populations","Manager AI toolkit: coaching prompts, performance writing, team analysis","People data integrated with Finance forecasting","Milestone: 75% automation. Fluency embedded. Playbook for other functions."]}/>
+        <PhaseCard phase={1} title="Foundation & Quick Wins" quarter="Q2 2026 (Now -> June)" active={true} delay={0.2} items={["Publish AI usage policy to People Hub","Formalize live tools: Engagement Suite, routing bot","Launch 'AI at DAT' resource page","Pilot bot self-training loop (V2)","First cross-functional AI sprint: one impossible task, 6-week timebox","Milestone: 3 visible wins at All Hands. Trust established."]}/>
+        <PhaseCard phase={2} title="Scale & Integrate" quarter="Q3 2026 (July -> Sept)" delay={0.35} items={["Comp verification engine live — 25 hrs/wk savings target","TA dashboards V1 — pipeline health and hiring velocity","AI fluency program launches: Foundations -> Practitioner -> Builder","Automated onboarding across all 6 locations","Milestone: 50% of repetitive processes automated."]}/>
+        <PhaseCard phase={3} title="Optimize & Extend" quarter="Q4 2026 (Oct -> Dec)" delay={0.5} items={["Predictive retention modeling -> proactive manager alerts","Skills inventory across all locations and acquired populations","Manager AI toolkit: coaching prompts, performance writing, team analysis","People data integrated with Finance forecasting","Milestone: 75% automation. Fluency embedded. Playbook for other functions."]}/>
       </div>
     </div>
   );
@@ -425,13 +408,17 @@ function FluencySlide() {
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>AI Fluency Program</h2>
       <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:640,lineHeight:1.7,marginBottom:8}}>Meet people where they are. Develop fluency through practice.</p>
       <div style={{...fadeUp(0.18),display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:18}}>
-        <div style={{background:C.blueLight,borderRadius:10,padding:"14px 18px",border:`1px solid ${C.blue}12`,display:"flex",alignItems:"center",gap:10}}>
-          <Cpu size={16} color={C.blue} style={{flexShrink:0}}/>
-          <div style={{fontSize:12,color:C.textSecondary}}><span style={{fontWeight:700,color:C.blue}}>Demand is real.</span> Claude access backlog keeps growing.</div>
-        </div>
-        <div style={{background:C.card,borderRadius:10,padding:"14px 18px",border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.black}`}}>
-          <div style={{fontSize:12,color:C.textPrimary,lineHeight:1.5,fontStyle:"italic"}}>"The apprenticeship model broke last summer. It's on us to rebuild it."</div>
-          <div style={{fontSize:10,color:C.textMuted,marginTop:3}}>— Ethan Mollick, Co-Intelligence</div>
+        <ImageBanner src={IMG.network} height={56} overlay="linear-gradient(90deg,rgba(0,70,221,0.65),rgba(0,0,0,0.4))" borderRadius={10}>
+          <div style={{padding:"0 18px",display:"flex",alignItems:"center",gap:10}}>
+            <Cpu size={16} color={C.white} style={{flexShrink:0}}/>
+            <div style={{fontSize:12,color:C.white}}><span style={{fontWeight:700}}>Demand is real.</span> Claude access backlog keeps growing.</div>
+          </div>
+        </ImageBanner>
+        <div style={{background:C.card,borderRadius:10,padding:"14px 18px",border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.black}`,display:"flex",alignItems:"center"}}>
+          <div>
+            <div style={{fontSize:12,color:C.textPrimary,lineHeight:1.5,fontStyle:"italic"}}>"The apprenticeship model broke last summer. It's on us to rebuild it."</div>
+            <div style={{fontSize:10,color:C.textMuted,marginTop:3}}>— Ethan Mollick, Co-Intelligence</div>
+          </div>
         </div>
       </div>
       <div style={{...fadeUp(0.25),display:"flex",gap:0,marginBottom:18,background:C.bgAlt,borderRadius:10,padding:3}}>
@@ -461,7 +448,7 @@ function GovernanceSlide() {
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>Governance & Trust</h2>
       <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:640,lineHeight:1.7,marginBottom:14}}>Speed without trust is reckless. Clear guardrails that enable experimentation.</p>
       <div style={{...fadeUp(0.18),marginBottom:16}}>
-        <ImageBanner src="/img/network.jpg" height={44} overlay="linear-gradient(90deg,rgba(0,0,0,0.6),rgba(0,70,221,0.5))">
+        <ImageBanner src={IMG.volume} height={44} overlay="linear-gradient(90deg,rgba(0,0,0,0.6),rgba(0,70,221,0.5))">
           <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>Build fast. Build responsibly. Build trust.</div>
         </ImageBanner>
       </div>
@@ -472,7 +459,7 @@ function GovernanceSlide() {
       <div style={{background:C.card,borderRadius:14,padding:"22px 20px",border:`1px solid ${C.border}`}}>
         {tab==="policy"?(<>{["No proprietary or teammate data in public AI tools","Human review before external use of AI outputs","Approved tool list on People Hub (Claude, Copilot, DAT-specific)","Bias testing before AI touches hiring or promotion decisions","Transparency with teammates about where AI is used"].map((item,i)=>(
           <div key={i} style={{fontSize:13,color:C.textSecondary,lineHeight:1.6,marginBottom:8,paddingLeft:24,position:"relative",opacity:0,animation:`slideIn 0.3s ease-out ${i*0.06}s forwards`}}><span style={{position:"absolute",left:0,top:1}}><Shield size={13} color={C.blue}/></span>{item}</div>))}</>):
-        (<>{["Align with Roper IT security and data classification","AI-specific terms in vendor contracts with Legal","Approved integrations: UKG, Greenhouse, 15Five","UKG modules: Onboarding, Merit Planning, Performance, Reporting, Integrations","All AI tools documented for audit readiness"].map((item,i)=>(
+        (<>{["Align with Roper IT security and data classification","AI-specific terms in vendor contracts with Legal","Approved integrations: UKG, Greenhouse, 15Five","UKG modules: Onboarding, Merit Planning, Performance, Reporting, Integrations","Build stronger communication lines with Roper administration","All AI tools documented for audit readiness"].map((item,i)=>(
           <div key={i} style={{fontSize:13,color:C.textSecondary,lineHeight:1.6,marginBottom:8,paddingLeft:24,position:"relative",opacity:0,animation:`slideIn 0.3s ease-out ${i*0.06}s forwards`}}><span style={{position:"absolute",left:0,top:1}}><Building2 size={13} color={C.greyDark}/></span>{item}</div>))}</>)}
       </div>
     </div>
@@ -486,14 +473,13 @@ function MetricsSlide() {
       <SectionLabel>Measurement</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>How We'll Know</h2>
       <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:600,lineHeight:1.6,marginBottom:12}}>Outcomes, not activity. Every metric maps to a business impact.</p>
-      {/* Image accent */}
       <div style={{...fadeUp(0.18),marginBottom:12}}>
-        <ImageBanner src="/img/network.jpg" height={38} overlay="linear-gradient(90deg,rgba(0,70,221,0.6),rgba(0,0,0,0.5))">
+        <ImageBanner src={IMG.graph} height={38} overlay="linear-gradient(90deg,rgba(0,70,221,0.6),rgba(0,0,0,0.5))">
           <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>People data rivaling financial data in strategic importance</div>
         </ImageBanner>
       </div>
       <div style={{...fadeUp(0.2),background:C.card,borderRadius:12,padding:"16px 22px",border:`1px solid ${C.border}`,marginBottom:12}}>
-        <div style={{fontSize:10,fontWeight:700,color:C.greyDark,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.12em",display:"flex",alignItems:"center",gap:6}}><TrendingUp size={12}/>Current → EOY 2026</div>
+        <div style={{fontSize:10,fontWeight:700,color:C.greyDark,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.12em",display:"flex",alignItems:"center",gap:6}}><TrendingUp size={12}/>Current -> EOY 2026</div>
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={bd} barGap={4}><XAxis dataKey="name" tick={{fill:C.textMuted,fontSize:10}} axisLine={false} tickLine={false} interval={0}/><YAxis tick={{fill:C.textMuted,fontSize:11}} axisLine={false} tickLine={false} domain={[0,100]} tickFormatter={v=>`${v}%`}/>
             <Tooltip contentStyle={{background:C.card,border:`1px solid ${C.border}`,borderRadius:8,fontSize:12,color:C.textPrimary}} formatter={v=>[`${v}%`]}/>
@@ -507,8 +493,7 @@ function MetricsSlide() {
         </div>
       </div>
       <div style={{...fadeUp(0.4),display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
-        {[{l:"Teammate Confidence",m:"75%",d:"Using AI tools by Q4 2026",c:C.blue,i:Brain},{l:"Decision Speed",m:"Real-time",d:"Quarterly PDF → live dashboards",c:C.greyDark,i:TrendingUp},{l:"Function Multiplier",m:"1→N",d:"Every tool becomes a template",c:C.black,i:Layers}].map((item,i)=>{
-          const Icon=item.i;return(
+        {[{l:"Teammate Confidence",m:"75%",d:"Using AI tools by Q4 2026",c:C.blue,i:Brain},{l:"Decision Speed",m:"Real-time",d:"Quarterly PDF -> live dashboards",c:C.greyDark,i:TrendingUp},{l:"Function Multiplier",m:"1->N",d:"Every tool becomes a template",c:C.black,i:Layers}].map((item,i)=>{const Icon=item.i;return(
           <div key={i} style={{background:C.card,borderRadius:10,padding:"12px 12px",border:`1px solid ${C.border}`,borderTop:`2px solid ${item.c}`}}>
             <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:4}}><Icon size={12} color={item.c}/><span style={{fontSize:9,fontWeight:700,color:item.c,textTransform:"uppercase",letterSpacing:"0.05em"}}>{item.l}</span></div>
             <div style={{fontSize:20,fontWeight:900,color:item.c}}>{item.m}</div>
@@ -526,13 +511,13 @@ function RisksSlide() {
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>What Could Go Wrong</h2>
       <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:600,lineHeight:1.7,marginBottom:14}}>Naming risks isn't hedging. It's how we build trust and plan around reality.</p>
       <div style={{...fadeUp(0.18),marginBottom:16}}>
-        <ImageBanner src="/img/waves.jpg" height={40} overlay="linear-gradient(90deg,rgba(225,6,0,0.4),rgba(0,0,0,0.6))">
+        <ImageBanner src={IMG.threads} height={40} overlay="linear-gradient(90deg,rgba(225,6,0,0.4),rgba(0,0,0,0.6))">
           <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>Every risk named. Every mitigation planned.</div>
         </ImageBanner>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
         {[{icon:UserX,title:"Concentration Risk",desc:"Built by one person. If unavailable, velocity drops to zero. Mitigation: Nat's team assumes ownership in Phase 2. Documentation built into every project.",color:C.red},
-          {icon:Building2,title:"Roper IT Access",desc:"UKG capabilities exist. Bottleneck is Roper admin. Hard blocker for onboarding, merit, integrations. Mitigation: Specific modules named in our ask.",color:C.yellowDark},
+          {icon:Building2,title:"Roper IT Access",desc:"UKG capabilities exist but the bottleneck is Roper admin. Hard blocker for onboarding, merit, integrations. Mitigation: Building stronger communication lines. Specific modules named in our ask.",color:C.yellowDark},
           {icon:Database,title:"Data Quality",desc:"Four acquisitions left inconsistent job codes, bands, and records. AI is only as good as the data. Mitigation: Cleanup in Phase 1-2 milestones.",color:C.blue},
           {icon:TrendingUp,title:"Sustainability",desc:"This pace needs capacity. Without team growth, Phase 2-3 stalls. Mitigation: Planned Talent Ops Analyst and WX Manager roles are Phase 3 prerequisites.",color:C.greyDark},
         ].map((risk,i)=>{const Icon=risk.icon;return(
@@ -561,9 +546,7 @@ function CloseSlide() {
         <SectionLabel delay={0}>Next Steps</SectionLabel>
         <h2 style={{...fadeUp(0.1),fontSize:36,fontWeight:900,color:C.black,letterSpacing:"-0.03em",lineHeight:1.1,margin:"6px 0 0 0"}}>The momentum is here.</h2>
         <h2 style={{...fadeUp(0.2),fontSize:36,fontWeight:900,color:C.blue,letterSpacing:"-0.03em",lineHeight:1.1,margin:"2px 0 0 0"}}>Here's how to accelerate it.</h2>
-        <p style={{...fadeUp(0.3),fontSize:13,color:C.textSecondary,lineHeight:1.6,maxWidth:500,margin:"14px auto 0"}}>
-          We've proven the model works. Five decisions to scale it across DAT.
-        </p>
+        <p style={{...fadeUp(0.3),fontSize:13,color:C.textSecondary,lineHeight:1.6,maxWidth:500,margin:"14px auto 0"}}>We've proven the model works. Five decisions to scale it across DAT.</p>
         <div style={{...fadeUp(0.35),marginTop:16,display:"flex",flexDirection:"column",gap:6,textAlign:"left"}}>
           {asks.map((item,i)=>{const II=item.icon;return(
             <div key={i} style={{background:C.card,borderRadius:10,padding:"10px 14px",border:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:10}}>
@@ -574,13 +557,9 @@ function CloseSlide() {
               </div>
             </div>);})}
         </div>
-        <div style={{...fadeUp(0.5),marginTop:12,padding:"12px 18px",background:C.card,borderRadius:10,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.black}`,textAlign:"left"}}>
-          <div style={{fontSize:13,color:C.textPrimary,fontWeight:600,lineHeight:1.4,fontStyle:"italic"}}>"The most successful teams I see implementing AI are when you give a small cross-functional team an impossible task and see how far they get."</div>
-          <div style={{fontSize:10,color:C.textMuted,marginTop:3}}>— Ethan Mollick, Co-Intelligence</div>
-        </div>
-        {/* Mission closing */}
+        <QuoteBlock quote="The most successful teams I see implementing AI are when you give a small cross-functional team an impossible task and see how far they get." source="Ethan Mollick, Co-Intelligence" accent={C.black} delay={0.5}/>
         <div style={{...fadeUp(0.6),marginTop:16}}>
-          <ImageBanner src="/img/waves.jpg" height={110} overlay="linear-gradient(135deg,rgba(0,70,221,0.75),rgba(0,0,0,0.55))">
+          <ImageBanner src={IMG.landscape} height={110} overlay="linear-gradient(135deg,rgba(0,70,221,0.75),rgba(0,0,0,0.55))">
             <div style={{textAlign:"center",padding:"0 32px"}}>
               <div style={{fontSize:12,fontWeight:900,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:6}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
               <div style={{fontSize:18,fontWeight:900,color:C.white,lineHeight:1.3,letterSpacing:"-0.01em",marginBottom:6}}>Now we take the uncertainty out of how we work.</div>
@@ -594,7 +573,6 @@ function CloseSlide() {
   );
 }
 
-// ── Main App ──
 const SC={"title":TitleSlide,"cost":CostSlide,"flywheel":FlywheelSlide,"landscape":LandscapeSlide,"proof":ProofSlide,"roadmap":RoadmapSlide,"fluency":FluencySlide,"governance":GovernanceSlide,"metrics":MetricsSlide,"risks":RisksSlide,"close":CloseSlide};
 
 export default function DATAITransformation() {
@@ -631,7 +609,7 @@ export default function DATAITransformation() {
       <style>{keyframes}</style><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 24px",borderBottom:`1px solid ${C.border}`,flexShrink:0,background:C.white,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:28,height:28,background:C.blue,borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:C.white}}>D</div>
+          <DATMark size={24} color={C.blue}/>
           <span style={{fontSize:13,fontWeight:700,color:C.greyDark}}>AI Transformation Strategy</span>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
