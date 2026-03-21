@@ -1,1544 +1,844 @@
-import { useState, useMemo, useCallback, useRef } from "react";
-import {
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, AreaChart, Area, Cell, Legend,
-} from "recharts";
-import _ from "lodash";
+import { useState, useEffect, useRef } from "react";
+import { LineChart, Line, BarChart, Bar, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, AreaChart, Area } from "recharts";
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   BANDED — Open-Source Compensation Intelligence
-   
-   Design direction: "Editorial Precision" — inspired by financial terminals 
-   meets modern editorial design. Warm sand/cream light theme with ink-black
-   type, precise geometric accents, and a signature teal signal color.
-   Feels like Bloomberg Terminal redesigned by Monocle magazine.
-   
-   Typography: Instrument Serif (display) + Geist (body) + Geist Mono (data)
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-// ─── PALETTE (CSS-variable-ready) ────────────────────────────────────────────
-const V = {
-  bg:           "#FAFAF7",
-  bgWarm:       "#F5F3EE",
-  surface:      "#FFFFFF",
-  surfaceMuted: "#F0EDE6",
-  border:       "#E4E0D8",
-  borderLight:  "#EBE8E1",
-  ink:          "#1A1A18",
-  inkSoft:      "#3D3D38",
-  inkMuted:     "#7A7A70",
-  inkFaint:     "#B0AEA4",
-  teal:         "#0D9488",
-  tealDark:     "#0F766E",
-  tealLight:    "#CCFBF1",
-  tealMuted:    "rgba(13,148,136,0.08)",
-  rose:         "#E11D48",
-  roseMuted:    "rgba(225,29,72,0.06)",
-  amber:        "#D97706",
-  amberMuted:   "rgba(217,119,6,0.08)",
-  blue:         "#2563EB",
-  blueMuted:    "rgba(37,99,235,0.06)",
-  violet:       "#7C3AED",
-  chartSet:     ["#0D9488", "#2563EB", "#D97706", "#E11D48", "#7C3AED"],
-  focus:        "0 0 0 2px #FAFAF7, 0 0 0 4px #0D9488",
+// ── DAT Brand Tokens ──
+const C = {
+  blue: "#0046DD",
+  blueOnBlack: "#0056FF",
+  black: "#000000",
+  white: "#FFFFFF",
+  grey: "#8A8D8F",
+  greyMed: "#6E6B68",
+  greyDark: "#565657",
+  red: "#E10600",
+  yellow: "#FFD700",
+  bg: "#0A0A0C",
+  card: "#111114",
+  cardHover: "#18181C",
+  blueMuted: "rgba(0,70,221,0.12)",
+  blueGlow: "rgba(0,86,255,0.25)",
+  textPrimary: "#F0F0F2",
+  textSecondary: "#9CA3AF",
+  textMuted: "#6B7280",
 };
 
-// ─── GLOBAL STYLES (injected once) ──────────────────────────────────────────
-const GLOBAL_CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
+// ── Slide Data ──
+const slides = [
+  { id: "title", label: "Title" },
+  { id: "why-now", label: "Why Now" },
+  { id: "one-dat", label: "One DAT" },
+  { id: "landscape", label: "Landscape" },
+  { id: "framework", label: "Framework" },
+  { id: "proof", label: "Already Built" },
+  { id: "roadmap", label: "Roadmap" },
+  { id: "fluency", label: "AI Fluency" },
+  { id: "governance", label: "Governance" },
+  { id: "metrics", label: "Metrics" },
+  { id: "close", label: "The Ask" },
+];
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; }
+// ── Animations ──
+const fadeUp = (delay = 0) => ({
+  opacity: 0,
+  transform: "translateY(24px)",
+  animation: `fadeUp 0.6s ease-out ${delay}s forwards`,
+});
 
-  :root {
-    color-scheme: light;
-    --font-display: 'Instrument Serif', Georgia, serif;
-    --font-body: 'Geist', -apple-system, sans-serif;
-    --font-mono: 'Geist Mono', 'SF Mono', monospace;
-  }
-
-  body {
-    font-family: var(--font-body);
-    -webkit-font-smoothing: antialiased;
-    touch-action: manipulation;
-  }
-
-  /* Focus-visible ring (Vercel guideline: never outline-none without replacement) */
-  :focus-visible {
-    outline: none;
-    box-shadow: ${V.focus};
-    border-radius: 4px;
-  }
-  :focus:not(:focus-visible) { outline: none; }
-
-  /* Tabular nums for data columns */
-  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-
-  /* Reduced motion (Vercel guideline: honor prefers-reduced-motion) */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: ${V.border}; border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: ${V.inkFaint}; }
-
-  /* Text balance on headings (Vercel guideline) */
-  h1, h2, h3 { text-wrap: balance; }
-
-  /* Staggered entrance animation */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .fade-up {
-    animation: fadeUp 0.4s ease-out both;
-  }
-  .fade-up-1 { animation-delay: 0ms; }
-  .fade-up-2 { animation-delay: 60ms; }
-  .fade-up-3 { animation-delay: 120ms; }
-  .fade-up-4 { animation-delay: 180ms; }
-  .fade-up-5 { animation-delay: 240ms; }
+const keyframes = `
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(0,70,221,0.15); }
+  50% { box-shadow: 0 0 40px rgba(0,70,221,0.35); }
+}
+@keyframes countUp {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes dotGrid {
+  0%, 100% { opacity: 0.03; }
+  50% { opacity: 0.06; }
+}
 `;
 
-// ─── DATA ENGINE ─────────────────────────────────────────────────────────────
-const COMPANIES = [
-  { name: "Stripe", size: "enterprise", industry: "Fintech" },
-  { name: "Datadog", size: "enterprise", industry: "DevTools" },
-  { name: "Snowflake", size: "enterprise", industry: "Data/Cloud" },
-  { name: "Figma", size: "mid-market", industry: "Design" },
-  { name: "Notion", size: "mid-market", industry: "Productivity" },
-  { name: "Vercel", size: "mid-market", industry: "DevTools" },
-  { name: "Linear", size: "smb", industry: "DevTools" },
-  { name: "Retool", size: "mid-market", industry: "DevTools" },
-  { name: "Coinbase", size: "enterprise", industry: "Fintech" },
-  { name: "Plaid", size: "enterprise", industry: "Fintech" },
-  { name: "HashiCorp", size: "enterprise", industry: "DevTools" },
-  { name: "Cloudflare", size: "enterprise", industry: "Infrastructure" },
-  { name: "Toast", size: "enterprise", industry: "Restaurant Tech" },
-  { name: "Gusto", size: "mid-market", industry: "HR Tech" },
-  { name: "Rippling", size: "enterprise", industry: "HR Tech" },
-  { name: "Scale AI", size: "enterprise", industry: "AI/ML" },
-  { name: "Anthropic", size: "enterprise", industry: "AI/ML" },
-  { name: "OpenAI", size: "enterprise", industry: "AI/ML" },
-  { name: "Databricks", size: "enterprise", industry: "Data/Cloud" },
-  { name: "MongoDB", size: "enterprise", industry: "Data/Cloud" },
-  { name: "Twilio", size: "enterprise", industry: "Communications" },
-  { name: "HubSpot", size: "enterprise", industry: "Marketing Tech" },
-  { name: "Atlassian", size: "enterprise", industry: "DevTools" },
-  { name: "GitLab", size: "enterprise", industry: "DevTools" },
-  { name: "Elastic", size: "enterprise", industry: "Search/Analytics" },
-];
+// ── Components ──
 
-const JOB_FAMILIES = {
-  "Software Engineering": {
-    levels: ["Junior Engineer", "Engineer", "Senior Engineer", "Staff Engineer", "Principal Engineer", "Distinguished Engineer"],
-    codes: ["IC1", "IC2", "IC3", "IC4", "IC5", "IC6"],
-    base: [85000, 450000],
-  },
-  "Product Management": {
-    levels: ["Associate PM", "Product Manager", "Senior PM", "Group PM", "Director of Product", "VP Product"],
-    codes: ["IC1", "IC2", "IC3", "IC4", "M3", "M5"],
-    base: [90000, 380000],
-  },
-  "Data Science": {
-    levels: ["Junior Data Scientist", "Data Scientist", "Senior Data Scientist", "Staff Data Scientist", "Principal Data Scientist"],
-    codes: ["IC1", "IC2", "IC3", "IC4", "IC5"],
-    base: [80000, 350000],
-  },
-  "Design": {
-    levels: ["Junior Designer", "Product Designer", "Senior Designer", "Staff Designer", "Design Director"],
-    codes: ["IC1", "IC2", "IC3", "IC4", "M3"],
-    base: [70000, 300000],
-  },
-  "DevOps / SRE": {
-    levels: ["Junior SRE", "SRE", "Senior SRE", "Staff SRE", "Principal SRE"],
-    codes: ["IC1", "IC2", "IC3", "IC4", "IC5"],
-    base: [82000, 370000],
-  },
-  "People / HR": {
-    levels: ["HR Coordinator", "HR Generalist", "HRBP", "Senior HRBP", "Director HR", "VP People"],
-    codes: ["IC1", "IC2", "IC3", "IC4", "M3", "M5"],
-    base: [55000, 280000],
-  },
-  "Marketing": {
-    levels: ["Marketing Coordinator", "Marketing Manager", "Senior Marketing Manager", "Director Marketing", "VP Marketing"],
-    codes: ["IC1", "IC2", "IC3", "M3", "M5"],
-    base: [55000, 300000],
-  },
-  "Sales": {
-    levels: ["SDR", "Account Executive", "Senior AE", "Enterprise AE", "Sales Director", "VP Sales"],
-    codes: ["IC1", "IC2", "IC3", "IC4", "M3", "M5"],
-    base: [50000, 320000],
-  },
-};
-
-const METROS = [
-  { name: "San Francisco", state: "CA", cola: 1.35, region: "West" },
-  { name: "New York", state: "NY", cola: 1.28, region: "Northeast" },
-  { name: "Seattle", state: "WA", cola: 1.22, region: "West" },
-  { name: "Austin", state: "TX", cola: 1.05, region: "South" },
-  { name: "Denver", state: "CO", cola: 1.08, region: "West" },
-  { name: "Boston", state: "MA", cola: 1.20, region: "Northeast" },
-  { name: "Chicago", state: "IL", cola: 1.02, region: "Midwest" },
-  { name: "Los Angeles", state: "CA", cola: 1.25, region: "West" },
-  { name: "Miami", state: "FL", cola: 1.0, region: "South" },
-  { name: "Remote", state: "US", cola: 1.0, region: "National" },
-  { name: "Portland", state: "OR", cola: 1.10, region: "West" },
-  { name: "Atlanta", state: "GA", cola: 0.98, region: "South" },
-  { name: "Raleigh", state: "NC", cola: 0.95, region: "South" },
-];
-
-const SKILLS_MAP = {
-  "Software Engineering": ["Python", "Rust", "Go", "TypeScript", "React", "Kubernetes", "AWS", "Java", "C++", "GraphQL", "Terraform", "PostgreSQL", "Redis", "Kafka"],
-  "Product Management": ["SQL", "A/B Testing", "Roadmapping", "OKRs", "User Research", "Agile", "Data Analysis"],
-  "Data Science": ["Python", "SQL", "PyTorch", "TensorFlow", "MLOps", "Spark", "Statistical Modeling", "NLP", "Computer Vision"],
-  "Design": ["Figma", "Prototyping", "Design Systems", "User Research", "Accessibility", "Motion Design", "CSS"],
-  "DevOps / SRE": ["Kubernetes", "Terraform", "AWS", "GCP", "Docker", "Prometheus", "CI/CD", "Linux"],
-  "People / HR": ["Workday", "UKG", "Compensation", "Benefits", "HRIS", "People Analytics"],
-  "Marketing": ["SEO", "Content Strategy", "HubSpot", "Google Analytics", "Paid Media", "Brand Strategy"],
-  "Sales": ["Salesforce", "Enterprise Sales", "SaaS", "Negotiation", "CRM", "Account Management"],
-};
-
-const WORK_MODELS = ["Remote", "Hybrid", "Onsite"];
-const SOURCES = ["LinkedIn Jobs", "Indeed", "Greenhouse Board", "CO\u00a0Transparency", "CA\u00a0Transparency", "NY\u00a0Transparency", "WA\u00a0Transparency", "Levels.fyi", "Glassdoor", "BLS\u00a0OEWS", "H-1B\u00a0Disclosure", "SEC\u00a0Proxy"];
-
-function sr(seed) { let s = seed; return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; }
-
-function buildDataset() {
-  const r = sr(42);
-  const out = [];
-  let id = 0;
-  for (const co of COMPANIES) {
-    for (const [fam, cfg] of Object.entries(JOB_FAMILIES)) {
-      const n = Math.floor(r() * 4) + 1;
-      for (let p = 0; p < n; p++) {
-        const li = Math.floor(r() * cfg.levels.length);
-        const m = METROS[Math.floor(r() * METROS.length)];
-        const pct = li / (cfg.levels.length - 1);
-        const bMin = cfg.base[0] + (cfg.base[1] - cfg.base[0]) * pct * 0.7;
-        const bMax = bMin * (1.15 + r() * 0.25);
-        const sMin = Math.round(bMin * m.cola / 1000) * 1000;
-        const sMax = Math.round(bMax * m.cola / 1000) * 1000;
-        const mid = Math.round((sMin + sMax) / 2 / 1000) * 1000;
-        const sk = SKILLS_MAP[fam] || [];
-        const picked = [];
-        for (let s = 0; s < Math.floor(r() * 4) + 2 && s < sk.length; s++) {
-          const x = sk[Math.floor(r() * sk.length)];
-          if (!picked.includes(x)) picked.push(x);
-        }
-        const dAgo = Math.floor(r() * 90);
-        const dt = new Date(); dt.setDate(dt.getDate() - dAgo);
-        out.push({ id: ++id, company: co.name, size: co.size, industry: co.industry, family: fam, title: cfg.levels[li], code: cfg.codes[li], level: li + 1, metro: m.name, state: m.state, region: m.region, sMin, sMax, mid, work: WORK_MODELS[Math.floor(r() * 3)], skills: picked, source: SOURCES[Math.floor(r() * SOURCES.length)], posted: dt.toISOString().split("T")[0], daysAgo: dAgo });
-      }
-    }
-  }
-  return out;
-}
-
-function buildSkillPremiums(data) {
-  const sm = {};
-  data.forEach(r => r.skills.forEach(s => {
-    if (!sm[s]) sm[s] = { t: 0, n: 0 };
-    sm[s].t += r.mid; sm[s].n++;
-  }));
-  const avg = data.reduce((a, r) => a + r.mid, 0) / data.length;
-  return Object.entries(sm).map(([skill, d]) => ({
-    skill, avgPay: Math.round(d.t / d.n), premium: Math.round(d.t / d.n - avg), postings: d.n, trend: Math.round((Math.random() - 0.38) * 16 * 10) / 10,
-  })).sort((a, b) => b.premium - a.premium);
-}
-
-function buildTrends() {
-  const months = ["Sep\u00a0'25", "Oct\u00a0'25", "Nov\u00a0'25", "Dec\u00a0'25", "Jan\u00a0'26", "Feb\u00a0'26"];
-  return months.map((m, i) => ({
-    month: m,
-    "Software Engineering": 175000 + i * 2800 + Math.random() * 3000,
-    "Product Management": 162000 + i * 2200 + Math.random() * 2500,
-    "Data Science": 155000 + i * 2500 + Math.random() * 2000,
-    "Design": 130000 + i * 1800 + Math.random() * 2000,
-    "DevOps / SRE": 158000 + i * 2600 + Math.random() * 2500,
-  }));
-}
-
-const pct = (arr, p) => { const s = [...arr].sort((a, b) => a - b); const i = (p / 100) * (s.length - 1); const l = Math.floor(i); return l === Math.ceil(i) ? s[l] : s[l] + (s[Math.ceil(i)] - s[l]) * (i - l); };
-const fmt = n => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
-const fmtK = n => "$" + new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(Math.round(n / 1000)) + "K";
-const fmtNum = n => new Intl.NumberFormat("en-US").format(n);
-
-// ─── MICRO-COMPONENTS ────────────────────────────────────────────────────────
-
-function Metric({ label, value, detail, accent = V.teal, delay = 0 }) {
+function DotGrid() {
   return (
-    <div className={`fade-up fade-up-${delay + 1}`} style={{
-      flex: "1 1 220px", minWidth: 200, padding: "22px 24px",
-      background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10,
-      position: "relative", overflow: "hidden",
+    <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
+      <svg width="100%" height="100%" style={{ animation: "dotGrid 8s ease-in-out infinite" }}>
+        <defs>
+          <pattern id="dots" x="0" y="0" width="32" height="32" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.7" fill={C.blueOnBlack} />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#dots)" />
+      </svg>
+    </div>
+  );
+}
+
+function GlowOrb({ top, left, size = 300, color = C.blueGlow }) {
+  return (
+    <div style={{
+      position: "absolute", top, left, width: size, height: size,
+      background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
+      borderRadius: "50%", filter: "blur(60px)", pointerEvents: "none", zIndex: 0,
+    }} />
+  );
+}
+
+function StatCard({ value, label, delay = 0, accent = C.blue }) {
+  return (
+    <div style={{
+      ...fadeUp(delay),
+      background: C.card,
+      border: `1px solid ${accent}22`,
+      borderRadius: 12,
+      padding: "28px 24px",
+      textAlign: "center",
+      position: "relative",
+      overflow: "hidden",
     }}>
-      <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 2, background: accent, opacity: 0.5 }} />
-      <p style={{ fontSize: 11, fontWeight: 600, color: V.inkMuted, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "var(--font-mono)" }}>{label}</p>
-      <p style={{ fontSize: 28, fontWeight: 700, color: V.ink, marginTop: 6, fontFamily: "var(--font-display)", lineHeight: 1.1 }}>{value}</p>
-      {detail && <p style={{ fontSize: 12, color: V.inkFaint, marginTop: 6 }}>{detail}</p>}
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: accent }} />
+      <div style={{ fontSize: 42, fontWeight: 900, color: accent, letterSpacing: "-0.02em", lineHeight: 1.1 }}>{value}</div>
+      <div style={{ fontSize: 13, color: C.textSecondary, marginTop: 10, lineHeight: 1.4, fontWeight: 500 }}>{label}</div>
     </div>
   );
 }
 
-function Pill({ children, active, onClick }) {
+function PillarCard({ icon, title, items, delay = 0, accent = C.blue }) {
+  const [hovered, setHovered] = useState(false);
   return (
-    <button onClick={onClick} aria-pressed={active} style={{
-      padding: "5px 13px", borderRadius: 6,
-      border: `1px solid ${active ? V.teal : V.border}`,
-      background: active ? V.tealMuted : "transparent",
-      color: active ? V.tealDark : V.inkMuted,
-      fontSize: 12, fontWeight: 500, cursor: "pointer",
-      fontFamily: "var(--font-body)", whiteSpace: "nowrap",
-      transition: "background 0.15s ease, border-color 0.15s ease, color 0.15s ease",
-    }}>{children}</button>
-  );
-}
-
-function NavBtn({ children, active, onClick, icon }) {
-  return (
-    <button onClick={onClick} aria-current={active ? "page" : undefined} style={{
-      display: "flex", alignItems: "center", gap: 10,
-      padding: "9px 14px", borderRadius: 8, border: "none", width: "100%", textAlign: "left",
-      background: active ? V.tealMuted : "transparent",
-      color: active ? V.tealDark : V.inkSoft,
-      fontSize: 13, fontWeight: active ? 600 : 450, cursor: "pointer",
-      fontFamily: "var(--font-body)",
-      transition: "background 0.15s ease, color 0.15s ease",
-    }}
-      onMouseEnter={e => { if (!active) e.currentTarget.style.background = V.surfaceMuted; }}
-      onMouseLeave={e => { if (!active) e.currentTarget.style.background = "transparent"; }}
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        ...fadeUp(delay),
+        background: hovered ? C.cardHover : C.card,
+        border: `1px solid ${hovered ? accent + "44" : accent + "18"}`,
+        borderRadius: 14,
+        padding: "28px 24px",
+        transition: "all 0.3s ease",
+        cursor: "default",
+        position: "relative",
+        overflow: "hidden",
+      }}
     >
-      <span style={{ fontSize: 15, width: 22, textAlign: "center", opacity: active ? 1 : 0.6 }}>{icon}</span>
-      {children}
-    </button>
-  );
-}
-
-function SourceTag({ source }) {
-  const isTransparency = source.includes("Transparency");
-  const isGov = source.includes("BLS") || source.includes("H-1B") || source.includes("SEC");
-  const c = isTransparency ? V.teal : isGov ? V.amber : V.blue;
-  return (
-    <span style={{ padding: "2px 7px", borderRadius: 4, background: `${c}12`, color: c, fontSize: 10, fontWeight: 600, fontFamily: "var(--font-mono)", letterSpacing: "0.02em" }}>
-      {source}
-    </span>
-  );
-}
-
-function SortableTable({ data, columns, maxRows = 50 }) {
-  const [sortKey, setSortKey] = useState(null);
-  const [sortDir, setSortDir] = useState("desc");
-
-  const sorted = useMemo(() => {
-    if (!sortKey) return data.slice(0, maxRows);
-    return [...data].sort((a, b) => {
-      const va = a[sortKey], vb = b[sortKey];
-      if (typeof va === "number") return sortDir === "asc" ? va - vb : vb - va;
-      return sortDir === "asc" ? String(va).localeCompare(String(vb)) : String(vb).localeCompare(String(va));
-    }).slice(0, maxRows);
-  }, [data, sortKey, sortDir, maxRows]);
-
-  const toggle = (k) => {
-    if (sortKey === k) setSortDir(d => d === "asc" ? "desc" : "asc");
-    else { setSortKey(k); setSortDir("desc"); }
-  };
-
-  return (
-    <div style={{ overflowX: "auto", borderRadius: 8, border: `1px solid ${V.border}` }}>
-      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, fontFamily: "var(--font-body)" }} role="grid">
-        <thead>
-          <tr>
-            {columns.map(col => (
-              <th key={col.key} role="columnheader" aria-sort={sortKey === col.key ? (sortDir === "asc" ? "ascending" : "descending") : "none"}>
-                <button onClick={() => toggle(col.key)} aria-label={`Sort by ${col.label}`} style={{
-                  display: "flex", alignItems: "center", gap: 4, width: "100%", justifyContent: col.align === "right" ? "flex-end" : "flex-start",
-                  padding: "11px 14px", background: V.bgWarm, color: V.inkMuted, border: "none", borderBottom: `1px solid ${V.border}`,
-                  fontWeight: 600, fontSize: 11, letterSpacing: "0.04em", textTransform: "uppercase", cursor: "pointer",
-                  fontFamily: "var(--font-mono)", whiteSpace: "nowrap",
-                }}>
-                  {col.label}
-                  {sortKey === col.key && <span style={{ fontSize: 10 }}>{sortDir === "asc" ? " ↑" : " ↓"}</span>}
-                </button>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.map((row, i) => (
-            <tr key={row.id ?? i}
-              style={{ borderBottom: `1px solid ${V.borderLight}`, transition: "background 0.1s ease" }}
-              onMouseEnter={e => e.currentTarget.style.background = V.bgWarm}
-              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-            >
-              {columns.map(col => (
-                <td key={col.key} style={{ padding: "10px 14px", color: V.inkSoft, textAlign: col.align || "left", whiteSpace: "nowrap", fontVariantNumeric: typeof row[col.key] === "number" ? "tabular-nums" : undefined }}>
-                  {col.render ? col.render(row[col.key], row) : row[col.key]}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {data.length > maxRows && (
-        <p style={{ padding: 12, textAlign: "center", color: V.inkFaint, fontSize: 12, background: V.bgWarm, margin: 0, borderTop: `1px solid ${V.borderLight}` }}>
-          Showing {fmtNum(maxRows)} of {fmtNum(data.length)} records
-        </p>
-      )}
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: `linear-gradient(90deg, ${accent}, transparent)` }} />
+      <div style={{ fontSize: 28, marginBottom: 8 }}>{icon}</div>
+      <div style={{ fontSize: 16, fontWeight: 800, color: C.textPrimary, marginBottom: 14, letterSpacing: "-0.01em" }}>{title}</div>
+      {items.map((item, i) => (
+        <div key={i} style={{ fontSize: 13, color: C.textSecondary, lineHeight: 1.6, marginBottom: 6, paddingLeft: 14, position: "relative" }}>
+          <span style={{ position: "absolute", left: 0, color: accent, fontWeight: 700 }}>›</span>
+          {item}
+        </div>
+      ))}
     </div>
   );
 }
 
-function BandBar({ min, max, p25, p50, p75, gMin, gMax }) {
-  const s = v => ((v - gMin) / (gMax - gMin)) * 100;
+function PhaseCard({ phase, title, quarter, items, delay = 0, active = false }) {
+  const [expanded, setExpanded] = useState(active);
+  const accent = phase === 1 ? C.blue : phase === 2 ? C.yellow : "#22C55E";
   return (
-    <div style={{ position: "relative", height: 24, background: V.surfaceMuted, borderRadius: 4 }} role="img" aria-label={`Range ${fmtK(min)} to ${fmtK(max)}, median ${fmtK(p50)}`}>
-      <div style={{ position: "absolute", left: `${s(min)}%`, width: `${s(max) - s(min)}%`, top: 4, height: 16, background: V.tealMuted, borderRadius: 3, border: `1px solid ${V.teal}30` }} />
-      <div style={{ position: "absolute", left: `${s(p25)}%`, top: 3, width: 2, height: 18, background: V.blue, borderRadius: 1 }} />
-      <div style={{ position: "absolute", left: `${s(p50)}%`, top: 1, width: 3, height: 22, background: V.teal, borderRadius: 1 }} />
-      <div style={{ position: "absolute", left: `${s(p75)}%`, top: 3, width: 2, height: 18, background: V.amber, borderRadius: 1 }} />
-    </div>
-  );
-}
-
-const chartTooltipStyle = { background: V.surface, border: `1px solid ${V.border}`, borderRadius: 8, fontSize: 12, fontFamily: "var(--font-body)", boxShadow: "0 4px 12px rgba(0,0,0,0.06)" };
-
-// ─── MAIN APP ────────────────────────────────────────────────────────────────
-export default function Banded() {
-  const [tab, setTab] = useState("dashboard");
-  const [data] = useState(buildDataset);
-  const [skills] = useState(() => buildSkillPremiums(buildDataset()));
-  const [trends] = useState(buildTrends);
-
-  const [famF, setFamF] = useState("All");
-  const [metF, setMetF] = useState("All");
-  const [sizeF, setSizeF] = useState("All");
-  const [lvlF, setLvlF] = useState("All");
-  const [q, setQ] = useState("");
-
-  const [bandFam, setBandFam] = useState("Software Engineering");
-  const [bandMet, setBandMet] = useState("All");
-
-  const filtered = useMemo(() => data.filter(r => {
-    if (famF !== "All" && r.family !== famF) return false;
-    if (metF !== "All" && r.metro !== metF) return false;
-    if (sizeF !== "All" && r.size !== sizeF) return false;
-    if (lvlF !== "All" && r.code !== lvlF) return false;
-    if (q) { const lq = q.toLowerCase(); return r.company.toLowerCase().includes(lq) || r.title.toLowerCase().includes(lq) || r.skills.some(s => s.toLowerCase().includes(lq)); }
-    return true;
-  }), [data, famF, metF, sizeF, lvlF, q]);
-
-  const stats = useMemo(() => {
-    if (!filtered.length) return { med: 0, p25: 0, p75: 0, p90: 0, n: 0, cos: 0 };
-    const m = filtered.map(r => r.mid);
-    return { med: pct(m, 50), p25: pct(m, 25), p75: pct(m, 75), p90: pct(m, 90), n: filtered.length, cos: new Set(filtered.map(r => r.company)).size };
-  }, [filtered]);
-
-  const geoData = useMemo(() => {
-    const bm = {};
-    filtered.forEach(r => {
-      if (!bm[r.metro]) bm[r.metro] = { mids: [], n: 0, state: r.state, region: r.region };
-      bm[r.metro].mids.push(r.mid); bm[r.metro].n++;
-    });
-    return Object.entries(bm).map(([metro, d]) => ({
-      metro, state: d.state, region: d.region, median: Math.round(pct(d.mids, 50)), p25: Math.round(pct(d.mids, 25)), p75: Math.round(pct(d.mids, 75)), postings: d.n,
-    })).sort((a, b) => b.median - a.median);
-  }, [filtered]);
-
-  const bandRows = useMemo(() => {
-    const cfg = JOB_FAMILIES[bandFam]; if (!cfg) return [];
-    return cfg.levels.map((lv, i) => {
-      const mx = data.filter(r => r.family === bandFam && r.title === lv && (bandMet === "All" || r.metro === bandMet));
-      if (!mx.length) {
-        const bM = cfg.base[0] + (cfg.base[1] - cfg.base[0]) * (i / (cfg.levels.length - 1)) * 0.7;
-        const m = bM * 1.1;
-        return { level: lv, code: cfg.codes[i], p25: Math.round(m * .88), p50: Math.round(m), p75: Math.round(m * 1.15), p90: Math.round(m * 1.3), min: Math.round(m * .82), max: Math.round(m * 1.35), n: 0 };
-      }
-      const ms = mx.map(r => r.mid);
-      return { level: lv, code: cfg.codes[i], p25: Math.round(pct(ms, 25)), p50: Math.round(pct(ms, 50)), p75: Math.round(pct(ms, 75)), p90: Math.round(pct(ms, 90)), min: Math.round(pct(ms, 10)), max: Math.round(pct(ms, 90)), n: mx.length };
-    });
-  }, [data, bandFam, bandMet]);
-
-  const scrapers = [
-    { source: "LinkedIn Jobs", status: "active", last: "2h\u00a0ago", records: "12,847", hp: 98 },
-    { source: "Indeed", status: "active", last: "4h\u00a0ago", records: "8,432", hp: 95 },
-    { source: "Greenhouse Boards", status: "active", last: "6h\u00a0ago", records: "5,219", hp: 99 },
-    { source: "CO Transparency", status: "active", last: "1d\u00a0ago", records: "3,891", hp: 100 },
-    { source: "CA Transparency", status: "active", last: "1d\u00a0ago", records: "6,742", hp: 100 },
-    { source: "NY Transparency", status: "active", last: "1d\u00a0ago", records: "4,123", hp: 100 },
-    { source: "WA Transparency", status: "active", last: "1d\u00a0ago", records: "2,847", hp: 100 },
-    { source: "Levels.fyi", status: "active", last: "12h\u00a0ago", records: "15,621", hp: 92 },
-    { source: "BLS OEWS", status: "scheduled", last: "7d\u00a0ago", records: "872,000", hp: 100 },
-    { source: "H-1B Disclosure", status: "scheduled", last: "30d\u00a0ago", records: "645,000", hp: 100 },
-    { source: "SEC Proxy Filings", status: "active", last: "3d\u00a0ago", records: "2,841", hp: 97 },
-    { source: "Glassdoor", status: "paused", last: "14d\u00a0ago", records: "28,412", hp: 45 },
-  ];
-
-  const alertItems = [
-    { id: 1, kind: "up", text: "Senior Engineer median in SF increased 8.2% (90\u00a0days)" },
-    { id: 2, kind: "up", text: "Staff Data Scientist roles in NYC up 12% (90\u00a0days)" },
-    { id: 3, kind: "skill", text: "Rust skill premium grew +$4.2K this quarter" },
-    { id: 4, kind: "down", text: "Junior Designer postings in Austin down 15% (90\u00a0days)" },
-    { id: 5, kind: "skill", text: "Kubernetes premium now +$21K over baseline" },
-  ];
-
-  const pages = [
-    { key: "dashboard", label: "Dashboard", icon: "◉" },
-    { key: "explore", label: "Explore", icon: "⬡" },
-    { key: "skills", label: "Skills Intel", icon: "◈" },
-    { key: "bands", label: "Band Builder", icon: "▤" },
-    { key: "trends", label: "Trends", icon: "◆" },
-    { key: "payequity", label: "Pay Equity", icon: "⚖" },
-    { key: "contribute", label: "Contribute", icon: "✦" },
-    { key: "scrapers", label: "Scrapers", icon: "⟐" },
-    { key: "alerts", label: "Alerts", icon: "◎" },
-  ];
-
-  // ─── FILTER BAR (with debounced search) ─────────────────────────────────────
-  const searchInputRef = useRef(null);
-  const [localSearch, setLocalSearch] = useState("");
-  const searchTimeoutRef = useRef(null);
-
-  const handleSearchChange = useCallback((e) => {
-    const value = e.target.value;
-    setLocalSearch(value);
-    
-    // Debounce the actual filter update
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-    }
-    searchTimeoutRef.current = setTimeout(() => {
-      setQ(value);
-    }, 300);
-  }, []);
-
-  const filterBarContent = (
-    <div className="fade-up fade-up-1" style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
-      <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-        <label htmlFor="banded-search" className="sr-only" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0,0,0,0)" }}>Search</label>
-        <input 
-          ref={searchInputRef}
-          id="banded-search" 
-          value={localSearch} 
-          onChange={handleSearchChange}
-          placeholder="Search company, title, skill…" 
-          autoComplete="off" 
-          spellCheck={false}
-          style={{ padding: "7px 14px", borderRadius: 7, border: `1px solid ${V.border}`, background: V.surface, color: V.ink, fontSize: 13, width: 260, fontFamily: "var(--font-body)", transition: "border-color 0.15s ease" }}
-          onFocus={e => e.target.style.borderColor = V.teal}
-          onBlur={e => e.target.style.borderColor = V.border}
-        />
-        <span style={{ width: 1, height: 20, background: V.border }} aria-hidden="true" />
-        <span style={{ fontSize: 10, color: V.inkFaint, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-mono)" }}>Family</span>
-        <Pill active={famF === "All"} onClick={() => setFamF("All")}>All</Pill>
-        {Object.keys(JOB_FAMILIES).map(f => <Pill key={f} active={famF === f} onClick={() => setFamF(f)}>{f}</Pill>)}
-      </div>
-      <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-        <span style={{ fontSize: 10, color: V.inkFaint, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-mono)", minWidth: 44 }}>Metro</span>
-        <Pill active={metF === "All"} onClick={() => setMetF("All")}>All</Pill>
-        {["San Francisco", "New York", "Seattle", "Denver", "Austin", "Boston", "Remote"].map(m => <Pill key={m} active={metF === m} onClick={() => setMetF(m)}>{m}</Pill>)}
-        <span style={{ width: 1, height: 20, background: V.border }} aria-hidden="true" />
-        <span style={{ fontSize: 10, color: V.inkFaint, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-mono)" }}>Size</span>
-        <Pill active={sizeF === "All"} onClick={() => setSizeF("All")}>All</Pill>
-        {["smb", "mid-market", "enterprise"].map(s => <Pill key={s} active={sizeF === s} onClick={() => setSizeF(s)}>{s.charAt(0).toUpperCase() + s.slice(1)}</Pill>)}
-        <span style={{ width: 1, height: 20, background: V.border }} aria-hidden="true" />
-        <span style={{ fontSize: 10, color: V.inkFaint, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: "var(--font-mono)" }}>Level</span>
-        <Pill active={lvlF === "All"} onClick={() => setLvlF("All")}>All</Pill>
-        {["IC1", "IC2", "IC3", "IC4", "IC5"].map(l => <Pill key={l} active={lvlF === l} onClick={() => setLvlF(l)}>{l}</Pill>)}
-      </div>
-    </div>
-  );
-
-  // ─── PAGES ────────────────────────────────────────────────────────────────
-
-  const Dashboard = () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      {filterBarContent}
-      <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-        <Metric label="Median Total Comp" value={fmtK(stats.med)} detail={`P25:\u00a0${fmtK(stats.p25)}\u2002·\u2002P75:\u00a0${fmtK(stats.p75)}`} delay={0} />
-        <Metric label="Data Points" value={fmtNum(stats.n)} detail={`${fmtNum(stats.cos)} companies represented`} accent={V.blue} delay={1} />
-        <Metric label="90th Percentile" value={fmtK(stats.p90)} detail="Top-of-market benchmark" accent={V.amber} delay={2} />
-        <Metric label="Active Sources" value="12" detail="11\u00a0active\u2002·\u20021\u00a0paused" accent={V.violet} delay={3} />
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        <section className="fade-up fade-up-4" style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 22 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 600, color: V.ink }}>Compensation Trends by Family</h3>
-          <p style={{ fontSize: 11, color: V.inkFaint, marginTop: 2, marginBottom: 16 }}>Median midpoint, trailing 6\u00a0months</p>
-          <ResponsiveContainer width="100%" height={270}>
-            <LineChart data={trends}>
-              <CartesianGrid strokeDasharray="3 3" stroke={V.borderLight} />
-              <XAxis dataKey="month" tick={{ fill: V.inkFaint, fontSize: 11, fontFamily: "var(--font-mono)" }} axisLine={{ stroke: V.border }} />
-              <YAxis tick={{ fill: V.inkFaint, fontSize: 11, fontFamily: "var(--font-mono)" }} axisLine={{ stroke: V.border }} tickFormatter={v => fmtK(v)} />
-              <Tooltip contentStyle={chartTooltipStyle} formatter={v => fmt(v)} />
-              {["Software Engineering", "Product Management", "Data Science", "Design", "DevOps / SRE"].map((f, i) => (
-                <Line key={f} type="monotone" dataKey={f} stroke={V.chartSet[i]} strokeWidth={2} dot={false} />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
-        </section>
-        <section className="fade-up fade-up-5" style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 22 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 600, color: V.ink }}>Pay by Metro</h3>
-          <p style={{ fontSize: 11, color: V.inkFaint, marginTop: 2, marginBottom: 16 }}>Median total comp, filtered view</p>
-          <ResponsiveContainer width="100%" height={270}>
-            <BarChart data={geoData.slice(0, 10)} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke={V.borderLight} />
-              <XAxis type="number" tick={{ fill: V.inkFaint, fontSize: 11, fontFamily: "var(--font-mono)" }} tickFormatter={v => fmtK(v)} axisLine={{ stroke: V.border }} />
-              <YAxis type="category" dataKey="metro" tick={{ fill: V.inkMuted, fontSize: 11 }} width={100} axisLine={{ stroke: V.border }} />
-              <Tooltip contentStyle={chartTooltipStyle} formatter={v => fmt(v)} />
-              <Bar dataKey="median" fill={V.teal} radius={[0, 4, 4, 0]} barSize={16} />
-            </BarChart>
-          </ResponsiveContainer>
-        </section>
-      </div>
-      <section className="fade-up fade-up-4" style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 22 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 600, color: V.ink }}>Top Skill Premiums</h3>
-        <p style={{ fontSize: 11, color: V.inkFaint, marginTop: 2, marginBottom: 16 }}>Pay delta vs.\u00a0overall median</p>
-        <ResponsiveContainer width="100%" height={240}>
-          <BarChart data={skills.slice(0, 15)}>
-            <CartesianGrid strokeDasharray="3 3" stroke={V.borderLight} />
-            <XAxis dataKey="skill" tick={{ fill: V.inkFaint, fontSize: 10, angle: -30 }} height={55} axisLine={{ stroke: V.border }} />
-            <YAxis tick={{ fill: V.inkFaint, fontSize: 11, fontFamily: "var(--font-mono)" }} tickFormatter={v => (v >= 0 ? "+" : "") + fmtK(v)} axisLine={{ stroke: V.border }} />
-            <Tooltip contentStyle={chartTooltipStyle} formatter={v => (v >= 0 ? "+" : "") + fmt(v)} />
-            <Bar dataKey="premium" radius={[3, 3, 0, 0]} barSize={22}>
-              {skills.slice(0, 15).map((e, i) => <Cell key={i} fill={e.premium >= 0 ? V.teal : V.rose} fillOpacity={0.75} />)}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </section>
-    </div>
-  );
-
-  const Explore = () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      {filterBarContent}
-      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <p style={{ fontSize: 13, color: V.inkMuted, margin: 0 }}><strong style={{ color: V.teal, fontVariantNumeric: "tabular-nums" }}>{fmtNum(filtered.length)}</strong> records</p>
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-          <button aria-label="Export as CSV" style={{ padding: "6px 14px", borderRadius: 6, border: `1px solid ${V.border}`, background: V.surface, color: V.inkMuted, fontSize: 12, cursor: "pointer", fontFamily: "var(--font-mono)" }}>↓\u00a0CSV</button>
-          <button aria-label="Export as Excel" style={{ padding: "6px 14px", borderRadius: 6, border: `1px solid ${V.teal}`, background: V.tealMuted, color: V.tealDark, fontSize: 12, cursor: "pointer", fontFamily: "var(--font-mono)", fontWeight: 600 }}>↓\u00a0XLSX</button>
-        </div>
-      </div>
-      <SortableTable data={filtered} maxRows={80} columns={[
-        { key: "company", label: "Company", render: (v, r) => <span><strong style={{ color: V.ink }}>{v}</strong> <span style={{ color: V.inkFaint, fontSize: 10 }}>({r.size})</span></span> },
-        { key: "title", label: "Title" },
-        { key: "code", label: "Level", align: "center", render: v => <span className="mono" style={{ fontSize: 11, color: V.blue, fontWeight: 600 }}>{v}</span> },
-        { key: "family", label: "Family" },
-        { key: "metro", label: "Metro" },
-        { key: "sMin", label: "Min", align: "right", render: v => <span className="mono">{fmt(v)}</span> },
-        { key: "sMax", label: "Max", align: "right", render: v => <span className="mono">{fmt(v)}</span> },
-        { key: "mid", label: "Midpoint", align: "right", render: v => <span className="mono" style={{ color: V.tealDark, fontWeight: 600 }}>{fmt(v)}</span> },
-        { key: "work", label: "Model" },
-        { key: "source", label: "Source", render: v => <SourceTag source={v} /> },
-        { key: "posted", label: "Posted", render: v => <span style={{ color: V.inkFaint, fontSize: 11 }}>{v}</span> },
-      ]} />
-    </div>
-  );
-
-  const Skills = () => {
-    const gainers = skills.filter(s => s.trend > 0).sort((a, b) => b.trend - a.trend).slice(0, 8);
-    const losers = skills.filter(s => s.trend < 0).sort((a, b) => a.trend - b.trend).slice(0, 6);
-    return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-        <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-          <Metric label="Highest Premium" value={skills[0]?.skill} detail={`+${fmtK(skills[0]?.premium)} over baseline`} />
-          <Metric label="Fastest Growing" value={gainers[0]?.skill} detail={`+${gainers[0]?.trend}% QoQ`} accent={V.blue} delay={1} />
-          <Metric label="Skills Tracked" value={String(skills.length)} detail="Across all job families" accent={V.violet} delay={2} />
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 14 }}>
-          <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 22 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, color: V.ink, marginBottom: 16 }}>Skill Premium Breakdown</h3>
-            <SortableTable data={skills} maxRows={30} columns={[
-              { key: "skill", label: "Skill", render: v => <strong style={{ color: V.ink }}>{v}</strong> },
-              { key: "premium", label: "Premium", align: "right", render: v => <span className="mono" style={{ color: v >= 0 ? V.tealDark : V.rose, fontWeight: 600 }}>{v >= 0 ? "+" : ""}{fmtK(v)}</span> },
-              { key: "avgPay", label: "Avg\u00a0Pay", align: "right", render: v => <span className="mono">{fmtK(v)}</span> },
-              { key: "postings", label: "Posts", align: "right" },
-              { key: "trend", label: "QoQ", align: "right", render: v => <span style={{ color: v >= 0 ? V.tealDark : V.rose, fontWeight: 600 }}>{v >= 0 ? "↑" : "↓"}\u00a0{Math.abs(v)}%</span> },
-            ]} />
-          </section>
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 20 }}>
-              <h3 style={{ fontSize: 13, fontWeight: 700, color: V.tealDark, marginBottom: 12 }}>↑ Rising Premiums</h3>
-              {gainers.map(s => (
-                <div key={s.skill} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: `1px solid ${V.borderLight}` }}>
-                  <span style={{ color: V.ink, fontSize: 13 }}>{s.skill}</span>
-                  <span className="mono" style={{ color: V.tealDark, fontSize: 12 }}>+{s.trend}%</span>
-                </div>
-              ))}
-            </section>
-            <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 20 }}>
-              <h3 style={{ fontSize: 13, fontWeight: 700, color: V.rose, marginBottom: 12 }}>↓ Declining Premiums</h3>
-              {losers.map(s => (
-                <div key={s.skill} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: `1px solid ${V.borderLight}` }}>
-                  <span style={{ color: V.ink, fontSize: 13 }}>{s.skill}</span>
-                  <span className="mono" style={{ color: V.rose, fontSize: 12 }}>{s.trend}%</span>
-                </div>
-              ))}
-            </section>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const Bands = () => {
-    const gMin = Math.min(...bandRows.map(d => d.min));
-    const gMax = Math.max(...bandRows.map(d => d.max));
-    return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-        <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 28 }}>
-          <h2 style={{ fontSize: 22, fontWeight: 400, color: V.ink, fontFamily: "var(--font-display)" }}>Salary Band Builder</h2>
-          <p style={{ fontSize: 13, color: V.inkMuted, marginTop: 4, marginBottom: 22, maxWidth: 640 }}>
-            Auto-generate market-based salary bands from aggregated posting data. Select a job family and geography to build your comp structure.
-          </p>
-          <div style={{ display: "flex", gap: 16, marginBottom: 28, flexWrap: "wrap" }}>
-            <div>
-              <label htmlFor="band-fam" style={{ display: "block", fontSize: 10, color: V.inkFaint, marginBottom: 5, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "var(--font-mono)" }}>Job Family</label>
-              <select id="band-fam" value={bandFam} onChange={e => setBandFam(e.target.value)} style={{ padding: "8px 12px", borderRadius: 7, border: `1px solid ${V.border}`, background: V.surface, color: V.ink, fontSize: 13, minWidth: 220, fontFamily: "var(--font-body)" }}>
-                {Object.keys(JOB_FAMILIES).map(f => <option key={f} value={f}>{f}</option>)}
-              </select>
-            </div>
-            <div>
-              <label htmlFor="band-geo" style={{ display: "block", fontSize: 10, color: V.inkFaint, marginBottom: 5, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "var(--font-mono)" }}>Geography</label>
-              <select id="band-geo" value={bandMet} onChange={e => setBandMet(e.target.value)} style={{ padding: "8px 12px", borderRadius: 7, border: `1px solid ${V.border}`, background: V.surface, color: V.ink, fontSize: 13, minWidth: 220, fontFamily: "var(--font-body)" }}>
-                <option value="All">All Markets (National)</option>
-                {METROS.map(m => <option key={m.name} value={m.name}>{m.name}, {m.state}</option>)}
-              </select>
-            </div>
-          </div>
-          <div style={{ marginBottom: 14, display: "flex", gap: 20, fontSize: 11, color: V.inkFaint }}>
-            <span><span style={{ display: "inline-block", width: 12, height: 2, background: V.blue, marginRight: 6, verticalAlign: "middle" }} aria-hidden="true" />P25</span>
-            <span><span style={{ display: "inline-block", width: 12, height: 3, background: V.teal, marginRight: 6, verticalAlign: "middle" }} aria-hidden="true" />P50</span>
-            <span><span style={{ display: "inline-block", width: 12, height: 2, background: V.amber, marginRight: 6, verticalAlign: "middle" }} aria-hidden="true" />P75</span>
-          </div>
-          {bandRows.map((b, i) => (
-            <div key={i} style={{ display: "grid", gridTemplateColumns: "170px 60px 1fr 80px 80px 80px 80px 50px", gap: 10, alignItems: "center", padding: "11px 0", borderBottom: `1px solid ${V.borderLight}` }}>
-              <span style={{ color: V.ink, fontWeight: 600, fontSize: 13 }}>{b.level}</span>
-              <span className="mono" style={{ fontSize: 11, color: V.blue }}>{b.code}</span>
-              <BandBar min={b.min} max={b.max} p25={b.p25} p50={b.p50} p75={b.p75} gMin={gMin} gMax={gMax} />
-              <span className="mono" style={{ fontSize: 12, color: V.inkMuted, textAlign: "right" }}>{fmtK(b.p25)}</span>
-              <span className="mono" style={{ fontSize: 12, color: V.tealDark, textAlign: "right", fontWeight: 600 }}>{fmtK(b.p50)}</span>
-              <span className="mono" style={{ fontSize: 12, color: V.inkMuted, textAlign: "right" }}>{fmtK(b.p75)}</span>
-              <span className="mono" style={{ fontSize: 12, color: V.amber, textAlign: "right" }}>{fmtK(b.p90)}</span>
-              <span style={{ fontSize: 10, color: V.inkFaint, textAlign: "right" }}>n={b.n}</span>
-            </div>
-          ))}
-          <div style={{ marginTop: 22, display: "flex", gap: 10 }}>
-            <button style={{ padding: "10px 22px", borderRadius: 7, border: "none", background: V.teal, color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-body)", transition: "opacity 0.15s ease" }} onMouseEnter={e => e.currentTarget.style.opacity = "0.85"} onMouseLeave={e => e.currentTarget.style.opacity = "1"}>
-              ↓\u00a0Export Bands
-            </button>
-          </div>
-        </section>
-        <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 22 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 600, color: V.ink, marginBottom: 16 }}>Band Visualization\u2002—\u2002{bandFam}</h3>
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={bandRows} barCategoryGap="20%">
-              <CartesianGrid strokeDasharray="3 3" stroke={V.borderLight} />
-              <XAxis dataKey="code" tick={{ fill: V.inkFaint, fontSize: 11, fontFamily: "var(--font-mono)" }} axisLine={{ stroke: V.border }} />
-              <YAxis tick={{ fill: V.inkFaint, fontSize: 11, fontFamily: "var(--font-mono)" }} tickFormatter={v => fmtK(v)} axisLine={{ stroke: V.border }} />
-              <Tooltip contentStyle={chartTooltipStyle} formatter={v => fmt(v)} />
-              <Bar dataKey="p25" fill={V.blue} fillOpacity={0.35} name="P25" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="p50" fill={V.teal} fillOpacity={0.55} name="P50" />
-              <Bar dataKey="p75" fill={V.amber} fillOpacity={0.35} name="P75" radius={[3, 3, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </section>
-      </div>
-    );
-  };
-
-  const Trends = () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-        <Metric label="Avg Market Movement" value="+4.7%" detail="All tracked families (90\u00a0days)" />
-        <Metric label="Hottest Vertical" value="AI/ML" detail="+11.3% median increase (90\u00a0days)" accent={V.amber} delay={1} />
-        <Metric label="Total Records" value="1.58M" detail="Across all ingested sources" accent={V.blue} delay={2} />
-      </div>
-      <section className="fade-up fade-up-3" style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 22 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 600, color: V.ink }}>Trend Lines</h3>
-        <p style={{ fontSize: 11, color: V.inkFaint, marginTop: 2, marginBottom: 16 }}>Median total comp by family, trailing 6\u00a0months</p>
-        <ResponsiveContainer width="100%" height={340}>
-          <AreaChart data={trends}>
-            <defs>
-              {V.chartSet.map((c, i) => (
-                <linearGradient key={i} id={`tg${i}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={c} stopOpacity={0.2} />
-                  <stop offset="95%" stopColor={c} stopOpacity={0} />
-                </linearGradient>
-              ))}
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke={V.borderLight} />
-            <XAxis dataKey="month" tick={{ fill: V.inkFaint, fontSize: 11, fontFamily: "var(--font-mono)" }} axisLine={{ stroke: V.border }} />
-            <YAxis tick={{ fill: V.inkFaint, fontSize: 11, fontFamily: "var(--font-mono)" }} axisLine={{ stroke: V.border }} tickFormatter={v => fmtK(v)} />
-            <Tooltip contentStyle={chartTooltipStyle} formatter={v => fmt(v)} />
-            <Legend />
-            {["Software Engineering", "Product Management", "Data Science", "Design", "DevOps / SRE"].map((f, i) => (
-              <Area key={f} type="monotone" dataKey={f} stroke={V.chartSet[i]} fill={`url(#tg${i})`} strokeWidth={2} />
-            ))}
-          </AreaChart>
-        </ResponsiveContainer>
-      </section>
-      <section className="fade-up fade-up-4" style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 22 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 600, color: V.ink, marginBottom: 16 }}>Geographic Pay Distribution</h3>
-        <SortableTable data={geoData} maxRows={15} columns={[
-          { key: "metro", label: "Metro", render: (v, r) => <span><strong style={{ color: V.ink }}>{v}</strong> <span style={{ color: V.inkFaint, fontSize: 10 }}>{r.state}</span></span> },
-          { key: "region", label: "Region" },
-          { key: "p25", label: "P25", align: "right", render: v => <span className="mono">{fmtK(v)}</span> },
-          { key: "median", label: "Median", align: "right", render: v => <span className="mono" style={{ color: V.tealDark, fontWeight: 600 }}>{fmtK(v)}</span> },
-          { key: "p75", label: "P75", align: "right", render: v => <span className="mono">{fmtK(v)}</span> },
-          { key: "postings", label: "Postings", align: "right" },
-        ]} />
-      </section>
-    </div>
-  );
-
-  const Scrapers = () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-        <Metric label="Active Pipelines" value="11" detail="1\u00a0paused (Glassdoor rate-limited)" />
-        <Metric label="Total Records" value="1.58M" detail="All ingested sources" accent={V.blue} delay={1} />
-        <Metric label="Avg Refresh" value="6.2h" detail="Weighted by source priority" accent={V.amber} delay={2} />
-        <Metric label="System Health" value="96%" detail="All systems nominal" accent={V.teal} delay={3} />
-      </div>
-      <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 22 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 600, color: V.ink, marginBottom: 16 }}>Pipeline Status</h3>
-        <SortableTable data={scrapers} columns={[
-          { key: "source", label: "Source", render: v => <strong style={{ color: V.ink }}>{v}</strong> },
-          { key: "status", label: "Status", render: v => {
-            const c = { active: V.teal, scheduled: V.amber, paused: V.rose }[v];
-            return <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-              <span style={{ width: 7, height: 7, borderRadius: "50%", background: c }} aria-hidden="true" />
-              <span style={{ color: c, fontWeight: 600, fontSize: 11, fontFamily: "var(--font-mono)", textTransform: "uppercase" }}>{v}</span>
-            </span>;
-          }},
-          { key: "last", label: "Last Run" },
-          { key: "records", label: "Records", align: "right", render: v => <span className="mono">{v}</span> },
-          { key: "hp", label: "Health", align: "right", render: v => {
-            const c = v >= 90 ? V.teal : v >= 70 ? V.amber : V.rose;
-            return <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "flex-end" }}>
-              <div style={{ width: 56, height: 5, background: V.surfaceMuted, borderRadius: 3, overflow: "hidden" }}>
-                <div style={{ width: `${v}%`, height: "100%", background: c, borderRadius: 3, transition: "width 0.3s ease" }} />
-              </div>
-              <span className="mono" style={{ fontSize: 11, color: c, fontWeight: 600 }}>{v}%</span>
-            </div>;
-          }},
-        ]} />
-      </section>
-      <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 22 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 600, color: V.ink, marginBottom: 14 }}>Architecture</h3>
-        <pre style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, color: V.inkMuted, lineHeight: 1.9, background: V.bgWarm, padding: 20, borderRadius: 8, border: `1px solid ${V.borderLight}`, overflowX: "auto", margin: 0 }}>
-{`┌─────────────┐    ┌──────────────┐    ┌───────────────┐
-│  Scheduler   │───▶│  Scraper      │───▶│  Redis Queue  │
-│  (Airflow)   │    │  Workers (8)  │    │  (Job Buffer) │
-└─────────────┘    └──────────────┘    └───────┬───────┘
-                                               │
-                   ┌──────────────┐    ┌───────▼───────┐
-                   │  NLP Engine   │◀──│  Normalizer   │
-                   │  (Embeddings) │    │  (Title Map)  │
-                   └──────┬───────┘    └───────────────┘
-                          │
-       ┌──────────────────▼──────────────────┐
-       │         PostgreSQL + Elastic         │
-       │     (Structured + Search Index)      │
-       └──────────────────┬──────────────────┘
-                          │
-       ┌──────────────────▼──────────────────┐
-       │          FastAPI Backend              │
-       │    (REST + GraphQL + WebSockets)      │
-       └──────────────────┬──────────────────┘
-                          │
-       ┌──────────────────▼──────────────────┐
-       │     React + Tailwind Dashboard       │
-       │  (Charts · Filters · Band Builder)   │
-       └─────────────────────────────────────┘`}
-        </pre>
-      </section>
-    </div>
-  );
-
-  const Alerts = () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 28 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 400, color: V.ink, fontFamily: "var(--font-display)" }}>Alerts</h2>
-        <p style={{ fontSize: 13, color: V.inkMuted, marginTop: 4, marginBottom: 22 }}>
-          Track market movements. Get notified when compensation shifts in the roles, geographies, or skill clusters you monitor.
-        </p>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {alertItems.map(a => {
-            const c = a.kind === "up" ? V.teal : a.kind === "down" ? V.rose : V.blue;
-            const bg = a.kind === "up" ? V.tealMuted : a.kind === "down" ? V.roseMuted : V.blueMuted;
-            return (
-              <article key={a.id} style={{ display: "flex", alignItems: "center", gap: 16, padding: "14px 18px", borderRadius: 8, border: `1px solid ${V.borderLight}`, background: bg }}>
-                <div style={{ width: 34, height: 34, borderRadius: 7, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, background: `${c}18`, color: c, flexShrink: 0 }} aria-hidden="true">
-                  {a.kind === "up" ? "↑" : a.kind === "down" ? "↓" : "◈"}
-                </div>
-                <p style={{ flex: 1, color: V.ink, fontSize: 14, margin: 0 }}>{a.text}</p>
-                <span style={{ fontSize: 11, color: V.inkFaint, whiteSpace: "nowrap" }}>2h\u00a0ago</span>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 24 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 600, color: V.ink, marginBottom: 16 }}>Create Alert</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto", gap: 12, alignItems: "end" }}>
-          <div>
-            <label htmlFor="alert-type" style={{ display: "block", fontSize: 10, color: V.inkFaint, marginBottom: 5, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--font-mono)" }}>Type</label>
-            <select id="alert-type" style={{ width: "100%", padding: "8px 12px", borderRadius: 7, border: `1px solid ${V.border}`, background: V.surface, color: V.ink, fontSize: 13, fontFamily: "var(--font-body)" }}>
-              <option>Pay Movement (+/- %)</option>
-              <option>Skill Premium Change</option>
-              <option>New Postings Volume</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="alert-fam" style={{ display: "block", fontSize: 10, color: V.inkFaint, marginBottom: 5, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--font-mono)" }}>Job Family</label>
-            <select id="alert-fam" style={{ width: "100%", padding: "8px 12px", borderRadius: 7, border: `1px solid ${V.border}`, background: V.surface, color: V.ink, fontSize: 13, fontFamily: "var(--font-body)" }}>
-              <option value="">All Families</option>
-              {Object.keys(JOB_FAMILIES).map(f => <option key={f}>{f}</option>)}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="alert-geo" style={{ display: "block", fontSize: 10, color: V.inkFaint, marginBottom: 5, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", fontFamily: "var(--font-mono)" }}>Geography</label>
-            <select id="alert-geo" style={{ width: "100%", padding: "8px 12px", borderRadius: 7, border: `1px solid ${V.border}`, background: V.surface, color: V.ink, fontSize: 13, fontFamily: "var(--font-body)" }}>
-              <option value="">All Markets</option>
-              {METROS.map(m => <option key={m.name}>{m.name}</option>)}
-            </select>
-          </div>
-          <button style={{ padding: "8px 20px", borderRadius: 7, border: "none", background: V.teal, color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", height: 38, fontFamily: "var(--font-body)", transition: "opacity 0.15s ease" }} onMouseEnter={e => e.currentTarget.style.opacity = "0.85"} onMouseLeave={e => e.currentTarget.style.opacity = "1"}>
-            + Add
-          </button>
-        </div>
-      </section>
-
-      <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 24 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 600, color: V.ink, marginBottom: 14 }}>Access Tiers</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
-          {[
-            { tier: "Free", price: "$0", color: V.inkMuted, features: ["25\u00a0searches/month", "Public data only", "Basic filters", "Community support"] },
-            { tier: "Pro", price: "$49/mo", color: V.teal, features: ["Unlimited searches", "Full dashboard", "Band builder", "CSV/XLSX export", "5\u00a0active alerts", "Email support"] },
-            { tier: "Enterprise", price: "Custom", color: V.violet, features: ["Everything in Pro", "API access", "Custom taxonomies", "Team seats", "White-label option", "HRIS integrations", "Dedicated CSM"] },
-          ].map(t => (
-            <div key={t.tier} style={{ padding: 20, borderRadius: 8, border: `1px solid ${t.color === V.teal ? V.teal : V.border}`, background: t.color === V.teal ? V.tealMuted : "transparent" }}>
-              <p style={{ fontSize: 11, fontWeight: 700, color: t.color, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "var(--font-mono)", margin: 0 }}>{t.tier}</p>
-              <p style={{ fontSize: 26, fontWeight: 400, color: V.ink, marginTop: 8, fontFamily: "var(--font-display)", margin: 0 }}>{t.price}</p>
-              <div style={{ marginTop: 14 }}>
-                {t.features.map(f => (
-                  <p key={f} style={{ fontSize: 12, color: V.inkMuted, padding: "3px 0", display: "flex", gap: 8, margin: 0 }}>
-                    <span style={{ color: t.color }} aria-hidden="true">✓</span>{f}
-                  </p>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    </div>
-  );
-
-  const Contribute = () => {
-    const [formData, setFormData] = useState({
-      jobTitle: '',
-      company: '',
-      baseSalary: '',
-      yoe: '',
-      metro: '',
-      jobFamily: '',
-    });
-    const [status, setStatus] = useState({ type: '', message: '' });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    // IQR-based validation (client-side demo)
-    const calculateIQR = (salaries) => {
-      const sorted = [...salaries].sort((a, b) => a - b);
-      const q1 = sorted[Math.floor(sorted.length / 4)];
-      const q3 = sorted[Math.floor(sorted.length * (3 / 4))];
-      const iqr = q3 - q1;
-      return { 
-        lowerBound: q1 - (2.0 * iqr), 
-        upperBound: q3 + (2.0 * iqr) 
-      };
-    };
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setIsSubmitting(true);
-      setStatus({ type: 'info', message: 'Validating data...' });
-
-      // Simulate validation delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-
-      const salary = Number(formData.baseSalary);
-      
-      // Basic sanity checks
-      if (salary < 20000 || salary > 1500000) {
-        setStatus({ type: 'error', message: 'Value exceeds global absolute bounds ($20K - $1.5M).' });
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Mock market data for validation demo
-      const mockMarketData = [130000, 135000, 140000, 145000, 150000, 155000, 160000, 180000, 190000];
-      const { lowerBound, upperBound } = calculateIQR(mockMarketData);
-
-      if (salary < lowerBound || salary > upperBound) {
-        setStatus({ 
-          type: 'warning', 
-          message: `The submitted salary ($${salary.toLocaleString()}) falls outside the statistical norm for this role. Flagged for manual review.`
-        });
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Success
-      setStatus({ type: 'success', message: 'Success! Your data has been securely added to Banded.' });
-      setFormData({ jobTitle: '', company: '', baseSalary: '', yoe: '', metro: '', jobFamily: '' });
-      setIsSubmitting(false);
-    };
-
-    const inputStyle = {
-      width: '100%',
-      padding: '10px 14px',
-      borderRadius: 7,
-      border: `1px solid ${V.border}`,
-      background: V.surface,
-      color: V.ink,
-      fontSize: 14,
-      fontFamily: 'var(--font-body)',
-      transition: 'border-color 0.15s ease',
-    };
-
-    const labelStyle = {
-      display: 'block',
-      fontSize: 11,
-      color: V.inkMuted,
-      marginBottom: 6,
-      fontWeight: 600,
-      letterSpacing: '0.06em',
-      textTransform: 'uppercase',
-      fontFamily: 'var(--font-mono)',
-    };
-
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 720 }}>
-        <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 28 }}>
-          <h2 style={{ fontSize: 22, fontWeight: 400, color: V.ink, fontFamily: 'var(--font-display)', margin: 0 }}>
-            Anonymously Share Your Comp
-          </h2>
-          <p style={{ fontSize: 13, color: V.inkMuted, marginTop: 8, marginBottom: 24, lineHeight: 1.6 }}>
-            Help democratize salary data. All submissions run through our anomaly detection engine using IQR-based statistical validation to ensure data integrity.
-          </p>
-
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-            <div>
-              <label style={labelStyle}>Job Title</label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. Senior Software Engineer"
-                value={formData.jobTitle}
-                onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
-                style={inputStyle}
-                onFocus={(e) => e.target.style.borderColor = V.teal}
-                onBlur={(e) => e.target.style.borderColor = V.border}
-              />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-              <div>
-                <label style={labelStyle}>Company</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Stripe"
-                  value={formData.company}
-                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                  style={inputStyle}
-                  onFocus={(e) => e.target.style.borderColor = V.teal}
-                  onBlur={(e) => e.target.style.borderColor = V.border}
-                />
-              </div>
-              <div>
-                <label style={labelStyle}>Job Family</label>
-                <select
-                  required
-                  value={formData.jobFamily}
-                  onChange={(e) => setFormData({ ...formData, jobFamily: e.target.value })}
-                  style={{ ...inputStyle, cursor: 'pointer' }}
-                >
-                  <option value="">Select...</option>
-                  {Object.keys(JOB_FAMILIES).map(f => <option key={f} value={f}>{f}</option>)}
-                </select>
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
-              <div>
-                <label style={labelStyle}>Base Salary (USD)</label>
-                <input
-                  type="number"
-                  required
-                  placeholder="150000"
-                  value={formData.baseSalary}
-                  onChange={(e) => setFormData({ ...formData, baseSalary: e.target.value })}
-                  style={inputStyle}
-                  onFocus={(e) => e.target.style.borderColor = V.teal}
-                  onBlur={(e) => e.target.style.borderColor = V.border}
-                />
-              </div>
-              <div>
-                <label style={labelStyle}>Years of Exp</label>
-                <input
-                  type="number"
-                  required
-                  placeholder="5"
-                  value={formData.yoe}
-                  onChange={(e) => setFormData({ ...formData, yoe: e.target.value })}
-                  style={inputStyle}
-                  onFocus={(e) => e.target.style.borderColor = V.teal}
-                  onBlur={(e) => e.target.style.borderColor = V.border}
-                />
-              </div>
-              <div>
-                <label style={labelStyle}>Metro</label>
-                <select
-                  required
-                  value={formData.metro}
-                  onChange={(e) => setFormData({ ...formData, metro: e.target.value })}
-                  style={{ ...inputStyle, cursor: 'pointer' }}
-                >
-                  <option value="">Select...</option>
-                  {METROS.map(m => <option key={m.name} value={m.name}>{m.name}, {m.state}</option>)}
-                </select>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              style={{
-                marginTop: 8,
-                padding: '12px 24px',
-                borderRadius: 7,
-                border: 'none',
-                background: isSubmitting ? V.inkFaint : V.teal,
-                color: '#fff',
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                fontFamily: 'var(--font-body)',
-                transition: 'background 0.15s ease',
-              }}
-              onMouseEnter={(e) => { if (!isSubmitting) e.target.style.background = V.tealDark; }}
-              onMouseLeave={(e) => { if (!isSubmitting) e.target.style.background = V.teal; }}
-            >
-              {isSubmitting ? 'Validating...' : 'Submit Anonymously'}
-            </button>
-
-            {status.message && (
-              <div style={{
-                marginTop: 8,
-                padding: '12px 16px',
-                borderRadius: 7,
-                background: status.type === 'success' ? V.tealMuted : status.type === 'error' ? V.roseMuted : status.type === 'warning' ? V.amberMuted : V.blueMuted,
-                border: `1px solid ${status.type === 'success' ? V.teal : status.type === 'error' ? V.rose : status.type === 'warning' ? V.amber : V.blue}30`,
-              }}>
-                <p style={{
-                  margin: 0,
-                  fontSize: 13,
-                  color: status.type === 'success' ? V.tealDark : status.type === 'error' ? V.rose : status.type === 'warning' ? V.amber : V.blue,
-                  fontWeight: 500,
-                }}>
-                  {status.message}
-                </p>
-              </div>
-            )}
-          </form>
-        </section>
-
-        <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 24 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 600, color: V.ink, marginBottom: 14 }}>How We Validate Data</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {[
-              { step: '1', title: 'IQR Analysis', desc: 'We calculate the interquartile range from existing market data for your role and location.' },
-              { step: '2', title: 'Outlier Detection', desc: 'Submissions outside 2× IQR bounds are flagged for manual review to maintain data quality.' },
-              { step: '3', title: 'Sanity Checks', desc: 'Global bounds ($20K - $1.5M) catch obvious errors before they enter the dataset.' },
-            ].map(item => (
-              <div key={item.step} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-                <div style={{
-                  width: 28, height: 28, borderRadius: 6,
-                  background: V.tealMuted, color: V.tealDark,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-mono)', flexShrink: 0,
-                }}>
-                  {item.step}
-                </div>
-                <div>
-                  <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: V.ink }}>{item.title}</p>
-                  <p style={{ margin: 0, marginTop: 2, fontSize: 12, color: V.inkMuted, lineHeight: 1.5 }}>{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
-    );
-  };
-
-  // ─── PAY EQUITY PAGE (Census ACS Integration) ─────────────────────────────
-  const PayEquity = () => {
-    const [selectedState, setSelectedState] = useState('');
-    const [selectedCounty, setSelectedCounty] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [equityData, setEquityData] = useState(null);
-    const [error, setError] = useState('');
-
-    // Sample state/county data (in production, this would be a full FIPS lookup)
-    const states = [
-      { fips: '06', name: 'California', counties: [
-        { fips: '075', name: 'San Francisco' },
-        { fips: '037', name: 'Los Angeles' },
-        { fips: '085', name: 'Santa Clara (San Jose)' },
-      ]},
-      { fips: '53', name: 'Washington', counties: [
-        { fips: '033', name: 'King (Seattle)' },
-        { fips: '053', name: 'Pierce (Tacoma)' },
-      ]},
-      { fips: '36', name: 'New York', counties: [
-        { fips: '061', name: 'New York (Manhattan)' },
-        { fips: '047', name: 'Kings (Brooklyn)' },
-      ]},
-      { fips: '48', name: 'Texas', counties: [
-        { fips: '453', name: 'Travis (Austin)' },
-        { fips: '201', name: 'Harris (Houston)' },
-      ]},
-      { fips: '08', name: 'Colorado', counties: [
-        { fips: '031', name: 'Denver' },
-        { fips: '001', name: 'Adams' },
-      ]},
-      { fips: '25', name: 'Massachusetts', counties: [
-        { fips: '025', name: 'Suffolk (Boston)' },
-        { fips: '017', name: 'Middlesex (Cambridge)' },
-      ]},
-    ];
-
-    const selectedStateData = states.find(s => s.fips === selectedState);
-
-    // Mock Census data fetch (in production, this calls the actual Census API)
-    const fetchPayEquityData = async () => {
-      if (!selectedState || !selectedCounty) return;
-      
-      setLoading(true);
-      setError('');
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1200));
-
-      // Mock data based on location (in production, this comes from Census ACS API)
-      const mockData = {
-        '06-075': { location: 'San Francisco County, CA', male: 142000, female: 118000 },
-        '06-037': { location: 'Los Angeles County, CA', male: 115000, female: 98000 },
-        '06-085': { location: 'Santa Clara County, CA', male: 158000, female: 132000 },
-        '53-033': { location: 'King County, WA', male: 138000, female: 115000 },
-        '53-053': { location: 'Pierce County, WA', male: 95000, female: 82000 },
-        '36-061': { location: 'New York County, NY', male: 145000, female: 122000 },
-        '36-047': { location: 'Kings County, NY', male: 105000, female: 89000 },
-        '48-453': { location: 'Travis County, TX', male: 125000, female: 105000 },
-        '48-201': { location: 'Harris County, TX', male: 118000, female: 98000 },
-        '08-031': { location: 'Denver County, CO', male: 122000, female: 102000 },
-        '08-001': { location: 'Adams County, CO', male: 88000, female: 75000 },
-        '25-025': { location: 'Suffolk County, MA', male: 135000, female: 112000 },
-        '25-017': { location: 'Middlesex County, MA', male: 142000, female: 118000 },
-      };
-
-      const key = `${selectedState}-${selectedCounty}`;
-      const data = mockData[key];
-
-      if (data) {
-        const centsOnDollar = ((data.female / data.male) * 100).toFixed(1);
-        const gap = data.male - data.female;
-        setEquityData({
-          ...data,
-          centsOnDollar,
-          gap,
-          gapPercent: ((gap / data.male) * 100).toFixed(1),
-        });
-      } else {
-        setError('Data not available for this location. Try a different county.');
-      }
-      
-      setLoading(false);
-    };
-
-    // Pre-loaded regional comparison data
-    const regionalComparison = [
-      { metro: 'San Francisco', male: 142000, female: 118000, ratio: 83.1 },
-      { metro: 'Seattle', male: 138000, female: 115000, ratio: 83.3 },
-      { metro: 'New York', male: 145000, female: 122000, ratio: 84.1 },
-      { metro: 'Austin', male: 125000, female: 105000, ratio: 84.0 },
-      { metro: 'Denver', male: 122000, female: 102000, ratio: 83.6 },
-      { metro: 'Boston', male: 135000, female: 112000, ratio: 83.0 },
-    ];
-
-    const inputStyle = {
-      width: '100%',
-      padding: '10px 14px',
-      borderRadius: 7,
-      border: `1px solid ${V.border}`,
-      background: V.surface,
-      color: V.ink,
-      fontSize: 14,
-      fontFamily: 'var(--font-body)',
-      cursor: 'pointer',
-    };
-
-    const labelStyle = {
-      display: 'block',
-      fontSize: 11,
-      color: V.inkMuted,
-      marginBottom: 6,
-      fontWeight: 600,
-      letterSpacing: '0.06em',
-      textTransform: 'uppercase',
-      fontFamily: 'var(--font-mono)',
-    };
-
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-        {/* Summary metrics */}
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-          <Metric label="National Tech Gap" value="83.2¢" detail="Women earn per $1 men earn in tech" accent={V.rose} />
-          <Metric label="Best Metro" value="New York" detail="84.1¢ on the dollar" accent={V.teal} delay={1} />
-          <Metric label="Data Source" value="Census ACS" detail="2022 1-Year Estimates" accent={V.blue} delay={2} />
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-          {/* Census Lookup */}
-          <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 24 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 400, color: V.ink, fontFamily: 'var(--font-display)', margin: 0 }}>
-              Census Pay Equity Lookup
-            </h3>
-            <p style={{ fontSize: 12, color: V.inkMuted, marginTop: 6, marginBottom: 20 }}>
-              Pull median earnings by sex for Computer/Math occupations using Census ACS data (Table B24011).
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div>
-                <label style={labelStyle}>State</label>
-                <select
-                  value={selectedState}
-                  onChange={(e) => { setSelectedState(e.target.value); setSelectedCounty(''); setEquityData(null); }}
-                  style={inputStyle}
-                >
-                  <option value="">Select state...</option>
-                  {states.map(s => <option key={s.fips} value={s.fips}>{s.name}</option>)}
-                </select>
-              </div>
-
-              <div>
-                <label style={labelStyle}>County</label>
-                <select
-                  value={selectedCounty}
-                  onChange={(e) => { setSelectedCounty(e.target.value); setEquityData(null); }}
-                  style={inputStyle}
-                  disabled={!selectedState}
-                >
-                  <option value="">Select county...</option>
-                  {selectedStateData?.counties.map(c => <option key={c.fips} value={c.fips}>{c.name}</option>)}
-                </select>
-              </div>
-
-              <button
-                onClick={fetchPayEquityData}
-                disabled={!selectedState || !selectedCounty || loading}
-                style={{
-                  marginTop: 4,
-                  padding: '10px 20px',
-                  borderRadius: 7,
-                  border: 'none',
-                  background: (!selectedState || !selectedCounty || loading) ? V.inkFaint : V.teal,
-                  color: '#fff',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  cursor: (!selectedState || !selectedCounty || loading) ? 'not-allowed' : 'pointer',
-                  fontFamily: 'var(--font-body)',
-                }}
-              >
-                {loading ? 'Fetching from Census API...' : 'Fetch Pay Equity Data'}
-              </button>
-
-              {error && (
-                <p style={{ margin: 0, fontSize: 12, color: V.rose }}>{error}</p>
-              )}
-
-              {equityData && (
-                <div style={{ marginTop: 8, padding: 16, background: V.bgWarm, borderRadius: 8, border: `1px solid ${V.borderLight}` }}>
-                  <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: V.ink, marginBottom: 12 }}>
-                    {equityData.location}
-                  </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                    <div>
-                      <p style={{ margin: 0, fontSize: 10, color: V.inkFaint, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Male Median</p>
-                      <p className="mono" style={{ margin: 0, fontSize: 18, fontWeight: 600, color: V.ink }}>{fmt(equityData.male)}</p>
-                    </div>
-                    <div>
-                      <p style={{ margin: 0, fontSize: 10, color: V.inkFaint, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Female Median</p>
-                      <p className="mono" style={{ margin: 0, fontSize: 18, fontWeight: 600, color: V.ink }}>{fmt(equityData.female)}</p>
-                    </div>
-                  </div>
-                  <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px solid ${V.border}` }}>
-                    <p style={{ margin: 0, fontSize: 10, color: V.inkFaint, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Regional Equity Signal</p>
-                    <p style={{ margin: 0, marginTop: 4, fontSize: 15, color: V.rose, fontWeight: 600 }}>
-                      Women earn <span style={{ fontSize: 20 }}>{equityData.centsOnDollar}¢</span> for every $1 men earn
-                    </p>
-                    <p style={{ margin: 0, marginTop: 4, fontSize: 12, color: V.inkMuted }}>
-                      Gap: {fmt(equityData.gap)} ({equityData.gapPercent}% difference)
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
-
-          {/* Regional Comparison Chart */}
-          <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 24 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 400, color: V.ink, fontFamily: 'var(--font-display)', margin: 0 }}>
-              Metro Comparison
-            </h3>
-            <p style={{ fontSize: 12, color: V.inkMuted, marginTop: 6, marginBottom: 20 }}>
-              Tech pay equity ratio by major metro (cents earned per $1)
-            </p>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={regionalComparison} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke={V.borderLight} />
-                <XAxis type="number" domain={[75, 90]} tick={{ fill: V.inkFaint, fontSize: 11, fontFamily: 'var(--font-mono)' }} tickFormatter={v => `${v}¢`} axisLine={{ stroke: V.border }} />
-                <YAxis type="category" dataKey="metro" tick={{ fill: V.inkMuted, fontSize: 11 }} width={90} axisLine={{ stroke: V.border }} />
-                <Tooltip contentStyle={chartTooltipStyle} formatter={v => `${v}¢`} />
-                <Bar dataKey="ratio" fill={V.rose} radius={[0, 4, 4, 0]} barSize={18} />
-              </BarChart>
-            </ResponsiveContainer>
-          </section>
-        </div>
-
-        {/* Methodology */}
-        <section style={{ background: V.surface, border: `1px solid ${V.border}`, borderRadius: 10, padding: 24 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 600, color: V.ink, marginBottom: 14 }}>Data Methodology</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
-            {[
-              { 
-                title: 'Census ACS API', 
-                desc: 'We pull median earnings by sex from the American Community Survey 1-Year Estimates using variables B24011_017E (Male) and B24011_034E (Female) for Computer/Math occupations.',
-                code: 'api.census.gov/data/2022/acs/acs1'
-              },
-              { 
-                title: 'FIPS Codes', 
-                desc: 'Geographic filtering uses Federal Information Processing Standards codes for state and county identification, enabling precise regional analysis.',
-                code: 'State: 53, County: 033 → King County, WA'
-              },
-              { 
-                title: 'Equity Calculation', 
-                desc: 'The pay equity ratio divides female median earnings by male median earnings, expressed as cents on the dollar. Values below 100¢ indicate a gender pay gap.',
-                code: '(female_median / male_median) × 100'
-              },
-            ].map(item => (
-              <div key={item.title}>
-                <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: V.ink }}>{item.title}</p>
-                <p style={{ margin: 0, marginTop: 6, fontSize: 12, color: V.inkMuted, lineHeight: 1.5 }}>{item.desc}</p>
-                <code style={{ display: 'block', marginTop: 8, padding: '6px 10px', background: V.bgWarm, borderRadius: 4, fontSize: 10, color: V.inkSoft, fontFamily: 'var(--font-mono)' }}>
-                  {item.code}
-                </code>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
-    );
-  };
-
-  const content = { dashboard: Dashboard, explore: Explore, skills: Skills, bands: Bands, trends: Trends, payequity: PayEquity, contribute: Contribute, scrapers: Scrapers, alerts: Alerts };
-  const Page = content[tab] || Dashboard;
-
-  return (
-    <div style={{ minHeight: "100vh", background: V.bg, color: V.ink, fontFamily: "var(--font-body)", display: "flex" }}>
-      <style>{GLOBAL_CSS}</style>
-
-      {/* ─── Sidebar ─── */}
-      <nav aria-label="Main navigation" style={{
-        width: 232, minHeight: "100vh", background: V.surface, borderRight: `1px solid ${V.border}`,
-        padding: "20px 12px", display: "flex", flexDirection: "column", flexShrink: 0,
-      }}>
-        <div style={{ padding: "0 12px", marginBottom: 28 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+    <div style={{ opacity: 0, transform: "translateY(24px)", animation: `fadeUp 0.6s ease-out ${delay}s forwards` }}>
+      <div
+        onClick={() => setExpanded(!expanded)}
+        style={{
+          background: expanded ? C.cardHover : C.card,
+          border: `1px solid ${expanded ? accent + "55" : accent + "18"}`,
+          borderRadius: 14,
+          padding: "24px",
+          cursor: "pointer",
+          transition: "background 0.3s ease, border 0.3s ease, box-shadow 0.3s ease",
+          boxShadow: expanded ? `0 0 24px ${accent}20` : "none",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: expanded ? 16 : 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <div style={{
-              width: 30, height: 30, borderRadius: 7,
-              background: V.teal, display: "flex", alignItems: "center", justifyContent: "center",
+              width: 40, height: 40, borderRadius: 10,
+              background: accent + "18", display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 16, fontWeight: 900, color: accent,
             }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <rect x="2" y="3" width="12" height="2" rx="1" fill="white" />
-                <rect x="4" y="7" width="8" height="2" rx="1" fill="white" opacity="0.7" />
-                <rect x="3" y="11" width="10" height="2" rx="1" fill="white" opacity="0.4" />
-              </svg>
+              {phase}
             </div>
             <div>
-              <p style={{ fontSize: 17, fontWeight: 400, color: V.ink, fontFamily: "var(--font-display)", margin: 0, lineHeight: 1.1 }}>Banded</p>
-              <p style={{ fontSize: 9, color: V.inkFaint, letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: "var(--font-mono)", margin: 0 }}>Comp Intelligence</p>
+              <div style={{ fontSize: 15, fontWeight: 800, color: C.textPrimary }}>{title}</div>
+              <div style={{ fontSize: 12, color: C.textMuted, fontWeight: 600, marginTop: 2 }}>{quarter}</div>
+            </div>
+          </div>
+          <div style={{ color: C.textMuted, fontSize: 20, transform: expanded ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.3s" }}>▾</div>
+        </div>
+        {expanded && (
+          <div style={{ paddingTop: 8, borderTop: `1px solid ${accent}15` }}>
+            {items.map((item, i) => (
+              <div key={i} style={{
+                fontSize: 13, color: C.textSecondary, lineHeight: 1.6, marginBottom: 8, paddingLeft: 16, position: "relative",
+                opacity: 0, animation: `slideIn 0.4s ease-out ${i * 0.08}s forwards`,
+              }}>
+                <span style={{ position: "absolute", left: 0, color: accent }}>→</span>
+                {item}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── SLIDES ──
+
+function TitleSlide() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "100%", textAlign: "center", position: "relative" }}>
+      <DotGrid />
+      <GlowOrb top="-10%" left="30%" size={500} />
+      <GlowOrb top="60%" left="60%" size={350} color="rgba(0,70,221,0.15)" />
+      <div style={{ position: "relative", zIndex: 1, maxWidth: 800 }}>
+        <div style={{ ...fadeUp(0), fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.blue, marginBottom: 24 }}>
+          DAT Freight & Analytics · People Team
+        </div>
+        <h1 style={{ ...fadeUp(0.15), fontSize: "clamp(36px, 5vw, 60px)", fontWeight: 900, color: C.white, lineHeight: 1.08, letterSpacing: "-0.03em", margin: 0 }}>
+          Everyone Has the<br />Same Tools.
+        </h1>
+        <h1 style={{ ...fadeUp(0.3), fontSize: "clamp(36px, 5vw, 60px)", fontWeight: 900, color: C.blueOnBlack, lineHeight: 1.08, letterSpacing: "-0.03em", margin: "4px 0 0 0" }}>
+          The Edge Goes to<br />Whoever Builds Fastest.
+        </h1>
+        <p style={{ ...fadeUp(0.5), fontSize: 17, color: C.textSecondary, marginTop: 28, lineHeight: 1.7, maxWidth: 580, margin: "28px auto 0" }}>
+          How DAT is building AI fluency, redesigning work, and accelerating the One DAT mission across every function, location, and team.
+        </p>
+        <div style={{ ...fadeUp(0.7), display: "flex", gap: 12, justifyContent: "center", marginTop: 36 }}>
+          <div style={{ padding: "10px 20px", background: C.blue, borderRadius: 8, fontSize: 13, fontWeight: 700, color: C.white }}>Presented by Talent Operations</div>
+          <div style={{ padding: "10px 20px", background: C.card, border: `1px solid ${C.blue}33`, borderRadius: 8, fontSize: 13, fontWeight: 600, color: C.textSecondary }}>March 2026</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WhyNowSlide() {
+  const data = [
+    { year: "2022", value: 12 },
+    { year: "2023", value: 28 },
+    { year: "2024", value: 55 },
+    { year: "2025", value: 78 },
+    { year: "2026", value: 95 },
+  ];
+  return (
+    <div style={{ position: "relative" }}>
+      <DotGrid />
+      <GlowOrb top="-5%" left="70%" size={350} />
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ ...fadeUp(0), fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.blue, marginBottom: 8 }}>The Burning Platform</div>
+        <h2 style={{ ...fadeUp(0.1), fontSize: 36, fontWeight: 900, color: C.white, letterSpacing: "-0.02em", margin: "0 0 8px 0" }}>Why Now. Why Us.</h2>
+        <p style={{ ...fadeUp(0.2), fontSize: 14, color: C.textSecondary, maxWidth: 600, lineHeight: 1.7, marginBottom: 32 }}>
+          AI adoption in HR has gone from experimental to existential. The organizations that build fluency first don't just keep pace — they define the new standard. DAT has the foundation. This is about acceleration.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 32 }}>
+          <StatCard value="39%" label="of core skills expected to change by 2030" delay={0.2} />
+          <StatCard value="78%" label="of companies have deployed AI in at least one function" delay={0.3} accent={C.yellow} />
+          <StatCard value="95%" label="of AI pilots fail to move beyond prototype" delay={0.4} accent={C.red} />
+          <StatCard value="120+" label="hours per teammate per year freed by AI" delay={0.5} accent="#22C55E" />
+        </div>
+        <div style={{ ...fadeUp(0.6), background: C.card, borderRadius: 14, padding: "24px 28px", border: `1px solid ${C.blue}15` }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: C.textSecondary, marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.1em" }}>Enterprise AI Adoption Curve — HR Function</div>
+          <ResponsiveContainer width="100%" height={180}>
+            <AreaChart data={data}>
+              <defs>
+                <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={C.blue} stopOpacity={0.3} />
+                  <stop offset="95%" stopColor={C.blue} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="year" tick={{ fill: C.textMuted, fontSize: 12 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: C.textMuted, fontSize: 11 }} axisLine={false} tickLine={false} domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+              <Tooltip
+                contentStyle={{ background: C.card, border: `1px solid ${C.blue}33`, borderRadius: 8, fontSize: 12, color: C.textPrimary }}
+                formatter={(v) => [`${v}% adoption`, "HR AI Maturity"]}
+              />
+              <Area type="monotone" dataKey="value" stroke={C.blue} strokeWidth={2.5} fill="url(#blueGrad)" dot={{ fill: C.blue, r: 4 }} />
+            </AreaChart>
+          </ResponsiveContainer>
+          <div style={{ fontSize: 11, color: C.textMuted, marginTop: 6 }}>Sources: Gartner CHRO Survey 2026, Deloitte Global Human Capital Trends, AIHR Priorities Report</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OneDATSlide() {
+  return (
+    <div style={{ position: "relative" }}>
+      <DotGrid />
+      <GlowOrb top="20%" left="-5%" size={400} />
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ ...fadeUp(0), fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.blue, marginBottom: 8 }}>Strategic Anchor</div>
+        <h2 style={{ ...fadeUp(0.1), fontSize: 36, fontWeight: 900, color: C.white, letterSpacing: "-0.02em", margin: "0 0 8px 0" }}>One DAT. One Capability.</h2>
+        <p style={{ ...fadeUp(0.15), fontSize: 14, color: C.textSecondary, maxWidth: 640, lineHeight: 1.7, marginBottom: 28 }}>
+          Four acquisitions. Six offices. 700 teammates. The One DAT mission is about building a single, unified culture and operating system. AI transformation is how we get there — not a parallel initiative, but the engine that makes One DAT real.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
+          <div style={{ ...fadeUp(0.2), background: C.card, borderRadius: 14, padding: "28px 24px", border: `1px solid ${C.blue}18` }}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: C.blue, marginBottom: 16 }}>Without AI Fluency</div>
+            {["Siloed processes from 4 legacy orgs", "Manual work that doesn't scale", "Knowledge trapped in individual heads", "Six offices, six different ways of working", "Slow decision cycles on workforce data"].map((item, i) => (
+              <div key={i} style={{ fontSize: 13, color: C.textSecondary, lineHeight: 1.6, marginBottom: 6, paddingLeft: 16, position: "relative" }}>
+                <span style={{ position: "absolute", left: 0, color: C.red }}>✕</span>{item}
+              </div>
+            ))}
+          </div>
+          <div style={{ ...fadeUp(0.3), background: C.card, borderRadius: 14, padding: "28px 24px", border: `1px solid #22C55E18` }}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#22C55E", marginBottom: 16 }}>With AI Fluency</div>
+            {["Unified processes powered by shared AI tools", "Automation that scales across all locations", "Institutional knowledge embedded in systems", "Consistent experience: Seattle = Denver = Bangalore", "Real-time workforce intelligence for leadership"].map((item, i) => (
+              <div key={i} style={{ fontSize: 13, color: C.textSecondary, lineHeight: 1.6, marginBottom: 6, paddingLeft: 16, position: "relative" }}>
+                <span style={{ position: "absolute", left: 0, color: "#22C55E" }}>✓</span>{item}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ ...fadeUp(0.45), background: `linear-gradient(135deg, ${C.blue}12, ${C.blue}06)`, borderRadius: 12, padding: "20px 24px", border: `1px solid ${C.blue}25`, display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ fontSize: 32 }}>⚡</div>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: C.blueOnBlack }}>The Multiplier Effect</div>
+            <div style={{ fontSize: 13, color: C.textSecondary, lineHeight: 1.6, marginTop: 4 }}>
+              Every AI capability we build in People Team becomes a template for every other function. We're not just transforming HR — we're establishing the operating pattern for how DAT adopts AI company-wide.
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          {pages.map(p => (
-            <NavBtn key={p.key} active={tab === p.key} onClick={() => setTab(p.key)} icon={p.icon}>
-              {p.label}
-            </NavBtn>
+function LandscapeSlide() {
+  const radarData = [
+    { subject: "Self-Service", DAT: 65, Industry: 45 },
+    { subject: "Predictive\nAnalytics", DAT: 55, Industry: 35 },
+    { subject: "Process\nAutomation", DAT: 70, Industry: 50 },
+    { subject: "AI Routing\n& Triage", DAT: 75, Industry: 25 },
+    { subject: "Workforce\nIntelligence", DAT: 60, Industry: 40 },
+    { subject: "Teammate\nExperience", DAT: 50, Industry: 45 },
+  ];
+  return (
+    <div style={{ position: "relative" }}>
+      <DotGrid />
+      <GlowOrb top="40%" left="75%" size={300} />
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ ...fadeUp(0), fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.blue, marginBottom: 8 }}>Industry Context</div>
+        <h2 style={{ ...fadeUp(0.1), fontSize: 36, fontWeight: 900, color: C.white, letterSpacing: "-0.02em", margin: "0 0 8px 0" }}>Where We Stand</h2>
+        <p style={{ ...fadeUp(0.15), fontSize: 14, color: C.textSecondary, maxWidth: 640, lineHeight: 1.7, marginBottom: 28 }}>
+          Gartner, Deloitte, and Bersin all converge on the same conclusion: 2026 is when HR moves from AI experimentation to AI-as-infrastructure. Only 21% of CHROs are closely involved in AI strategy. DAT's People Team is already building.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+          <div style={{ ...fadeUp(0.2), background: C.card, borderRadius: 14, padding: 24, border: `1px solid ${C.blue}15` }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: C.textSecondary, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.1em" }}>DAT vs. Industry AI Maturity</div>
+            <ResponsiveContainer width="100%" height={260}>
+              <RadarChart data={radarData}>
+                <PolarGrid stroke={C.greyDark + "33"} />
+                <PolarAngleAxis dataKey="subject" tick={{ fill: C.textMuted, fontSize: 10 }} />
+                <PolarRadiusAxis tick={false} domain={[0, 100]} axisLine={false} />
+                <Radar name="DAT" dataKey="DAT" stroke={C.blue} fill={C.blue} fillOpacity={0.2} strokeWidth={2} />
+                <Radar name="Industry Avg" dataKey="Industry" stroke={C.grey} fill={C.grey} fillOpacity={0.08} strokeWidth={1.5} strokeDasharray="4 4" />
+                <Tooltip contentStyle={{ background: C.card, border: `1px solid ${C.blue}33`, borderRadius: 8, fontSize: 12, color: C.textPrimary }} />
+              </RadarChart>
+            </ResponsiveContainer>
+            <div style={{ display: "flex", gap: 20, justifyContent: "center", marginTop: 4 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ width: 12, height: 3, background: C.blue, borderRadius: 2 }} />
+                <span style={{ fontSize: 11, color: C.textMuted }}>DAT Today</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ width: 12, height: 3, background: C.grey, borderRadius: 2, borderStyle: "dashed" }} />
+                <span style={{ fontSize: 11, color: C.textMuted }}>Industry Avg</span>
+              </div>
+            </div>
+          </div>
+          <div style={{ ...fadeUp(0.3), display: "flex", flexDirection: "column", gap: 12 }}>
+            {[
+              { source: "Gartner", insight: "Shape work in the human-machine era. Mobilize leaders to make change routine.", color: C.blue },
+              { source: "Deloitte", insight: "The S-curve is compressing. Organizations must leap to the next curve faster to stay competitive.", color: C.yellow },
+              { source: "Josh Bersin", insight: "2026 marks the shift from record-keeping to agentic action. HR is becoming 'full-stack.'", color: "#22C55E" },
+              { source: "Ethan Mollick", insight: "Nobody knows anything — including the labs. The people in this room get to decide what this looks like.", color: C.blueOnBlack },
+            ].map((item, i) => (
+              <div key={i} style={{ background: C.card, borderRadius: 10, padding: "16px 18px", borderLeft: `3px solid ${item.color}`, border: `1px solid ${item.color}15`, borderLeftWidth: 3 }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: item.color, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>{item.source}</div>
+                <div style={{ fontSize: 13, color: C.textSecondary, lineHeight: 1.5 }}>{item.insight}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FrameworkSlide() {
+  return (
+    <div style={{ position: "relative" }}>
+      <DotGrid />
+      <GlowOrb top="-10%" left="50%" size={400} />
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ ...fadeUp(0), fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.blue, marginBottom: 8 }}>Strategic Framework</div>
+        <h2 style={{ ...fadeUp(0.1), fontSize: 36, fontWeight: 900, color: C.white, letterSpacing: "-0.02em", margin: "0 0 8px 0" }}>Three Pillars of AI Transformation</h2>
+        <p style={{ ...fadeUp(0.15), fontSize: 14, color: C.textSecondary, maxWidth: 640, lineHeight: 1.7, marginBottom: 28 }}>
+          We're not chasing AI for AI's sake. Every initiative maps to one of three pillars — each directly connected to how we accelerate the One DAT mission and make teammates' work better.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 18 }}>
+          <PillarCard
+            icon="🤖" title="Automate the Yester-Work" delay={0.2} accent={C.blue}
+            items={[
+              "Eliminate manual processes designed for a pre-AI world",
+              "AI-powered self-service for 80% of common teammate questions",
+              "Intelligent routing via #ask-people-team Slack bot",
+              "Automated comp verification, offer generation, onboarding flows",
+              "Target: 75% of repetitive People Ops work automated by EOY",
+            ]}
+          />
+          <PillarCard
+            icon="📊" title="Build Workforce Intelligence" delay={0.3} accent={C.yellow}
+            items={[
+              "Real-time dashboards replacing quarterly static reports",
+              "Predictive retention and engagement modeling",
+              "Skills inventory and capability mapping across all 6 locations",
+              "Workforce planning integrated with Finance forecasting",
+              "Target: People data rivals financial data in strategic importance",
+            ]}
+          />
+          <PillarCard
+            icon="🧠" title="Develop AI Fluency" delay={0.4} accent="#22C55E"
+            items={[
+              "Every teammate confident using AI in their daily work",
+              "Rebuild the apprenticeship model for an AI-augmented world",
+              "Leader training: manage AI-augmented teams, not just people",
+              "Cross-functional 'impossible task' teams to drive experimentation",
+              "Target: 75% of teammates actively using AI tools by Q4 2026",
+            ]}
+          />
+        </div>
+        <div style={{ ...fadeUp(0.55), marginTop: 20, background: `linear-gradient(90deg, ${C.blue}08, ${C.blue}15, ${C.blue}08)`, borderRadius: 10, padding: "14px 20px", textAlign: "center" }}>
+          <span style={{ fontSize: 13, color: C.textSecondary }}>Each pillar feeds the others. Automation frees capacity for intelligence work. Intelligence identifies where fluency is needed. Fluency accelerates adoption of automation. </span>
+          <span style={{ fontSize: 13, color: C.blueOnBlack, fontWeight: 700 }}>This is a flywheel, not a checklist.</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProofSlide() {
+  const proofs = [
+    { name: "Engagement Dashboard", desc: "Real-time Gallup Q12 analytics. 6 tabs. 97% survey participation. Deployed on Render. Replaced quarterly static PDF with living intelligence.", status: "Live", accent: "#22C55E" },
+    { name: "#ask-people-team Bot", desc: "n8n + Claude Sonnet routing bot. Auto-classifies questions and routes to the right owner. V2 adds self-training loop.", status: "Live", accent: "#22C55E" },
+    { name: "PBP Coaching Framework", desc: "Interactive tool for HRBPs to facilitate structured leader conversations around engagement data. Deployed on Vercel.", status: "Live", accent: "#22C55E" },
+    { name: "Comp Verification Engine", desc: "Automated matching of hiring requests to Radford codes, salary ranges, bonus targets, and exempt status.", status: "Prototype", accent: C.yellow },
+    { name: "Merit Cycle App", desc: "React app with role-based views (XLT/ELT/Admin) for managing annual merit decisions. Replaced 14-tab spreadsheet.", status: "Prototype", accent: C.yellow },
+    { name: "Manager Action Framework", desc: "Interactive HTML covering all 12 Q12 items with specific action recommendations per engagement driver.", status: "Live", accent: "#22C55E" },
+  ];
+  return (
+    <div style={{ position: "relative" }}>
+      <DotGrid />
+      <GlowOrb top="50%" left="80%" size={300} />
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ ...fadeUp(0), fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.blue, marginBottom: 8 }}>Credibility</div>
+        <h2 style={{ ...fadeUp(0.1), fontSize: 36, fontWeight: 900, color: C.white, letterSpacing: "-0.02em", margin: "0 0 8px 0" }}>We're Not Pitching. We've Already Built.</h2>
+        <p style={{ ...fadeUp(0.15), fontSize: 14, color: C.textSecondary, maxWidth: 600, lineHeight: 1.7, marginBottom: 28 }}>
+          These aren't concepts on a slide. They're live tools teammates and leaders use today — built by Talent Operations as proof-of-concept for what AI-enabled People Team operations look like.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+          {proofs.map((p, i) => (
+            <div key={i} style={{
+              ...fadeUp(0.2 + i * 0.08),
+              background: C.card, borderRadius: 12, padding: "20px 18px",
+              border: `1px solid ${p.accent}18`, position: "relative", overflow: "hidden",
+            }}>
+              <div style={{ position: "absolute", top: 12, right: 12, background: p.accent + "18", color: p.accent, fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>{p.status}</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: C.textPrimary, marginBottom: 8, paddingRight: 60 }}>{p.name}</div>
+              <div style={{ fontSize: 12, color: C.textSecondary, lineHeight: 1.6 }}>{p.desc}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ ...fadeUp(0.7), marginTop: 18, padding: "14px 20px", background: `${C.blue}08`, borderRadius: 10, border: `1px solid ${C.blue}15`, textAlign: "center" }}>
+          <span style={{ fontSize: 13, color: C.textSecondary }}>Total investment so far: </span>
+          <span style={{ fontSize: 13, color: C.blueOnBlack, fontWeight: 800 }}>~$0 in external tooling. </span>
+          <span style={{ fontSize: 13, color: C.textSecondary }}>Built with AI, open-source frameworks, and existing platform licenses.</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RoadmapSlide() {
+  return (
+    <div style={{ position: "relative" }}>
+      <DotGrid />
+      <GlowOrb top="30%" left="-5%" size={350} />
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ ...fadeUp(0), fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.blue, marginBottom: 8 }}>Implementation</div>
+        <h2 style={{ ...fadeUp(0.1), fontSize: 36, fontWeight: 900, color: C.white, letterSpacing: "-0.02em", margin: "0 0 8px 0" }}>12-Month Roadmap</h2>
+        <p style={{ ...fadeUp(0.15), fontSize: 14, color: C.textSecondary, maxWidth: 600, lineHeight: 1.7, marginBottom: 24 }}>
+          Click each phase to expand. We sequence quick wins first to build organizational trust, then scale.
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <PhaseCard phase={1} title="Foundation & Quick Wins" quarter="Q2 2026 (Now → June)" active={true} delay={0.2} items={[
+            "AI usage policy published to People Hub — what's approved, what's not, use case examples",
+            "Formalize existing tools: Engagement Dashboard, #ask-people-team bot, PBP Framework",
+            "Launch 'AI at DAT' page on People Hub — approved tools, training resources, success stories",
+            "Pilot Slack-native Q&A bot self-training loop (V2) with weekly prompt refinement",
+            "First cross-functional AI sprint: pick one impossible task, resource a small team, 6-week timebox",
+            "Milestone: 3 visible wins celebrated at All Hands. Trust established.",
+          ]} />
+          <PhaseCard phase={2} title="Scale & Integrate" quarter="Q3 2026 (July → September)" delay={0.35} items={[
+            "Comp verification engine live — automated Radford matching for all new hire requests",
+            "Workforce intelligence dashboard V2 — real-time headcount, retention, hiring velocity for ELT",
+            "AI fluency training program launched: tiered (Foundations → Practitioner → Builder)",
+            "Automated onboarding flows for all 6 locations — consistent One DAT experience",
+            "Recognition platform evaluation completed with AI-generated insight layer",
+            "Milestone: 50% of repetitive People Ops processes automated. Training at scale.",
+          ]} />
+          <PhaseCard phase={3} title="Optimize & Extend" quarter="Q4 2026 (October → December)" delay={0.5} items={[
+            "Predictive retention modeling live — flight risk signals surfaced to managers proactively",
+            "Skills inventory and capability mapping across all locations and post-acquisition populations",
+            "Manager AI toolkit — structured prompts for coaching, performance writing, team analysis",
+            "People data integrated with Finance forecasting for workforce planning",
+            "AI transformation playbook published — template for every function to adopt",
+            "Milestone: 75% automation target. AI fluency embedded. Model exported to other functions.",
+          ]} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FluencySlide() {
+  const tiers = [
+    { level: "Foundations", who: "All 700 teammates", hours: "2–4 hrs", color: C.blue, items: ["What AI can and can't do", "Approved tools at DAT", "Basic prompting skills", "Data privacy essentials"] },
+    { level: "Practitioner", who: "Managers + ICs in knowledge roles", hours: "8–12 hrs", color: C.yellow, items: ["Advanced prompting & workflows", "AI-assisted writing, analysis, code", "Building personal automations", "Evaluating AI outputs critically"] },
+    { level: "Builder", who: "Power users + Talent Ops", hours: "20+ hrs", color: "#22C55E", items: ["Prototyping tools and workflows", "n8n / automation platforms", "Data pipeline + dashboard creation", "Teaching others — internal multiplier"] },
+  ];
+  return (
+    <div style={{ position: "relative" }}>
+      <DotGrid />
+      <GlowOrb top="10%" left="60%" size={350} />
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ ...fadeUp(0), fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.blue, marginBottom: 8 }}>Capability Building</div>
+        <h2 style={{ ...fadeUp(0.1), fontSize: 36, fontWeight: 900, color: C.white, letterSpacing: "-0.02em", margin: "0 0 8px 0" }}>AI Fluency Program</h2>
+        <p style={{ ...fadeUp(0.15), fontSize: 14, color: C.textSecondary, maxWidth: 640, lineHeight: 1.7, marginBottom: 8 }}>
+          Ethan Mollick said it clearly: the expertise of how to use AI is already in your teams. The locus of innovation has to be inside the organization. Our program builds on that principle — meet people where they are, develop fluency through practice not slides.
+        </p>
+        <p style={{ ...fadeUp(0.2), fontSize: 13, color: C.yellow, fontWeight: 600, marginBottom: 28 }}>
+          "The apprenticeship model broke last summer. It's on us to rebuild it." — Ethan Mollick, Unleash 2026
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 18 }}>
+          {tiers.map((t, i) => (
+            <div key={i} style={{
+              ...fadeUp(0.25 + i * 0.1),
+              background: C.card, borderRadius: 14, padding: "24px 20px",
+              border: `1px solid ${t.color}20`, position: "relative", overflow: "hidden",
+            }}>
+              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: `linear-gradient(90deg, ${t.color}, transparent)` }} />
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+                <div>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: t.color }}>{t.level}</div>
+                  <div style={{ fontSize: 11, color: C.textMuted, marginTop: 2 }}>{t.who}</div>
+                </div>
+                <div style={{ background: t.color + "15", color: t.color, fontSize: 11, fontWeight: 700, padding: "4px 10px", borderRadius: 6 }}>{t.hours}</div>
+              </div>
+              {t.items.map((item, j) => (
+                <div key={j} style={{ fontSize: 13, color: C.textSecondary, lineHeight: 1.6, marginBottom: 5, paddingLeft: 14, position: "relative" }}>
+                  <span style={{ position: "absolute", left: 0, color: t.color, fontSize: 10, top: 3 }}>●</span>
+                  {item}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div style={{ ...fadeUp(0.6), marginTop: 18, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
+          {[
+            { label: "Delivery Method", value: "Hands-on workshops + async practice. Not slide decks." },
+            { label: "Reinforcement", value: "AI tip of the week in Slack. Monthly use case showcases." },
+            { label: "Measurement", value: "Quarterly AI fluency pulse. Track tool adoption rates." },
+          ].map((item, i) => (
+            <div key={i} style={{ background: `${C.blue}08`, borderRadius: 10, padding: "14px 16px", border: `1px solid ${C.blue}12` }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: C.blue, marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.05em" }}>{item.label}</div>
+              <div style={{ fontSize: 12, color: C.textSecondary, lineHeight: 1.5 }}>{item.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GovernanceSlide() {
+  return (
+    <div style={{ position: "relative" }}>
+      <DotGrid />
+      <GlowOrb top="50%" left="20%" size={300} />
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ ...fadeUp(0), fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.blue, marginBottom: 8 }}>Responsible AI</div>
+        <h2 style={{ ...fadeUp(0.1), fontSize: 36, fontWeight: 900, color: C.white, letterSpacing: "-0.02em", margin: "0 0 8px 0" }}>Governance & Trust</h2>
+        <p style={{ ...fadeUp(0.15), fontSize: 14, color: C.textSecondary, maxWidth: 640, lineHeight: 1.7, marginBottom: 28 }}>
+          Speed without trust is reckless. We build fast and responsibly. The AI usage policy is the foundation — clear guardrails that enable experimentation without exposing the organization to unnecessary risk.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, marginBottom: 20 }}>
+          <div style={{ ...fadeUp(0.2), background: C.card, borderRadius: 14, padding: "24px 22px", border: `1px solid ${C.blue}18` }}>
+            <div style={{ fontSize: 15, fontWeight: 800, color: C.textPrimary, marginBottom: 14 }}>AI Usage Policy — Core Principles</div>
+            {[
+              "No proprietary or teammate data entered into public AI tools",
+              "All AI outputs reviewed by a human before external use",
+              "Approved tool list maintained on People Hub (Claude, Copilot, DAT-specific)",
+              "Bias testing required before any AI tool touches hiring or promotion decisions",
+              "Transparent with teammates about where and how AI is used in People processes",
+            ].map((item, i) => (
+              <div key={i} style={{ fontSize: 13, color: C.textSecondary, lineHeight: 1.6, marginBottom: 8, paddingLeft: 16, position: "relative" }}>
+                <span style={{ position: "absolute", left: 0, color: C.blue }}>◆</span>{item}
+              </div>
+            ))}
+          </div>
+          <div style={{ ...fadeUp(0.3), background: C.card, borderRadius: 14, padding: "24px 22px", border: `1px solid ${C.yellow}18` }}>
+            <div style={{ fontSize: 15, fontWeight: 800, color: C.textPrimary, marginBottom: 14 }}>Roper Alignment</div>
+            {[
+              "Align with Roper IT security and data classification requirements",
+              "Work with Legal on AI-specific terms in vendor contracts",
+              "Coordinate with IT on approved integrations (UKG, Greenhouse, 15Five)",
+              "Lobby for expanded UKG module access — onboarding, integrations, reporting",
+              "Document all AI tools in use for audit readiness",
+            ].map((item, i) => (
+              <div key={i} style={{ fontSize: 13, color: C.textSecondary, lineHeight: 1.6, marginBottom: 8, paddingLeft: 16, position: "relative" }}>
+                <span style={{ position: "absolute", left: 0, color: C.yellow }}>◆</span>{item}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ ...fadeUp(0.4), background: `linear-gradient(135deg, ${C.red}08, transparent)`, borderRadius: 12, padding: "16px 20px", border: `1px solid ${C.red}18`, display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ fontSize: 28 }}>⚠️</div>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: C.red }}>The UKG Bottleneck</div>
+            <div style={{ fontSize: 12, color: C.textSecondary, lineHeight: 1.5, marginTop: 2 }}>
+              UKG confirmed at Unleash that every capability we want already exists on the platform. The constraint is Roper-side administration and access controls. Nat is building stronger lines of communication. This is a known dependency — not a technology gap.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MetricsSlide() {
+  const barData = [
+    { name: "Process\nAutomation", current: 20, target: 75 },
+    { name: "Self-Service\nAdoption", current: 35, target: 80 },
+    { name: "AI Fluency\nRate", current: 15, target: 75 },
+    { name: "Dashboard\nCoverage", current: 40, target: 90 },
+    { name: "HRBP Admin\nReduction", current: 10, target: 40 },
+  ];
+  return (
+    <div style={{ position: "relative" }}>
+      <DotGrid />
+      <GlowOrb top="-5%" left="40%" size={350} />
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ ...fadeUp(0), fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.blue, marginBottom: 8 }}>Measurement</div>
+        <h2 style={{ ...fadeUp(0.1), fontSize: 36, fontWeight: 900, color: C.white, letterSpacing: "-0.02em", margin: "0 0 8px 0" }}>How We'll Know It's Working</h2>
+        <p style={{ ...fadeUp(0.15), fontSize: 14, color: C.textSecondary, maxWidth: 600, lineHeight: 1.7, marginBottom: 28 }}>
+          We measure outcomes, not activity. Every metric maps to a business impact that leadership cares about.
+        </p>
+        <div style={{ ...fadeUp(0.2), background: C.card, borderRadius: 14, padding: "24px 28px", border: `1px solid ${C.blue}15`, marginBottom: 20 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: C.textSecondary, marginBottom: 16, textTransform: "uppercase", letterSpacing: "0.1em" }}>Current State → EOY 2026 Target</div>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={barData} barGap={4}>
+              <XAxis dataKey="name" tick={{ fill: C.textMuted, fontSize: 10 }} axisLine={false} tickLine={false} interval={0} />
+              <YAxis tick={{ fill: C.textMuted, fontSize: 11 }} axisLine={false} tickLine={false} domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+              <Tooltip contentStyle={{ background: C.card, border: `1px solid ${C.blue}33`, borderRadius: 8, fontSize: 12, color: C.textPrimary }} formatter={(v) => [`${v}%`]} />
+              <Bar dataKey="current" name="Current" radius={[4, 4, 0, 0]} maxBarSize={32}>
+                {barData.map((_, i) => <Cell key={i} fill={C.greyDark} />)}
+              </Bar>
+              <Bar dataKey="target" name="EOY Target" radius={[4, 4, 0, 0]} maxBarSize={32}>
+                {barData.map((_, i) => <Cell key={i} fill={C.blue} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+          <div style={{ display: "flex", gap: 20, justifyContent: "center", marginTop: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 12, height: 12, background: C.greyDark, borderRadius: 3 }} /><span style={{ fontSize: 11, color: C.textMuted }}>Current</span></div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 12, height: 12, background: C.blue, borderRadius: 3 }} /><span style={{ fontSize: 11, color: C.textMuted }}>EOY 2026 Target</span></div>
+          </div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+          <StatCard value="30%" label="reduction in People Team ticket volume via self-service" delay={0.3} accent={C.blue} />
+          <StatCard value="$0" label="external tooling cost — built with AI + existing licenses" delay={0.4} accent="#22C55E" />
+          <StatCard value="1→N" label="every tool built becomes a template for other functions" delay={0.5} accent={C.yellow} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CloseSlide() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "100%", textAlign: "center", position: "relative" }}>
+      <DotGrid />
+      <GlowOrb top="20%" left="25%" size={450} />
+      <GlowOrb top="50%" left="65%" size={300} color="rgba(0,70,221,0.12)" />
+      <div style={{ position: "relative", zIndex: 1, maxWidth: 700 }}>
+        <div style={{ ...fadeUp(0), fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.blue, marginBottom: 20 }}>The Ask</div>
+        <h2 style={{ ...fadeUp(0.1), fontSize: 42, fontWeight: 900, color: C.white, letterSpacing: "-0.03em", lineHeight: 1.1, margin: "0 0 16px 0" }}>
+          We don't need permission<br />to keep building.
+        </h2>
+        <h2 style={{ ...fadeUp(0.2), fontSize: 42, fontWeight: 900, color: C.blueOnBlack, letterSpacing: "-0.03em", lineHeight: 1.1, margin: "0 0 24px 0" }}>
+          We need alignment.
+        </h2>
+        <p style={{ ...fadeUp(0.35), fontSize: 15, color: C.textSecondary, lineHeight: 1.8, marginBottom: 36, maxWidth: 560, margin: "0 auto 36px auto" }}>
+          The People Team is ready to lead DAT's AI transformation — not as a side project, but as the operational backbone of the One DAT mission. We've proven the model works. Now we need executive sponsorship, cross-functional partnership, and the organizational will to make AI fluency everyone's job.
+        </p>
+        <div style={{ ...fadeUp(0.5), display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 36 }}>
+          {[
+            { ask: "Executive Sponsorship", detail: "Jeff + Jana champion AI fluency publicly. Set the tone from the top." },
+            { ask: "Cross-Functional Access", detail: "Roper IT partnership. UKG module access. Data governance framework." },
+            { ask: "Organizational Will", detail: "AI fluency as a performance expectation. Experiment fast, learn publicly." },
+          ].map((item, i) => (
+            <div key={i} style={{ background: C.card, borderRadius: 12, padding: "20px 18px", border: `1px solid ${C.blue}20`, textAlign: "left" }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: C.blueOnBlack, marginBottom: 8 }}>{item.ask}</div>
+              <div style={{ fontSize: 12, color: C.textSecondary, lineHeight: 1.6 }}>{item.detail}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ ...fadeUp(0.65), padding: "18px 28px", background: `linear-gradient(135deg, ${C.blue}15, ${C.blue}08)`, borderRadius: 12, border: `1px solid ${C.blue}25` }}>
+          <div style={{ fontSize: 15, color: C.white, fontWeight: 700, lineHeight: 1.5 }}>
+            "The most successful teams I see implementing AI are when you give a small cross-functional team an impossible task and see how far they get."
+          </div>
+          <div style={{ fontSize: 12, color: C.textMuted, marginTop: 6 }}>— Ethan Mollick, Wharton · Unleash America 2026</div>
+        </div>
+        <div style={{ ...fadeUp(0.8), marginTop: 32, fontSize: 12, color: C.textMuted }}>
+          DAT Freight & Analytics · People Team · Talent Operations · Confidential
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main App ──
+
+const slideComponents = {
+  "title": TitleSlide,
+  "why-now": WhyNowSlide,
+  "one-dat": OneDATSlide,
+  "landscape": LandscapeSlide,
+  "framework": FrameworkSlide,
+  "proof": ProofSlide,
+  "roadmap": RoadmapSlide,
+  "fluency": FluencySlide,
+  "governance": GovernanceSlide,
+  "metrics": MetricsSlide,
+  "close": CloseSlide,
+};
+
+export default function DATAITransformation() {
+  const [current, setCurrent] = useState(0);
+  const [slideKey, setSlideKey] = useState(0);
+  const containerRef = useRef(null);
+
+  const goTo = (idx) => {
+    if (idx >= 0 && idx < slides.length) {
+      setCurrent(idx);
+      setSlideKey(k => k + 1);
+      if (containerRef.current) containerRef.current.scrollTop = 0;
+    }
+  };
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); goTo(current + 1); }
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); goTo(current - 1); }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [current]);
+
+  const SlideComponent = slideComponents[slides[current].id];
+
+  return (
+    <div style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif", background: C.bg, color: C.textPrimary, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <style>{keyframes}</style>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+      {/* ── Top Nav ── */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 24px", borderBottom: `1px solid ${C.greyDark}22`, flexShrink: 0, background: C.bg, zIndex: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 28, height: 28, background: C.blue, borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 900, color: C.white }}>D</div>
+          <span style={{ fontSize: 13, fontWeight: 700, color: C.textSecondary }}>AI Transformation Strategy</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ fontSize: 12, color: C.textMuted, fontWeight: 600 }}>{current + 1} / {slides.length}</span>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+        {/* ── Sidebar ── */}
+        <div style={{ width: 200, borderRight: `1px solid ${C.greyDark}22`, padding: "16px 0", overflowY: "auto", flexShrink: 0, background: C.bg }}>
+          {slides.map((s, i) => (
+            <div
+              key={s.id}
+              onClick={() => goTo(i)}
+              style={{
+                padding: "9px 20px",
+                fontSize: 13,
+                fontWeight: i === current ? 700 : 500,
+                color: i === current ? C.blueOnBlack : C.textMuted,
+                background: i === current ? C.blueMuted : "transparent",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                borderLeft: i === current ? `3px solid ${C.blue}` : "3px solid transparent",
+              }}
+            >
+              <span style={{ opacity: 0.5, marginRight: 8, fontSize: 11 }}>{String(i + 1).padStart(2, "0")}</span>
+              {s.label}
+            </div>
           ))}
         </div>
 
-        <div style={{ marginTop: "auto", padding: "14px 12px", borderTop: `1px solid ${V.borderLight}` }}>
-          <p style={{ fontSize: 10, color: V.inkFaint, lineHeight: 1.7, margin: 0 }}>
-            <strong style={{ color: V.inkMuted }}>Data Provenance</strong><br />
-            Only publicly accessible data. No\u00a0PII collected. All sources flagged.
-          </p>
-          <p className="mono" style={{ fontSize: 9, color: V.inkFaint, marginTop: 10 }}>v0.9.0-beta\u2002·\u20021.58M\u00a0records</p>
-        </div>
-      </nav>
-
-      {/* ─── Main ─── */}
-      <main style={{ flex: 1, overflow: "auto", maxHeight: "100vh", minWidth: 0 }}>
-        <header style={{
-          padding: "18px 32px", borderBottom: `1px solid ${V.border}`,
-          display: "flex", alignItems: "center", justifyContent: "space-between", background: V.surface,
-        }}>
-          <div>
-            <h1 style={{ fontSize: 20, fontWeight: 400, margin: 0, fontFamily: "var(--font-display)", color: V.ink }}>
-              {pages.find(p => p.key === tab)?.label}
-            </h1>
-            <p style={{ fontSize: 12, color: V.inkFaint, marginTop: 2, margin: 0 }}>
-              {tab === "dashboard" && "Aggregated intelligence across 12\u00a0data sources"}
-              {tab === "explore" && "Browse and filter all compensation records"}
-              {tab === "skills" && "Skills-based pay signal analysis"}
-              {tab === "bands" && "Build market-based salary structures"}
-              {tab === "trends" && "Compensation movement and market signals"}
-              {tab === "payequity" && "Gender pay equity analysis via Census ACS data"}
-              {tab === "contribute" && "Anonymously share your compensation data"}
-              {tab === "scrapers" && "Data pipeline health and ingestion status"}
-              {tab === "alerts" && "Monitor compensation movements"}
-            </p>
+        {/* ── Slide Content ── */}
+        <div ref={containerRef} style={{ flex: 1, overflowY: "auto", padding: "32px 40px 48px 40px" }}>
+          <div key={slideKey} style={{ maxWidth: 1000, margin: "0 auto", animation: "scaleIn 0.35s ease-out forwards" }}>
+            <SlideComponent />
           </div>
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            <span className="mono" style={{ padding: "4px 10px", borderRadius: 5, background: V.tealMuted, color: V.tealDark, fontSize: 11, fontWeight: 600 }}>PRO</span>
-            <div style={{ width: 32, height: 32, borderRadius: "50%", background: V.teal, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#fff", fontFamily: "var(--font-mono)" }} aria-label="User account">BK</div>
-          </div>
-        </header>
-
-        <div style={{ padding: 32 }}>
-          <Page />
         </div>
-      </main>
+      </div>
+
+      {/* ── Bottom Nav ── */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 24px", borderTop: `1px solid ${C.greyDark}22`, flexShrink: 0, background: C.bg }}>
+        <button onClick={() => goTo(current - 1)} disabled={current === 0} style={{
+          padding: "7px 18px", borderRadius: 8, border: `1px solid ${C.greyDark}44`, background: "transparent",
+          color: current === 0 ? C.textMuted : C.textSecondary, fontSize: 13, fontWeight: 600, cursor: current === 0 ? "default" : "pointer",
+          opacity: current === 0 ? 0.4 : 1, transition: "all 0.2s",
+        }}>← Previous</button>
+        <div style={{ display: "flex", gap: 4 }}>
+          {slides.map((_, i) => (
+            <div key={i} onClick={() => goTo(i)} style={{
+              width: i === current ? 24 : 8, height: 4, borderRadius: 2,
+              background: i === current ? C.blue : C.greyDark + "55",
+              cursor: "pointer", transition: "all 0.3s",
+            }} />
+          ))}
+        </div>
+        <button onClick={() => goTo(current + 1)} disabled={current === slides.length - 1} style={{
+          padding: "7px 18px", borderRadius: 8, border: "none", background: current === slides.length - 1 ? C.greyDark + "33" : C.blue,
+          color: C.white, fontSize: 13, fontWeight: 600, cursor: current === slides.length - 1 ? "default" : "pointer",
+          opacity: current === slides.length - 1 ? 0.4 : 1, transition: "all 0.2s",
+        }}>Next →</button>
+      </div>
     </div>
   );
 }
