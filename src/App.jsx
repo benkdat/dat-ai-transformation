@@ -194,10 +194,13 @@ function TitleSlide() {
           <div style={{padding:"10px 22px",background:C.blue,borderRadius:8,fontSize:13,fontWeight:700,color:C.white,display:"flex",alignItems:"center",gap:6}}><Sparkles size={14}/>Talent Operations</div>
           <div style={{padding:"10px 22px",background:C.white,border:`1.5px solid ${C.border}`,borderRadius:8,fontSize:13,fontWeight:600,color:C.greyDark,display:"flex",alignItems:"center",gap:6}}><Clock size={14}/>March 2026</div>
         </div>
-        {/* DAT iQ brand image strip */}
+        {/* Mission-connected opening */}
         <div style={{...fadeUp(0.9),marginTop:36}}>
-          <ImageBanner src="/img/network.jpg" height={100} overlay="linear-gradient(90deg,rgba(0,70,221,0.6),rgba(0,0,0,0.4))">
-            <div style={{fontSize:12,fontWeight:700,color:C.white,letterSpacing:"0.15em",textTransform:"uppercase",opacity:0.9}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
+          <ImageBanner src="/img/network.jpg" height={110} overlay="linear-gradient(90deg,rgba(0,70,221,0.7),rgba(0,0,0,0.5))">
+            <div style={{textAlign:"center",padding:"0 32px"}}>
+              <div style={{fontSize:13,fontWeight:900,color:C.white,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:6}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
+              <div style={{fontSize:12,color:"rgba(255,255,255,0.8)",lineHeight:1.5,maxWidth:480}}>Now the People Team is taking the uncertainty out of how we work. Same mission. New frontier.</div>
+            </div>
           </ImageBanner>
         </div>
       </div>
@@ -394,7 +397,12 @@ function RoadmapSlide() {
     <div>
       <SectionLabel>Implementation</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>12-Month Roadmap</h2>
-      <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:600,lineHeight:1.7,marginBottom:20}}>Quick wins first to build trust. Then scale.</p>
+      <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:600,lineHeight:1.7,marginBottom:16}}>Quick wins first to build trust. Then scale.</p>
+      <div style={{...fadeUp(0.18),marginBottom:16}}>
+        <ImageBanner src="/img/volume.jpg" height={48} overlay="linear-gradient(90deg,rgba(0,0,0,0.55),rgba(0,70,221,0.5))">
+          <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>Q2 Foundation → Q3 Scale → Q4 Optimize · Phase 1 already underway</div>
+        </ImageBanner>
+      </div>
       <div style={{display:"flex",flexDirection:"column",gap:12}}>
         <PhaseCard phase={1} title="Foundation & Quick Wins" quarter="Q2 2026 (Now → June)" active={true} delay={0.2} items={["Publish AI usage policy to People Hub","Formalize live tools: Engagement Suite, routing bot","Launch 'AI at DAT' resource page","Pilot bot self-training loop (V2)","First cross-functional AI sprint: one impossible task, 6-week timebox","Milestone: 3 visible wins at All Hands. Trust established."]}/>
         <PhaseCard phase={2} title="Scale & Integrate" quarter="Q3 2026 (July → Sept)" delay={0.35} items={["Comp verification engine live — 25 hrs/wk savings target","TA dashboards V1 — pipeline health and hiring velocity","AI fluency program launches: Foundations → Practitioner → Builder","Automated onboarding across all 6 locations","Milestone: 50% of repetitive processes automated."]}/>
@@ -451,7 +459,12 @@ function GovernanceSlide() {
     <div>
       <SectionLabel>Responsible AI</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>Governance & Trust</h2>
-      <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:640,lineHeight:1.7,marginBottom:18}}>Speed without trust is reckless. Clear guardrails that enable experimentation.</p>
+      <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:640,lineHeight:1.7,marginBottom:14}}>Speed without trust is reckless. Clear guardrails that enable experimentation.</p>
+      <div style={{...fadeUp(0.18),marginBottom:16}}>
+        <ImageBanner src="/img/network.jpg" height={44} overlay="linear-gradient(90deg,rgba(0,0,0,0.6),rgba(0,70,221,0.5))">
+          <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>Build fast. Build responsibly. Build trust.</div>
+        </ImageBanner>
+      </div>
       <div style={{...fadeUp(0.2),display:"flex",gap:0,marginBottom:16,background:C.bgAlt,borderRadius:10,padding:3}}>
         {[{k:"policy",l:"AI Usage Policy",i:Shield},{k:"roper",l:"Roper Alignment",i:Building2}].map(t=>{const TI=t.i;return(
           <button key={t.k} data-clickable="true" onClick={()=>setTab(t.k)} style={{flex:1,padding:"10px 14px",borderRadius:8,border:"none",background:tab===t.k?C.card:"transparent",color:tab===t.k?C.blue:C.textMuted,fontSize:12,fontWeight:700,cursor:"pointer",boxShadow:tab===t.k?"0 1px 3px rgba(0,0,0,0.08)":"none",transition:"all 0.25s",fontFamily:"'Inter',system-ui",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}><TI size={13}/>{t.l}</button>);})}
@@ -511,7 +524,12 @@ function RisksSlide() {
     <div>
       <SectionLabel>Honest Assessment</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>What Could Go Wrong</h2>
-      <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:600,lineHeight:1.7,marginBottom:22}}>Naming risks isn't hedging. It's how we build trust and plan around reality.</p>
+      <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:600,lineHeight:1.7,marginBottom:14}}>Naming risks isn't hedging. It's how we build trust and plan around reality.</p>
+      <div style={{...fadeUp(0.18),marginBottom:16}}>
+        <ImageBanner src="/img/threads.jpg" height={44} overlay="linear-gradient(90deg,rgba(225,6,0,0.4),rgba(0,0,0,0.6))">
+          <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>Every risk named. Every mitigation planned.</div>
+        </ImageBanner>
+      </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
         {[{icon:UserX,title:"Concentration Risk",desc:"Built by one person. If unavailable, velocity drops to zero. Mitigation: Nat's team assumes ownership in Phase 2. Documentation built into every project.",color:C.red},
           {icon:Building2,title:"Roper IT Access",desc:"UKG capabilities exist. Bottleneck is Roper admin. Hard blocker for onboarding, merit, integrations. Mitigation: Specific modules named in our ask.",color:C.yellowDark},
@@ -557,10 +575,15 @@ function CloseSlide() {
           <div style={{fontSize:14,color:C.textPrimary,fontWeight:600,lineHeight:1.5,fontStyle:"italic"}}>"The most successful teams I see implementing AI are when you give a small cross-functional team an impossible task and see how far they get."</div>
           <div style={{fontSize:11,color:C.textMuted,marginTop:5}}>— Ethan Mollick, Wharton · Unleash America 2026</div>
         </div>
-        {/* Closing brand image */}
-        <div style={{...fadeUp(0.65),marginTop:20}}>
-          <ImageBanner src="/img/landscape.jpg" height={70} overlay="linear-gradient(90deg,rgba(0,70,221,0.6),rgba(0,0,0,0.4))">
-            <div style={{fontSize:11,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>DAT Freight & Analytics · People Team · Talent Operations</div>
+        {/* Mission closing — bookends the opening */}
+        <div style={{...fadeUp(0.65),marginTop:24}}>
+          <ImageBanner src="/img/landscape.jpg" height={140} overlay="linear-gradient(135deg,rgba(0,70,221,0.75),rgba(0,0,0,0.55))">
+            <div style={{textAlign:"center",padding:"0 40px"}}>
+              <div style={{fontSize:14,fontWeight:900,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:8}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
+              <div style={{fontSize:20,fontWeight:900,color:C.white,lineHeight:1.3,letterSpacing:"-0.01em",marginBottom:8}}>Now we take the uncertainty out of how we work.</div>
+              <div style={{width:40,height:2,background:`linear-gradient(90deg,${C.white},rgba(255,255,255,0.3))`,borderRadius:1,margin:"0 auto 10px"}}/>
+              <div style={{fontSize:11,color:"rgba(255,255,255,0.7)",letterSpacing:"0.05em"}}>DAT Freight & Analytics · People Team · Talent Operations · March 2026</div>
+            </div>
           </ImageBanner>
         </div>
       </div>
