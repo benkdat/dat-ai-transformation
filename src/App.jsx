@@ -7,7 +7,7 @@ import {
   Zap, BarChart3, Brain, Bot, Target, Shield, ChevronRight, ChevronDown,
   ArrowRight, Play, Minimize2, Clock, CheckCircle2, Wrench,
   TrendingUp, Users, Building2, Layers, AlertTriangle, Sparkles, GitBranch,
-  ChevronLeft, Monitor, BookOpen
+  ChevronLeft, Monitor, BookOpen, Search, CalendarCheck, Award, ArrowLeftRight
 } from "lucide-react";
 
 // ── DAT Brand Tokens — Light Mode ──
@@ -469,24 +469,29 @@ function FrameworkSlide() {
 function ProofSlide() {
   const [filter, setFilter] = useState("all");
   const proofs = [
-    { name: "Engagement Dashboard", desc: "Real-time Gallup Q12 analytics. 6 tabs. 97% survey participation. Deployed on Render.", status: "Live", accent: C.green, icon: BarChart3 },
-    { name: "#ask-people-team Bot", desc: "n8n + Claude Sonnet routing bot. Auto-classifies questions and routes to the right owner.", status: "Live", accent: C.green, icon: Bot },
-    { name: "PBP Coaching Framework", desc: "Interactive tool for HRBPs to facilitate structured leader conversations around engagement data.", status: "Live", accent: C.green, icon: Users },
-    { name: "Comp Verification Engine", desc: "Automated matching of hiring requests to Radford codes, salary ranges, bonus targets, and exempt status.", status: "Prototype", accent: C.yellowDark, icon: Target },
-    { name: "Merit Cycle App", desc: "React app with role-based views (XLT/ELT/Admin) for managing annual merit decisions.", status: "Prototype", accent: C.yellowDark, icon: Monitor },
-    { name: "Manager Action Framework", desc: "Interactive HTML covering all 12 Q12 items with specific action recommendations per engagement driver.", status: "Live", accent: C.green, icon: BookOpen },
+    { name: "Engagement Intelligence Suite", desc: "Gallup Q12 dashboard (6 tabs, 97% participation), PBP Coaching Framework, and Manager Action Framework — a single ecosystem for measuring, coaching, and acting on engagement.", status: "Live", accent: C.green, icon: BarChart3 },
+    { name: "#ask-people-team Bot", desc: "n8n + Claude Sonnet routing bot. Auto-classifies questions and routes to the right owner. V2 adds self-training loop.", status: "Live", accent: C.green, icon: Bot },
+    { name: "Comp Verification Engine", desc: "Automated matching of hiring requests to Radford codes, salary ranges, bonus targets, and exempt status. Replaces a manual email-driven process.", status: "Prototype", accent: C.yellowDark, icon: Target },
+    { name: "Merit Cycle App", desc: "React app with role-based views (XLT/ELT/Admin) for managing annual merit decisions. Replaced a 14-tab spreadsheet.", status: "Prototype", accent: C.yellowDark, icon: Monitor },
+    { name: "TA Sourcing Agent", desc: "AI-powered candidate sourcing that builds qualified pipelines from job requirements. Reduces manual boolean searching and could replace or augment TalentWall/Crosschq.", status: "Planned", accent: C.blue, icon: Search },
+    { name: "TA Scheduling Agent", desc: "Automated interview coordination across hiring managers, panels, and candidates. Eliminates the back-and-forth that eats recruiter hours.", status: "Planned", accent: C.blue, icon: CalendarCheck },
+    { name: "TA Analytics Dashboards", desc: "Real-time hiring velocity, pipeline health, and source-of-hire reporting for recruiting leadership. Replaces static weekly pulls.", status: "Planned", accent: C.blue, icon: TrendingUp },
+    { name: "Recognition Platform", desc: "AI-assisted teammate recognition for Workplace Experience. Surfaces recognition patterns, nudges managers, and connects to engagement data.", status: "Planned", accent: C.blue, icon: Award },
+    { name: "Integration Builder", desc: "Custom integrations between Greenhouse, UKG, and internal tools — capabilities that would cost $50K+ through vendors, built in-house with AI.", status: "Planned", accent: C.blue, icon: ArrowLeftRight },
   ];
   const filtered = filter === "all" ? proofs : proofs.filter(p => p.status.toLowerCase() === filter);
+  const statusBg = (p) => p.accent === C.green ? C.greenLight : p.accent === C.yellowDark ? "#FFFBEB" : C.blueLight;
+  const statusIcon = (p) => p.status === "Live" ? <CheckCircle2 size={10} /> : p.status === "Prototype" ? <Clock size={10} /> : <Sparkles size={10} />;
   return (
     <div>
-      <SectionLabel>Credibility</SectionLabel>
-      <h2 style={{ ...fadeUp(0.1), fontSize: 34, fontWeight: 900, color: C.textPrimary, letterSpacing: "-0.02em", margin: "0 0 8px 0" }}>We're Not Pitching. We've Already Built.</h2>
-      <p style={{ ...fadeUp(0.15), fontSize: 14, color: C.textSecondary, maxWidth: 600, lineHeight: 1.7, marginBottom: 20 }}>
-        These aren't concepts on a slide. They're live tools teammates and leaders use today — built by Talent Operations as proof of what AI-enabled People Team operations look like.
+      <SectionLabel>Credibility + Vision</SectionLabel>
+      <h2 style={{ ...fadeUp(0.1), fontSize: 34, fontWeight: 900, color: C.textPrimary, letterSpacing: "-0.02em", margin: "0 0 8px 0" }}>Built, Proven, and Growing.</h2>
+      <p style={{ ...fadeUp(0.15), fontSize: 14, color: C.textSecondary, maxWidth: 640, lineHeight: 1.7, marginBottom: 20 }}>
+        What started as proof-of-concept tools is becoming a full operating layer. Some of these replace expensive vendor solutions. Others create capabilities that didn't exist before. All built in-house with AI.
       </p>
       <div style={{ ...fadeUp(0.2), display: "flex", gap: 8, marginBottom: 18 }}>
-        {["all", "live", "prototype"].map(f => (
-          <button key={f} onClick={() => setFilter(f)} style={{
+        {["all", "live", "prototype", "planned"].map(f => (
+          <button key={f} data-clickable="true" onClick={() => setFilter(f)} style={{
             padding: "6px 16px", borderRadius: 20, border: "none",
             background: filter === f ? C.blue : C.bgAlt, color: filter === f ? C.white : C.textMuted,
             fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all 0.2s", fontFamily: "'Inter', system-ui", textTransform: "capitalize",
@@ -498,8 +503,8 @@ function ProofSlide() {
           const Icon = p.icon;
           return (
             <div key={p.name} style={{ ...fadeUp(0.2 + i * 0.06), background: C.card, borderRadius: 12, padding: "20px 18px", border: `1px solid ${C.border}`, position: "relative", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-              <div style={{ position: "absolute", top: 12, right: 12, background: p.accent === C.green ? C.greenLight : "#FFFBEB", color: p.accent, fontSize: 10, fontWeight: 800, padding: "3px 10px", borderRadius: 12, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 3 }}>
-                {p.status === "Live" ? <CheckCircle2 size={10} /> : <Clock size={10} />}{p.status}
+              <div style={{ position: "absolute", top: 12, right: 12, background: statusBg(p), color: p.accent, fontSize: 10, fontWeight: 800, padding: "3px 10px", borderRadius: 12, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 3 }}>
+                {statusIcon(p)}{p.status}
               </div>
               <div style={{ width: 36, height: 36, borderRadius: 8, background: p.accent + "12", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
                 <Icon size={18} color={p.accent} />
@@ -510,11 +515,11 @@ function ProofSlide() {
           );
         })}
       </div>
-      <div style={{ ...fadeUp(0.6), marginTop: 16, padding: "14px 20px", background: C.greenLight, borderRadius: 10, border: `1px solid ${C.green}20`, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+      <div style={{ ...fadeUp(0.6), marginTop: 16, padding: "14px 20px", background: C.greenLight, borderRadius: 10, border: `1px solid ${C.green}20`, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
         <Sparkles size={16} color={C.green} />
-        <span style={{ fontSize: 13, color: C.textSecondary }}>Total investment: </span>
-        <span style={{ fontSize: 13, color: C.green, fontWeight: 800 }}>~$0 in external tooling. </span>
-        <span style={{ fontSize: 13, color: C.textSecondary }}>Built with AI, open-source frameworks, and existing licenses.</span>
+        <span style={{ fontSize: 13, color: C.textSecondary }}>Estimated vendor cost for equivalent capabilities: </span>
+        <span style={{ fontSize: 13, color: C.green, fontWeight: 800 }}>$150K+. </span>
+        <span style={{ fontSize: 13, color: C.textSecondary }}>Our cost: AI + open-source frameworks + existing licenses.</span>
       </div>
     </div>
   );
