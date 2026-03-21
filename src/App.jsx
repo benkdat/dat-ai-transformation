@@ -66,12 +66,12 @@ function BigStat({value,suffix="",prefix="",label,sub,delay=0,accent=C.blue}){
   const [h,setH]=useState(false);
   return (
     <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{
-      ...fadeUp(delay),background:C.card,border:`1px solid ${h?accent+"44":C.border}`,borderRadius:16,padding:"28px 24px",textAlign:"center",
+      ...fadeUp(delay),background:C.card,border:`1px solid ${h?accent+"44":C.border}`,borderRadius:14,padding:"24px 20px",textAlign:"center",
       transition:"all 0.25s",boxShadow:h?`0 8px 30px ${accent}12`:"0 1px 3px rgba(0,0,0,0.04)",position:"relative",overflow:"hidden"}}>
       <div style={{position:"absolute",top:0,left:0,right:0,height:3,background:`linear-gradient(90deg,${accent},${accent}66)`,transform:h?"scaleX(1)":"scaleX(0.3)",transition:"transform 0.4s ease"}}/>
-      <div style={{fontSize:48,fontWeight:900,color:accent,letterSpacing:"-0.03em",lineHeight:1}}><AnimNum value={parseInt(String(value).replace(/\D/g,""))} suffix={suffix} prefix={prefix}/></div>
-      <div style={{fontSize:14,color:C.textPrimary,marginTop:10,fontWeight:700,lineHeight:1.3}}>{label}</div>
-      {sub&&<div style={{fontSize:12,color:C.textMuted,marginTop:4,lineHeight:1.4}}>{sub}</div>}
+      <div style={{fontSize:42,fontWeight:900,color:accent,letterSpacing:"-0.03em",lineHeight:1}}><AnimNum value={parseInt(String(value).replace(/\D/g,""))} suffix={suffix} prefix={prefix}/></div>
+      <div style={{fontSize:13,color:C.textPrimary,marginTop:8,fontWeight:700,lineHeight:1.3}}>{label}</div>
+      {sub&&<div style={{fontSize:11,color:C.textMuted,marginTop:3,lineHeight:1.3}}>{sub}</div>}
     </div>);
 }
 
@@ -195,8 +195,8 @@ function TitleSlide() {
           <div style={{padding:"10px 22px",background:C.white,border:`1.5px solid ${C.border}`,borderRadius:8,fontSize:13,fontWeight:600,color:C.greyDark,display:"flex",alignItems:"center",gap:6}}><Clock size={14}/>March 2026</div>
         </div>
         {/* Mission-connected opening */}
-        <div style={{...fadeUp(0.9),marginTop:36}}>
-          <ImageBanner src="/img/network.jpg" height={110} overlay="linear-gradient(90deg,rgba(0,70,221,0.7),rgba(0,0,0,0.5))">
+        <div style={{...fadeUp(0.9),marginTop:28}}>
+          <ImageBanner src="/img/network.jpg" height={90} overlay="linear-gradient(90deg,rgba(0,70,221,0.7),rgba(0,0,0,0.5))">
             <div style={{textAlign:"center",padding:"0 32px"}}>
               <div style={{fontSize:13,fontWeight:900,color:C.white,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:6}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
               <div style={{fontSize:12,color:"rgba(255,255,255,0.8)",lineHeight:1.5,maxWidth:480}}>Now the People Team is taking the uncertainty out of how we work. Same mission. New frontier.</div>
@@ -213,34 +213,34 @@ function CostSlide() {
     <div>
       <SectionLabel>The Burning Platform</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>80 Hours of Yesterwork</h2>
-      <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:640,lineHeight:1.7,marginBottom:24}}>
+      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:16}}>
         Peter Hinssen calls it <span style={{fontWeight:700,color:C.black}}>yesterwork</span>: outdated processes designed before AI existed that silently eat organizational capacity. These are DAT's numbers.
       </p>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16,marginBottom:24}}>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:12}}>
         <BigStat value="80" suffix=" hrs" label="Admin work per week" sub="Across all People pillars" delay={0.2} accent={C.red}/>
         <BigStat value="110" prefix="$" suffix="K" label="Annual tool spend at risk" sub="TalentWall, Crosschq, scheduling, recognition, reporting" delay={0.3} accent={C.yellowDark}/>
         <BigStat value="40" suffix=" reqs" label="Supported by 3 recruiters" sub="Full-lifecycle. Admin eats capacity meant for candidates" delay={0.4} accent={C.blue}/>
       </div>
       {/* Threads image accent */}
-      <div style={{...fadeUp(0.45),marginBottom:16}}>
-        <ImageBanner src="/img/threads.jpg" height={60} overlay="linear-gradient(90deg,rgba(225,6,0,0.5),rgba(0,0,0,0.6))">
-          <div style={{fontSize:11,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>80 hours/week = 2 full-time teammates doing work AI can handle</div>
+      <div style={{...fadeUp(0.45),marginBottom:10}}>
+        <ImageBanner src="/img/waves.jpg" height={44} overlay="linear-gradient(90deg,rgba(225,6,0,0.55),rgba(0,0,0,0.5))">
+          <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>80 hours/week = 2 full-time teammates doing work AI can handle</div>
         </ImageBanner>
       </div>
-      <div style={{...fadeUp(0.5),background:C.card,borderRadius:14,padding:"24px",border:`1px solid ${C.border}`}}>
-        <div style={{fontSize:11,fontWeight:700,color:C.greyDark,marginBottom:16,textTransform:"uppercase",letterSpacing:"0.12em"}}>Where the 80 Hours Go</div>
+      <div style={{...fadeUp(0.5),background:C.card,borderRadius:12,padding:"16px 18px",border:`1px solid ${C.border}`}}>
+        <div style={{fontSize:10,fontWeight:700,color:C.greyDark,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.12em"}}>Where the 80 Hours Go</div>
         {[{label:"Comp verification & offer matching",hours:25,color:C.blue},{label:"Recruiter scheduling & coordination",hours:20,color:C.red},{label:"Manual reporting & data pulls",hours:15,color:C.yellowDark},{label:"Routing questions to the right person",hours:12,color:C.grey},{label:"Onboarding process management",hours:8,color:C.greyDark}].map((item,i)=>(
-          <div key={i} style={{display:"flex",alignItems:"center",gap:14,marginBottom:10}}>
-            <div style={{width:90,fontSize:12,fontWeight:600,color:C.greyDark,textAlign:"right",flexShrink:0}}>{item.hours} hrs</div>
-            <div style={{flex:1,height:32,background:C.bgAlt,borderRadius:8,overflow:"hidden",position:"relative"}}>
-              <div style={{height:"100%",background:`linear-gradient(90deg,${item.color}18,${item.color}08)`,borderLeft:`3px solid ${item.color}`,width:`${(item.hours/25)*100}%`,borderRadius:8,display:"flex",alignItems:"center",paddingLeft:12,opacity:0,animation:`slideIn 0.6s ease-out ${0.5+i*0.1}s forwards`}}>
-                <span style={{fontSize:12,color:C.textPrimary,fontWeight:500}}>{item.label}</span></div>
+          <div key={i} style={{display:"flex",alignItems:"center",gap:10,marginBottom:5}}>
+            <div style={{width:70,fontSize:11,fontWeight:600,color:C.greyDark,textAlign:"right",flexShrink:0}}>{item.hours} hrs</div>
+            <div style={{flex:1,height:24,background:C.bgAlt,borderRadius:6,overflow:"hidden",position:"relative"}}>
+              <div style={{height:"100%",background:`linear-gradient(90deg,${item.color}18,${item.color}08)`,borderLeft:`3px solid ${item.color}`,width:`${(item.hours/25)*100}%`,borderRadius:6,display:"flex",alignItems:"center",paddingLeft:10,opacity:0,animation:`slideIn 0.6s ease-out ${0.5+i*0.1}s forwards`}}>
+                <span style={{fontSize:11,color:C.textPrimary,fontWeight:500}}>{item.label}</span></div>
             </div>
           </div>
         ))}
-        <div style={{marginTop:14,padding:"14px 18px",background:C.card,borderRadius:8,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.black}`}}>
-          <div style={{fontSize:13,color:C.textPrimary,lineHeight:1.5,fontStyle:"italic"}}>"Yesterwork is the silent killer of organizations. We all have to become yesterwork hunters."</div>
-          <div style={{fontSize:11,color:C.textMuted,marginTop:4}}>— Peter Hinssen, Unleash America 2026</div>
+        <div style={{marginTop:8,padding:"10px 14px",background:C.card,borderRadius:8,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.black}`}}>
+          <div style={{fontSize:12,color:C.textPrimary,lineHeight:1.4,fontStyle:"italic"}}>"Yesterwork is the silent killer of organizations. We all have to become yesterwork hunters."</div>
+          <div style={{fontSize:10,color:C.textMuted,marginTop:2}}>— Peter Hinssen, Unleash America 2026</div>
         </div>
       </div>
     </div>
@@ -264,7 +264,7 @@ function FlywheelSlide() {
       </p>
       {/* Waves image behind flywheel */}
       <div style={{...fadeUp(0.2),position:"relative",borderRadius:14,overflow:"hidden",marginBottom:18}}>
-        <img src="/img/waves.jpg" alt="" style={{width:"100%",height:420,objectFit:"cover",display:"block",borderRadius:14}}/>
+        <img src="/img/waves.jpg" alt="" style={{width:"100%",height:370,objectFit:"cover",display:"block",borderRadius:14}}/>
         <div style={{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(248,249,250,0.92),rgba(248,249,250,0.85))",borderRadius:14}}/>
         <div style={{position:"absolute",inset:0,display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,alignItems:"center",padding:"20px 24px",zIndex:1}}>
           <FlywheelDiagram activeStage={activeStage} setActiveStage={setActiveStage}/>
@@ -318,7 +318,7 @@ function LandscapeSlide() {
       <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:640,lineHeight:1.7,marginBottom:20}}>Self-assessed maturity against industry benchmarks. Ahead where we've built. Behind where we haven't invested yet.</p>
       {/* Graph image accent */}
       <div style={{...fadeUp(0.18),marginBottom:18}}>
-        <ImageBanner src="/img/graph.jpg" height={48} overlay="linear-gradient(90deg,rgba(0,70,221,0.65),rgba(0,0,0,0.5))">
+        <ImageBanner src="/img/waves.jpg" height={42} overlay="linear-gradient(90deg,rgba(0,70,221,0.65),rgba(0,0,0,0.5))">
           <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>2026: The year People functions move from experimentation to infrastructure</div>
         </ImageBanner>
       </div>
@@ -399,7 +399,7 @@ function RoadmapSlide() {
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>12-Month Roadmap</h2>
       <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:600,lineHeight:1.7,marginBottom:16}}>Quick wins first to build trust. Then scale.</p>
       <div style={{...fadeUp(0.18),marginBottom:16}}>
-        <ImageBanner src="/img/volume.jpg" height={48} overlay="linear-gradient(90deg,rgba(0,0,0,0.55),rgba(0,70,221,0.5))">
+        <ImageBanner src="/img/network.jpg" height={42} overlay="linear-gradient(90deg,rgba(0,0,0,0.55),rgba(0,70,221,0.5))">
           <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>Q2 Foundation → Q3 Scale → Q4 Optimize · Phase 1 already underway</div>
         </ImageBanner>
       </div>
@@ -431,7 +431,7 @@ function FluencySlide() {
         </div>
         <div style={{background:C.card,borderRadius:10,padding:"14px 18px",border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.black}`}}>
           <div style={{fontSize:12,color:C.textPrimary,lineHeight:1.5,fontStyle:"italic"}}>"The apprenticeship model broke last summer. It's on us to rebuild it."</div>
-          <div style={{fontSize:10,color:C.textMuted,marginTop:3}}>— Ethan Mollick, Unleash 2026</div>
+          <div style={{fontSize:10,color:C.textMuted,marginTop:3}}>— Ethan Mollick, Co-Intelligence</div>
         </div>
       </div>
       <div style={{...fadeUp(0.25),display:"flex",gap:0,marginBottom:18,background:C.bgAlt,borderRadius:10,padding:3}}>
@@ -485,16 +485,16 @@ function MetricsSlide() {
     <div>
       <SectionLabel>Measurement</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>How We'll Know</h2>
-      <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:600,lineHeight:1.7,marginBottom:18}}>Outcomes, not activity. Every metric maps to a business impact.</p>
-      {/* Volume image accent */}
-      <div style={{...fadeUp(0.18),marginBottom:16}}>
-        <ImageBanner src="/img/volume.jpg" height={48} overlay="linear-gradient(90deg,rgba(0,70,221,0.6),rgba(0,0,0,0.5))">
+      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:600,lineHeight:1.6,marginBottom:12}}>Outcomes, not activity. Every metric maps to a business impact.</p>
+      {/* Image accent */}
+      <div style={{...fadeUp(0.18),marginBottom:12}}>
+        <ImageBanner src="/img/network.jpg" height={38} overlay="linear-gradient(90deg,rgba(0,70,221,0.6),rgba(0,0,0,0.5))">
           <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>People data rivaling financial data in strategic importance</div>
         </ImageBanner>
       </div>
-      <div style={{...fadeUp(0.2),background:C.card,borderRadius:14,padding:"22px 26px",border:`1px solid ${C.border}`,marginBottom:16}}>
-        <div style={{fontSize:11,fontWeight:700,color:C.greyDark,marginBottom:14,textTransform:"uppercase",letterSpacing:"0.12em",display:"flex",alignItems:"center",gap:6}}><TrendingUp size={13}/>Current → EOY 2026</div>
-        <ResponsiveContainer width="100%" height={190}>
+      <div style={{...fadeUp(0.2),background:C.card,borderRadius:12,padding:"16px 22px",border:`1px solid ${C.border}`,marginBottom:12}}>
+        <div style={{fontSize:10,fontWeight:700,color:C.greyDark,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.12em",display:"flex",alignItems:"center",gap:6}}><TrendingUp size={12}/>Current → EOY 2026</div>
+        <ResponsiveContainer width="100%" height={180}>
           <BarChart data={bd} barGap={4}><XAxis dataKey="name" tick={{fill:C.textMuted,fontSize:10}} axisLine={false} tickLine={false} interval={0}/><YAxis tick={{fill:C.textMuted,fontSize:11}} axisLine={false} tickLine={false} domain={[0,100]} tickFormatter={v=>`${v}%`}/>
             <Tooltip contentStyle={{background:C.card,border:`1px solid ${C.border}`,borderRadius:8,fontSize:12,color:C.textPrimary}} formatter={v=>[`${v}%`]}/>
             <Bar dataKey="current" name="Current" radius={[4,4,0,0]} maxBarSize={26}>{bd.map((_,i)=><Cell key={i} fill={C.border}/>)}</Bar>
@@ -506,13 +506,13 @@ function MetricsSlide() {
           <div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:10,height:10,background:C.blue,borderRadius:2}}/><span style={{fontSize:10,color:C.textMuted}}>EOY 2026</span></div>
         </div>
       </div>
-      <div style={{...fadeUp(0.4),display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
+      <div style={{...fadeUp(0.4),display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
         {[{l:"Teammate Confidence",m:"75%",d:"Using AI tools by Q4 2026",c:C.blue,i:Brain},{l:"Decision Speed",m:"Real-time",d:"Quarterly PDF → live dashboards",c:C.greyDark,i:TrendingUp},{l:"Function Multiplier",m:"1→N",d:"Every tool becomes a template",c:C.black,i:Layers}].map((item,i)=>{
           const Icon=item.i;return(
-          <div key={i} style={{background:C.card,borderRadius:12,padding:"16px 14px",border:`1px solid ${C.border}`,borderTop:`2px solid ${item.c}`}}>
-            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}><Icon size={14} color={item.c}/><span style={{fontSize:10,fontWeight:700,color:item.c,textTransform:"uppercase",letterSpacing:"0.05em"}}>{item.l}</span></div>
-            <div style={{fontSize:22,fontWeight:900,color:item.c}}>{item.m}</div>
-            <div style={{fontSize:10,color:C.textMuted,marginTop:3}}>{item.d}</div>
+          <div key={i} style={{background:C.card,borderRadius:10,padding:"12px 12px",border:`1px solid ${C.border}`,borderTop:`2px solid ${item.c}`}}>
+            <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:4}}><Icon size={12} color={item.c}/><span style={{fontSize:9,fontWeight:700,color:item.c,textTransform:"uppercase",letterSpacing:"0.05em"}}>{item.l}</span></div>
+            <div style={{fontSize:20,fontWeight:900,color:item.c}}>{item.m}</div>
+            <div style={{fontSize:9,color:C.textMuted,marginTop:2}}>{item.d}</div>
           </div>);})}
       </div>
     </div>
@@ -526,7 +526,7 @@ function RisksSlide() {
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 8px 0"}}>What Could Go Wrong</h2>
       <p style={{...fadeUp(0.15),fontSize:14,color:C.textSecondary,maxWidth:600,lineHeight:1.7,marginBottom:14}}>Naming risks isn't hedging. It's how we build trust and plan around reality.</p>
       <div style={{...fadeUp(0.18),marginBottom:16}}>
-        <ImageBanner src="/img/threads.jpg" height={44} overlay="linear-gradient(90deg,rgba(225,6,0,0.4),rgba(0,0,0,0.6))">
+        <ImageBanner src="/img/waves.jpg" height={40} overlay="linear-gradient(90deg,rgba(225,6,0,0.4),rgba(0,0,0,0.6))">
           <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>Every risk named. Every mitigation planned.</div>
         </ImageBanner>
       </div>
@@ -549,40 +549,43 @@ function RisksSlide() {
 
 function CloseSlide() {
   const asks=[
-    {ask:"Champion AI fluency from the top",detail:"Jana and Jeff signal this is a DAT priority at All Hands and ELT.",icon:Users},
-    {ask:"Approve UKG module access",detail:"Onboarding, Merit Planning, Performance, Reporting, Integrations.",icon:Monitor},
-    {ask:"Add a standing AI review to XLT or ELT",detail:"Monthly 15-minute slot. Keeps us accountable and keeps you informed.",icon:Clock},
-    {ask:"Include AI fluency in performance expectations",detail:"Builds the muscle company-wide. An investment in how we work.",icon:Brain},
-    {ask:"Sponsor one cross-functional AI sprint",detail:"Small team, one impossible task, 6-week timebox. We prove it scales.",icon:Zap},
+    {ask:"Champion AI fluency from the top",detail:"Jana + Jeff at All Hands and ELT",icon:Users},
+    {ask:"Approve UKG module access",detail:"Onboarding, Merit Planning, Performance, Reporting, Integrations",icon:Monitor},
+    {ask:"Add standing AI review to XLT or ELT",detail:"Monthly 15-min slot. Progress, blockers, decisions",icon:Clock},
+    {ask:"AI fluency in performance expectations",detail:"Company-wide capability, not a checkbox",icon:Brain},
+    {ask:"Sponsor one cross-functional AI sprint",detail:"Small team, impossible task, 6-week timebox",icon:Zap},
   ];
   return (
     <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",minHeight:"100%",textAlign:"center"}}>
       <div style={{maxWidth:720}}>
         <SectionLabel delay={0}>Next Steps</SectionLabel>
-        <h2 style={{...fadeUp(0.1),fontSize:38,fontWeight:900,color:C.black,letterSpacing:"-0.03em",lineHeight:1.1,margin:"8px 0 0 0"}}>The momentum is here.</h2>
-        <h2 style={{...fadeUp(0.2),fontSize:38,fontWeight:900,color:C.blue,letterSpacing:"-0.03em",lineHeight:1.1,margin:"4px 0 0 0"}}>Here's how to accelerate it.</h2>
-        <p style={{...fadeUp(0.3),fontSize:14,color:C.textSecondary,lineHeight:1.7,maxWidth:540,margin:"20px auto 0"}}>
-          We've proven the model works. These five decisions would let us scale what's already working across all of DAT.
+        <h2 style={{...fadeUp(0.1),fontSize:36,fontWeight:900,color:C.black,letterSpacing:"-0.03em",lineHeight:1.1,margin:"6px 0 0 0"}}>The momentum is here.</h2>
+        <h2 style={{...fadeUp(0.2),fontSize:36,fontWeight:900,color:C.blue,letterSpacing:"-0.03em",lineHeight:1.1,margin:"2px 0 0 0"}}>Here's how to accelerate it.</h2>
+        <p style={{...fadeUp(0.3),fontSize:13,color:C.textSecondary,lineHeight:1.6,maxWidth:500,margin:"14px auto 0"}}>
+          We've proven the model works. Five decisions to scale it across DAT.
         </p>
-        <div style={{...fadeUp(0.35),marginTop:24,display:"flex",flexDirection:"column",gap:8,textAlign:"left"}}>
+        <div style={{...fadeUp(0.35),marginTop:16,display:"flex",flexDirection:"column",gap:6,textAlign:"left"}}>
           {asks.map((item,i)=>{const II=item.icon;return(
-            <div key={i} style={{background:C.card,borderRadius:12,padding:"14px 18px",border:`1px solid ${C.border}`,display:"flex",alignItems:"flex-start",gap:12}}>
-              <div style={{width:34,height:34,borderRadius:8,background:C.blueLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:2}}><II size={16} color={C.blue}/></div>
-              <div><div style={{fontSize:13,fontWeight:800,color:C.textPrimary}}>{item.ask}</div><div style={{fontSize:11,color:C.textSecondary,lineHeight:1.5,marginTop:1}}>{item.detail}</div></div>
+            <div key={i} style={{background:C.card,borderRadius:10,padding:"10px 14px",border:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:10}}>
+              <div style={{width:30,height:30,borderRadius:7,background:C.blueLight,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><II size={14} color={C.blue}/></div>
+              <div style={{flex:1,display:"flex",alignItems:"baseline",gap:6,flexWrap:"wrap"}}>
+                <span style={{fontSize:13,fontWeight:800,color:C.textPrimary}}>{item.ask}</span>
+                <span style={{fontSize:11,color:C.textMuted}}>{item.detail}</span>
+              </div>
             </div>);})}
         </div>
-        <div style={{...fadeUp(0.55),marginTop:16,padding:"16px 22px",background:C.card,borderRadius:12,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.black}`,textAlign:"left"}}>
-          <div style={{fontSize:14,color:C.textPrimary,fontWeight:600,lineHeight:1.5,fontStyle:"italic"}}>"The most successful teams I see implementing AI are when you give a small cross-functional team an impossible task and see how far they get."</div>
-          <div style={{fontSize:11,color:C.textMuted,marginTop:5}}>— Ethan Mollick, Wharton · Unleash America 2026</div>
+        <div style={{...fadeUp(0.5),marginTop:12,padding:"12px 18px",background:C.card,borderRadius:10,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.black}`,textAlign:"left"}}>
+          <div style={{fontSize:13,color:C.textPrimary,fontWeight:600,lineHeight:1.4,fontStyle:"italic"}}>"The most successful teams I see implementing AI are when you give a small cross-functional team an impossible task and see how far they get."</div>
+          <div style={{fontSize:10,color:C.textMuted,marginTop:3}}>— Ethan Mollick, Co-Intelligence</div>
         </div>
-        {/* Mission closing — bookends the opening */}
-        <div style={{...fadeUp(0.65),marginTop:24}}>
-          <ImageBanner src="/img/landscape.jpg" height={140} overlay="linear-gradient(135deg,rgba(0,70,221,0.75),rgba(0,0,0,0.55))">
-            <div style={{textAlign:"center",padding:"0 40px"}}>
-              <div style={{fontSize:14,fontWeight:900,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:8}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
-              <div style={{fontSize:20,fontWeight:900,color:C.white,lineHeight:1.3,letterSpacing:"-0.01em",marginBottom:8}}>Now we take the uncertainty out of how we work.</div>
-              <div style={{width:40,height:2,background:`linear-gradient(90deg,${C.white},rgba(255,255,255,0.3))`,borderRadius:1,margin:"0 auto 10px"}}/>
-              <div style={{fontSize:11,color:"rgba(255,255,255,0.7)",letterSpacing:"0.05em"}}>DAT Freight & Analytics · People Team · Talent Operations · March 2026</div>
+        {/* Mission closing */}
+        <div style={{...fadeUp(0.6),marginTop:16}}>
+          <ImageBanner src="/img/waves.jpg" height={110} overlay="linear-gradient(135deg,rgba(0,70,221,0.75),rgba(0,0,0,0.55))">
+            <div style={{textAlign:"center",padding:"0 32px"}}>
+              <div style={{fontSize:12,fontWeight:900,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:6}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
+              <div style={{fontSize:18,fontWeight:900,color:C.white,lineHeight:1.3,letterSpacing:"-0.01em",marginBottom:6}}>Now we take the uncertainty out of how we work.</div>
+              <div style={{width:40,height:2,background:`linear-gradient(90deg,${C.white},rgba(255,255,255,0.3))`,borderRadius:1,margin:"0 auto 6px"}}/>
+              <div style={{fontSize:10,color:"rgba(255,255,255,0.7)",letterSpacing:"0.05em"}}>DAT Freight & Analytics · People Team · March 2026</div>
             </div>
           </ImageBanner>
         </div>
