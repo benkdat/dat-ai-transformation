@@ -213,21 +213,26 @@ function PeopleOpsIcon({size=40}) {
 // ── SLIDES ──
 
 function TitleSlide() {
+  const [h1,setH1]=useState(false);
+  const [h2,setH2]=useState(false);
   return (
     <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",minHeight:"100%",textAlign:"center"}}>
       <div style={{maxWidth:800}}>
-        <div style={{...fadeUp(0),display:"inline-flex",alignItems:"center",gap:14,marginBottom:32}}>
-          <PeopleOpsIcon size={48}/>
-          <div style={{fontSize:12,fontWeight:700,color:C.grey,letterSpacing:"0.1em",textTransform:"uppercase"}}>DAT Freight & Analytics · People Team</div>
+        <h1 style={{...fadeUp(0.1),fontSize:"clamp(36px,5vw,58px)",fontWeight:900,color:C.blue,lineHeight:1.08,letterSpacing:"-0.03em",margin:0}}>AI Fluency as DAT's<br/>Competitive Edge</h1>
+        <p style={{...fadeUp(0.3),fontSize:16,color:C.textSecondary,marginTop:24,lineHeight:1.7,maxWidth:520,margin:"24px auto 0"}}>How the People Team is challenging the status quo, eliminating yesterwork, and building the AI muscle that makes DAT faster than everyone else.</p>
+        <div style={{...fadeUp(0.5),display:"flex",gap:16,justifyContent:"center",marginTop:36}}>
+          <div onMouseEnter={()=>setH1(true)} onMouseLeave={()=>setH1(false)}
+            style={{width:150,height:150,borderRadius:18,background:C.black,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",transition:"all 0.3s",transform:h1?"scale(1.04)":"scale(1)",boxShadow:h1?"0 12px 40px rgba(0,0,0,0.25)":"0 4px 16px rgba(0,0,0,0.12)"}}>
+            <img src="/img/dat-logo.png" alt="DAT Freight & Analytics" style={{width:"80%",height:"auto",objectFit:"contain"}}/>
+          </div>
+          <div onMouseEnter={()=>setH2(true)} onMouseLeave={()=>setH2(false)}
+            style={{width:150,height:150,borderRadius:18,overflow:"hidden",transition:"all 0.3s",transform:h2?"scale(1.04)":"scale(1)",boxShadow:h2?"0 12px 40px rgba(0,70,221,0.2)":"0 4px 16px rgba(0,0,0,0.12)"}}>
+            <PeopleOpsIcon size={150}/>
+          </div>
         </div>
-        <h1 style={{...fadeUp(0.15),fontSize:"clamp(36px,5vw,58px)",fontWeight:900,color:C.blue,lineHeight:1.08,letterSpacing:"-0.03em",margin:0}}>AI Fluency as DAT's<br/>Competitive Edge</h1>
-        <p style={{...fadeUp(0.4),fontSize:16,color:C.textSecondary,marginTop:24,lineHeight:1.7,maxWidth:520,margin:"24px auto 0"}}>How the People Team is challenging the status quo, eliminating yesterwork, and building the AI muscle that makes DAT faster than everyone else.</p>
-        <div style={{...fadeUp(0.6),display:"flex",gap:12,justifyContent:"center",marginTop:32}}>
-          <div style={{padding:"10px 22px",background:C.blue,borderRadius:8,fontSize:13,fontWeight:700,color:C.white,display:"flex",alignItems:"center",gap:6}}><Sparkles size={14}/>Talent Operations</div>
-          <div style={{padding:"10px 22px",background:C.white,border:`1.5px solid ${C.border}`,borderRadius:8,fontSize:13,fontWeight:600,color:C.greyDark,display:"flex",alignItems:"center",gap:6}}><Clock size={14}/>March 2026</div>
-        </div>
-        <div style={{...fadeUp(0.8),marginTop:28}}>
-          <ImageBanner src="/img/network.jpg" height={90} overlay="linear-gradient(90deg,rgba(0,70,221,0.7),rgba(0,0,0,0.5))">
+        <div style={{...fadeUp(0.65),marginTop:10,fontSize:11,color:C.textMuted,fontWeight:600,letterSpacing:"0.05em"}}>March 2026</div>
+        <div style={{...fadeUp(0.75),marginTop:24}}>
+          <ImageBanner src="/img/network.jpg" height={86} overlay="linear-gradient(90deg,rgba(0,70,221,0.7),rgba(0,0,0,0.5))">
             <div style={{textAlign:"center",padding:"0 32px"}}>
               <div style={{fontSize:13,fontWeight:900,color:C.white,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:6}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
               <div style={{fontSize:12,color:"rgba(255,255,255,0.8)",lineHeight:1.5,maxWidth:480}}>Now the People Team is taking the uncertainty out of how we work. Same mission. New frontier.</div>
@@ -659,7 +664,9 @@ export default function DATAITransformation() {
       <style>{keyframes}</style><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 24px",borderBottom:`1px solid ${C.border}`,flexShrink:0,background:C.white,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <PeopleOpsIcon size={28}/>
+          <div style={{width:28,height:28,borderRadius:6,background:C.black,overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <img src="/img/dat-logo.png" alt="DAT" style={{width:"85%",height:"auto"}}/>
+          </div>
           <span style={{fontSize:13,fontWeight:700,color:C.greyDark}}>AI Fluency · The Competitive Talent Edge</span>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
