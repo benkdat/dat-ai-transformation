@@ -178,40 +178,36 @@ function PeopleOpsIcon({size=40,variant="dark"}) {
   const fg=variant==="light"?"#0046DD":"#0056FF";
   const txt=variant==="light"?"#111827":"#FFFFFF";
   const dashC=variant==="light"?"#0046DD":"#FFFFFF";
-  const dashO=variant==="light"?0.2:0.3;
-  const subO=variant==="light"?0.7:0.85;
+  const dashO=variant==="light"?0.2:0.4;
   return (
     <svg width={size} height={size} viewBox="0 0 200 200" style={{display:"block",flexShrink:0}}>
       <rect x="0" y="0" width="200" height="200" rx="28" fill={bg}/>
-      <path d="M30 192 L88 55 L112 55 L170 192" fill="none" stroke={fg} strokeWidth="2" opacity="0.35"/>
-      <path d="M45 192 L91 55 L109 55 L155 192" fill={fg} opacity="0.03"/>
-      <line x1="96" y1="130" x2="102" y2="65" stroke={dashC} strokeWidth="0.8" strokeDasharray="3 5" opacity={dashO}/>
-      <circle cx="100" cy="28" r="13" fill={fg}/>
-      <path d={`M82 50 Q82 38, 100 38 Q118 38, 118 50`} fill={fg}/>
-      <line x1="86" y1="42" x2="48" y2="34" stroke={fg} strokeWidth="0.8" opacity="0.5"/>
-      <circle cx="44" cy="33" r="3.5" fill="none" stroke={fg} strokeWidth="0.8" opacity="0.6"/>
-      <circle cx="44" cy="33" r="1.2" fill={fg} opacity="0.6"/>
-      <line x1="114" y1="42" x2="152" y2="34" stroke={fg} strokeWidth="0.8" opacity="0.5"/>
-      <circle cx="156" cy="33" r="3.5" fill="none" stroke={fg} strokeWidth="0.8" opacity="0.6"/>
-      <circle cx="156" cy="33" r="1.2" fill={fg} opacity="0.6"/>
-      <line x1="82" y1="46" x2="34" y2="62" stroke={fg} strokeWidth="0.6" opacity="0.35"/>
-      <circle cx="30" cy="64" r="3" fill="none" stroke={fg} strokeWidth="0.7" opacity="0.45"/>
-      <circle cx="30" cy="64" r="1" fill={fg} opacity="0.45"/>
-      <line x1="118" y1="46" x2="166" y2="62" stroke={fg} strokeWidth="0.6" opacity="0.35"/>
-      <circle cx="170" cy="64" r="3" fill="none" stroke={fg} strokeWidth="0.7" opacity="0.45"/>
-      <circle cx="170" cy="64" r="1" fill={fg} opacity="0.45"/>
-      <line x1="84" y1="34" x2="56" y2="14" stroke={fg} strokeWidth="0.5" opacity="0.25"/>
-      <circle cx="53" cy="12" r="2.5" fill="none" stroke={fg} strokeWidth="0.6" opacity="0.35"/>
-      <circle cx="53" cy="12" r="0.8" fill={fg} opacity="0.35"/>
-      <line x1="116" y1="34" x2="144" y2="14" stroke={fg} strokeWidth="0.5" opacity="0.25"/>
-      <circle cx="147" cy="12" r="2.5" fill="none" stroke={fg} strokeWidth="0.6" opacity="0.35"/>
-      <circle cx="147" cy="12" r="0.8" fill={fg} opacity="0.35"/>
-      <line x1="100" y1="22" x2="100" y2="10" stroke={fg} strokeWidth="0.5" opacity="0.3"/>
-      <circle cx="100" cy="7" r="2.5" fill="none" stroke={fg} strokeWidth="0.6" opacity="0.4"/>
-      <circle cx="100" cy="7" r="0.8" fill={fg} opacity="0.4"/>
-      <text x="100" y="136" textAnchor="middle" fill={txt} fontFamily="Inter, system-ui" fontSize="16" fontWeight="900" letterSpacing="0.06em">PEOPLE</text>
-      <text x="100" y="156" textAnchor="middle" fill={txt} fontFamily="Inter, system-ui" fontSize="16" fontWeight="900" letterSpacing="0.06em">OPS</text>
-      <text x="100" y="178" textAnchor="middle" fill={fg} fontFamily="Inter, system-ui" fontSize="10" fontWeight="900" letterSpacing="0.1em" opacity={subO}>DAT FREIGHT &amp; ANALYTICS</text>
+      {/* Road — wide, unbroken, edge to edge */}
+      <line x1="22" y1="200" x2="86" y2="40" stroke={fg} strokeWidth="3" opacity={variant==="light"?0.4:0.6}/>
+      <line x1="178" y1="200" x2="114" y2="40" stroke={fg} strokeWidth="3" opacity={variant==="light"?0.4:0.6}/>
+      <line x1="97" y1="148" x2="100" y2="52" stroke={dashC} strokeWidth="1.2" strokeDasharray="4 6" opacity={dashO}/>
+      {/* Person at apex */}
+      <circle cx="100" cy="22" r="14" fill={fg}/>
+      <path d="M80 44 Q80 32, 100 32 Q120 32, 120 44" fill={fg}/>
+      {/* Network nodes */}
+      <line x1="84" y1="36" x2="44" y2="24" stroke={fg} strokeWidth="1.5" opacity={variant==="light"?0.45:0.65}/>
+      <circle cx="40" cy="23" r="4" fill="none" stroke={fg} strokeWidth="1.2" opacity={variant==="light"?0.5:0.7}/>
+      <circle cx="40" cy="23" r="1.5" fill={fg} opacity={variant==="light"?0.5:0.7}/>
+      <line x1="116" y1="36" x2="156" y2="24" stroke={fg} strokeWidth="1.5" opacity={variant==="light"?0.45:0.65}/>
+      <circle cx="160" cy="23" r="4" fill="none" stroke={fg} strokeWidth="1.2" opacity={variant==="light"?0.5:0.7}/>
+      <circle cx="160" cy="23" r="1.5" fill={fg} opacity={variant==="light"?0.5:0.7}/>
+      <line x1="80" y1="40" x2="30" y2="56" stroke={fg} strokeWidth="1" opacity={variant==="light"?0.3:0.4}/>
+      <circle cx="26" cy="58" r="3" fill="none" stroke={fg} strokeWidth="1" opacity={variant==="light"?0.35:0.5}/>
+      <circle cx="26" cy="58" r="1" fill={fg} opacity={variant==="light"?0.35:0.5}/>
+      <line x1="120" y1="40" x2="170" y2="56" stroke={fg} strokeWidth="1" opacity={variant==="light"?0.3:0.4}/>
+      <circle cx="174" cy="58" r="3" fill="none" stroke={fg} strokeWidth="1" opacity={variant==="light"?0.35:0.5}/>
+      <circle cx="174" cy="58" r="1" fill={fg} opacity={variant==="light"?0.35:0.5}/>
+      {/* PEOPLE TEAM */}
+      <text x="100" y="100" textAnchor="middle" fill={txt} fontFamily="Inter, system-ui" fontSize="20" fontWeight="900" letterSpacing="0.06em">PEOPLE</text>
+      <text x="100" y="124" textAnchor="middle" fill={txt} fontFamily="Inter, system-ui" fontSize="20" fontWeight="900" letterSpacing="0.06em">TEAM</text>
+      {/* DAT logo at base */}
+      {variant==="light"&&<rect x="50" y="156" width="100" height="28" rx="6" fill="#000000"/>}
+      <image href="/img/dat-logo.png" x="55" y="158" width="90" height="24"/>
     </svg>
   );
 }
