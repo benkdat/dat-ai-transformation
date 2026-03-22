@@ -172,14 +172,52 @@ function FlywheelDiagram({activeStage,setActiveStage}) {
   );
 }
 
+// ── People Ops Icon (The Horizon) ──
+function PeopleOpsIcon({size=40}) {
+  const s=size/200;
+  return (
+    <svg width={size} height={size} viewBox="0 0 200 200" style={{display:"block",flexShrink:0}}>
+      <rect x="0" y="0" width="200" height="200" rx="28" fill="#000000"/>
+      <path d="M42 150 L90 58 L110 58 L158 150" fill="none" stroke="#0056FF" strokeWidth="2" opacity="0.4"/>
+      <path d="M55 150 L93 58 L107 58 L145 150" fill="#0056FF" opacity="0.03"/>
+      <line x1="96" y1="120" x2="102" y2="68" stroke="#FFFFFF" strokeWidth="0.8" strokeDasharray="3 5" opacity="0.35"/>
+      <circle cx="100" cy="30" r="12" fill="#0056FF"/>
+      <path d="M84 50 Q84 40, 100 40 Q116 40, 116 50" fill="#0056FF"/>
+      <line x1="88" y1="44" x2="52" y2="38" stroke="#0056FF" strokeWidth="0.8" opacity="0.5"/>
+      <circle cx="48" cy="37" r="3.5" fill="none" stroke="#0056FF" strokeWidth="0.8" opacity="0.6"/>
+      <circle cx="48" cy="37" r="1.2" fill="#0056FF" opacity="0.6"/>
+      <line x1="112" y1="44" x2="148" y2="38" stroke="#0056FF" strokeWidth="0.8" opacity="0.5"/>
+      <circle cx="152" cy="37" r="3.5" fill="none" stroke="#0056FF" strokeWidth="0.8" opacity="0.6"/>
+      <circle cx="152" cy="37" r="1.2" fill="#0056FF" opacity="0.6"/>
+      <line x1="84" y1="48" x2="38" y2="65" stroke="#0056FF" strokeWidth="0.6" opacity="0.35"/>
+      <circle cx="34" cy="67" r="3" fill="none" stroke="#0056FF" strokeWidth="0.7" opacity="0.45"/>
+      <circle cx="34" cy="67" r="1" fill="#0056FF" opacity="0.45"/>
+      <line x1="116" y1="48" x2="162" y2="65" stroke="#0056FF" strokeWidth="0.6" opacity="0.35"/>
+      <circle cx="166" cy="67" r="3" fill="none" stroke="#0056FF" strokeWidth="0.7" opacity="0.45"/>
+      <circle cx="166" cy="67" r="1" fill="#0056FF" opacity="0.45"/>
+      <line x1="86" y1="36" x2="58" y2="18" stroke="#0056FF" strokeWidth="0.5" opacity="0.25"/>
+      <circle cx="55" cy="16" r="2.5" fill="none" stroke="#0056FF" strokeWidth="0.6" opacity="0.35"/>
+      <circle cx="55" cy="16" r="0.8" fill="#0056FF" opacity="0.35"/>
+      <line x1="114" y1="36" x2="142" y2="18" stroke="#0056FF" strokeWidth="0.5" opacity="0.25"/>
+      <circle cx="145" cy="16" r="2.5" fill="none" stroke="#0056FF" strokeWidth="0.6" opacity="0.35"/>
+      <circle cx="145" cy="16" r="0.8" fill="#0056FF" opacity="0.35"/>
+      <line x1="100" y1="26" x2="100" y2="14" stroke="#0056FF" strokeWidth="0.5" opacity="0.3"/>
+      <circle cx="100" cy="11" r="2.5" fill="none" stroke="#0056FF" strokeWidth="0.6" opacity="0.4"/>
+      <circle cx="100" cy="11" r="0.8" fill="#0056FF" opacity="0.4"/>
+      <text x="100" y="172" textAnchor="middle" fill="#FFFFFF" fontFamily="Inter, system-ui" fontSize="11" fontWeight="900" letterSpacing="0.08em">PEOPLE OPS</text>
+      <text x="100" y="188" textAnchor="middle" fill="#0056FF" fontFamily="Inter, system-ui" fontSize="7" fontWeight="700" letterSpacing="0.18em" opacity="0.6">DAT FREIGHT &amp; ANALYTICS</text>
+    </svg>
+  );
+}
+
 // ── SLIDES ──
 
 function TitleSlide() {
   return (
     <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",minHeight:"100%",textAlign:"center"}}>
       <div style={{maxWidth:800}}>
-        <div style={{...fadeUp(0),display:"inline-flex",alignItems:"center",gap:10,marginBottom:32}}>
-          <div style={{width:36,height:36,background:C.blue,borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,fontWeight:900,color:C.white}}>D</div>
+        <div style={{...fadeUp(0),display:"inline-flex",alignItems:"center",gap:14,marginBottom:32}}>
+          <PeopleOpsIcon size={48}/>
           <div style={{fontSize:12,fontWeight:700,color:C.grey,letterSpacing:"0.1em",textTransform:"uppercase"}}>DAT Freight & Analytics · People Team</div>
         </div>
         <h1 style={{...fadeUp(0.15),fontSize:"clamp(36px,5vw,58px)",fontWeight:900,color:C.blue,lineHeight:1.08,letterSpacing:"-0.03em",margin:0}}>AI Fluency as DAT's<br/>Competitive Edge</h1>
@@ -564,8 +602,12 @@ function CloseSlide() {
               </div>
             </div>);})}
         </div>
+        {/* People Ops mark */}
+        <div style={{...fadeUp(0.5),marginTop:16,display:"flex",justifyContent:"center"}}>
+          <PeopleOpsIcon size={64}/>
+        </div>
         {/* Mission closing */}
-        <div style={{...fadeUp(0.55),marginTop:16}}>
+        <div style={{...fadeUp(0.55),marginTop:12}}>
           <ImageBanner src="/img/waves.jpg" height={110} overlay="linear-gradient(135deg,rgba(0,70,221,0.75),rgba(0,0,0,0.55))">
             <div style={{textAlign:"center",padding:"0 32px"}}>
               <div style={{fontSize:12,fontWeight:900,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:6}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
@@ -617,7 +659,7 @@ export default function DATAITransformation() {
       <style>{keyframes}</style><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 24px",borderBottom:`1px solid ${C.border}`,flexShrink:0,background:C.white,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:28,height:28,background:C.blue,borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:C.white}}>D</div>
+          <PeopleOpsIcon size={28}/>
           <span style={{fontSize:13,fontWeight:700,color:C.greyDark}}>AI Fluency · The Competitive Talent Edge</span>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
