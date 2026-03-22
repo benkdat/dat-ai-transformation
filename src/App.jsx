@@ -256,8 +256,8 @@ function TitleSlide() {
             </div>
           </div>
         </div>
-        <div style={{...fadeUp(0.5),marginTop:20,fontSize:11,color:C.textMuted,fontWeight:600,letterSpacing:"0.05em"}}>March 2026</div>
       </div>
+      <div style={{position:"absolute",bottom:12,left:0,right:0,textAlign:"center",fontSize:11,color:C.textMuted,fontWeight:600,letterSpacing:"0.05em",opacity:0,animation:"fadeUp 0.5s ease-out 0.6s forwards"}}>March 2026</div>
     </div>
   );
 }
@@ -627,12 +627,13 @@ function CloseSlide() {
         </div>
         {/* Mission closing */}
         <div style={{...fadeUp(0.5),marginTop:16}}>
-          <ImageBanner src="/img/waves.jpg" height={110} overlay="linear-gradient(135deg,rgba(0,70,221,0.75),rgba(0,0,0,0.55))">
-            <div style={{textAlign:"center",padding:"0 32px"}}>
-              <div style={{fontSize:12,fontWeight:900,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:6}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
-              <div style={{fontSize:18,fontWeight:900,color:C.white,lineHeight:1.3,letterSpacing:"-0.01em",marginBottom:6}}>Now we take the uncertainty out of how we work.</div>
-              <div style={{width:40,height:2,background:`linear-gradient(90deg,${C.white},rgba(255,255,255,0.3))`,borderRadius:1,margin:"0 auto 6px"}}/>
-              <div style={{fontSize:10,color:"rgba(255,255,255,0.7)",letterSpacing:"0.05em"}}>DAT Freight & Analytics · People Team · March 2026</div>
+          <ImageBanner src="/img/waves.jpg" height={140} overlay="linear-gradient(135deg,rgba(0,70,221,0.75),rgba(0,0,0,0.55))">
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:24,padding:"0 32px",width:"100%"}}>
+              <div style={{textAlign:"center",flex:1}}>
+                <div style={{fontSize:12,fontWeight:900,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:6}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
+                <div style={{fontSize:18,fontWeight:900,color:C.white,lineHeight:1.3,letterSpacing:"-0.01em"}}>Now we take the uncertainty out of how we work.</div>
+              </div>
+              <PeopleOpsIcon size={64}/>
             </div>
           </ImageBanner>
         </div>
