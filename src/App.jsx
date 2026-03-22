@@ -219,30 +219,36 @@ function PeopleOpsIcon({size=40}) {
 
 function TitleSlide() {
   return (
-    <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",minHeight:"100%",textAlign:"center"}}>
-      <div style={{maxWidth:800}}>
-        {/* DAT logo next to headline, spanning both lines */}
-        <div style={{...fadeUp(0.1),display:"flex",alignItems:"center",justifyContent:"center",gap:24}}>
-          <div style={{width:100,height:100,borderRadius:16,background:C.black,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",flexShrink:0,boxShadow:"0 4px 20px rgba(0,0,0,0.15)"}}>
-            <img src="/img/dat-logo.png" alt="DAT" style={{width:"80%",height:"auto",objectFit:"contain"}}/>
+    <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",minHeight:"100%",textAlign:"center",position:"relative"}}>
+      {/* Full background image */}
+      <div style={{position:"absolute",inset:0,overflow:"hidden",borderRadius:14}}>
+        <img src="/img/waves.jpg" alt="" style={{width:"100%",height:"100%",objectFit:"cover",opacity:0.12}}/>
+      </div>
+      <div style={{maxWidth:800,position:"relative",zIndex:1}}>
+        {/* Black hero box with DAT logo + title */}
+        <div style={{...fadeUp(0.1),background:C.black,borderRadius:20,padding:"40px 48px 36px",boxShadow:"0 8px 40px rgba(0,0,0,0.2)",overflow:"hidden",position:"relative"}}>
+          {/* Subtle image texture inside black box */}
+          <div style={{position:"absolute",inset:0,overflow:"hidden",borderRadius:20}}>
+            <img src="/img/network.jpg" alt="" style={{width:"100%",height:"100%",objectFit:"cover",opacity:0.08}}/>
           </div>
-          <div style={{textAlign:"left"}}>
-            <h1 style={{fontSize:"clamp(34px,4.5vw,52px)",fontWeight:900,color:C.black,lineHeight:1.08,letterSpacing:"-0.03em",margin:0}}>AI Fluency as DAT's</h1>
-            <h1 style={{fontSize:"clamp(34px,4.5vw,52px)",fontWeight:900,color:C.blue,lineHeight:1.08,letterSpacing:"-0.03em",margin:0}}>Competitive Edge</h1>
+          <div style={{position:"relative",zIndex:1}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:20,marginBottom:24}}>
+              <img src="/img/dat-logo.png" alt="DAT Freight & Analytics" style={{height:28}}/>
+              <div style={{width:1,height:24,background:"rgba(255,255,255,0.15)"}}/>
+              <PeopleOpsIcon size={48}/>
+            </div>
+            <h1 style={{fontSize:"clamp(32px,4.5vw,50px)",fontWeight:900,color:C.white,lineHeight:1.1,letterSpacing:"-0.03em",margin:0}}>AI Fluency as DAT's</h1>
+            <h1 style={{fontSize:"clamp(32px,4.5vw,50px)",fontWeight:900,color:"#0056FF",lineHeight:1.1,letterSpacing:"-0.03em",margin:"2px 0 0 0"}}>Competitive Edge</h1>
+            <p style={{fontSize:14,color:"rgba(255,255,255,0.6)",marginTop:18,lineHeight:1.6,maxWidth:480,margin:"18px auto 0"}}>How the People Team is challenging the status quo, eliminating yesterwork, and building the AI muscle that makes DAT faster than everyone else.</p>
           </div>
         </div>
-        <p style={{...fadeUp(0.3),fontSize:16,color:C.textSecondary,marginTop:24,lineHeight:1.7,maxWidth:520,margin:"24px auto 0"}}>How the People Team is challenging the status quo, eliminating yesterwork, and building the AI muscle that makes DAT faster than everyone else.</p>
-        {/* People Ops icon standalone above date */}
-        <div style={{...fadeUp(0.5),marginTop:32,display:"flex",flexDirection:"column",alignItems:"center",gap:10}}>
-          <PeopleOpsIcon size={120}/>
-          <div style={{fontSize:11,color:C.textMuted,fontWeight:600,letterSpacing:"0.05em"}}>March 2026</div>
-        </div>
-        <div style={{...fadeUp(0.7),marginTop:24}}>
-          <ImageBanner src="/img/network.jpg" height={86} overlay="linear-gradient(90deg,rgba(0,70,221,0.7),rgba(0,0,0,0.5))">
-            <div style={{textAlign:"center",padding:"0 32px"}}>
-              <div style={{fontSize:13,fontWeight:900,color:C.white,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:6}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
-              <div style={{fontSize:12,color:"rgba(255,255,255,0.75)",lineHeight:1.5}}>Now the People Team is taking the uncertainty out of how we work.</div>
-              <div style={{fontSize:13,fontWeight:700,color:C.white,marginTop:4,whiteSpace:"nowrap"}}>Same mission. New frontier.</div>
+        <div style={{...fadeUp(0.4),marginTop:14,fontSize:11,color:C.textMuted,fontWeight:600,letterSpacing:"0.05em"}}>March 2026</div>
+        <div style={{...fadeUp(0.65),marginTop:20}}>
+          <ImageBanner src="/img/network.jpg" height={76} overlay="linear-gradient(90deg,rgba(0,70,221,0.7),rgba(0,0,0,0.5))">
+            <div style={{textAlign:"center",padding:"0 28px"}}>
+              <div style={{fontSize:12,fontWeight:900,color:C.white,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:4}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
+              <div style={{fontSize:11,color:"rgba(255,255,255,0.75)",lineHeight:1.5}}>Now the People Team is taking the uncertainty out of how we work.</div>
+              <div style={{fontSize:12,fontWeight:700,color:C.white,marginTop:3,whiteSpace:"nowrap"}}>Same mission. New frontier.</div>
             </div>
           </ImageBanner>
         </div>
