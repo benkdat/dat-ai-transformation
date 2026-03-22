@@ -174,38 +174,43 @@ function FlywheelDiagram({activeStage,setActiveStage}) {
 
 // ── People Ops Icon (The Horizon) ──
 function PeopleOpsIcon({size=40}) {
-  const s=size/200;
   return (
     <svg width={size} height={size} viewBox="0 0 200 200" style={{display:"block",flexShrink:0}}>
       <rect x="0" y="0" width="200" height="200" rx="28" fill="#000000"/>
-      <path d="M42 150 L90 58 L110 58 L158 150" fill="none" stroke="#0056FF" strokeWidth="2" opacity="0.4"/>
-      <path d="M55 150 L93 58 L107 58 L145 150" fill="#0056FF" opacity="0.03"/>
-      <line x1="96" y1="120" x2="102" y2="68" stroke="#FFFFFF" strokeWidth="0.8" strokeDasharray="3 5" opacity="0.35"/>
-      <circle cx="100" cy="30" r="12" fill="#0056FF"/>
-      <path d="M84 50 Q84 40, 100 40 Q116 40, 116 50" fill="#0056FF"/>
-      <line x1="88" y1="44" x2="52" y2="38" stroke="#0056FF" strokeWidth="0.8" opacity="0.5"/>
-      <circle cx="48" cy="37" r="3.5" fill="none" stroke="#0056FF" strokeWidth="0.8" opacity="0.6"/>
-      <circle cx="48" cy="37" r="1.2" fill="#0056FF" opacity="0.6"/>
-      <line x1="112" y1="44" x2="148" y2="38" stroke="#0056FF" strokeWidth="0.8" opacity="0.5"/>
-      <circle cx="152" cy="37" r="3.5" fill="none" stroke="#0056FF" strokeWidth="0.8" opacity="0.6"/>
-      <circle cx="152" cy="37" r="1.2" fill="#0056FF" opacity="0.6"/>
-      <line x1="84" y1="48" x2="38" y2="65" stroke="#0056FF" strokeWidth="0.6" opacity="0.35"/>
-      <circle cx="34" cy="67" r="3" fill="none" stroke="#0056FF" strokeWidth="0.7" opacity="0.45"/>
-      <circle cx="34" cy="67" r="1" fill="#0056FF" opacity="0.45"/>
-      <line x1="116" y1="48" x2="162" y2="65" stroke="#0056FF" strokeWidth="0.6" opacity="0.35"/>
-      <circle cx="166" cy="67" r="3" fill="none" stroke="#0056FF" strokeWidth="0.7" opacity="0.45"/>
-      <circle cx="166" cy="67" r="1" fill="#0056FF" opacity="0.45"/>
-      <line x1="86" y1="36" x2="58" y2="18" stroke="#0056FF" strokeWidth="0.5" opacity="0.25"/>
-      <circle cx="55" cy="16" r="2.5" fill="none" stroke="#0056FF" strokeWidth="0.6" opacity="0.35"/>
-      <circle cx="55" cy="16" r="0.8" fill="#0056FF" opacity="0.35"/>
-      <line x1="114" y1="36" x2="142" y2="18" stroke="#0056FF" strokeWidth="0.5" opacity="0.25"/>
-      <circle cx="145" cy="16" r="2.5" fill="none" stroke="#0056FF" strokeWidth="0.6" opacity="0.35"/>
-      <circle cx="145" cy="16" r="0.8" fill="#0056FF" opacity="0.35"/>
-      <line x1="100" y1="26" x2="100" y2="14" stroke="#0056FF" strokeWidth="0.5" opacity="0.3"/>
-      <circle cx="100" cy="11" r="2.5" fill="none" stroke="#0056FF" strokeWidth="0.6" opacity="0.4"/>
-      <circle cx="100" cy="11" r="0.8" fill="#0056FF" opacity="0.4"/>
-      <text x="100" y="172" textAnchor="middle" fill="#FFFFFF" fontFamily="Inter, system-ui" fontSize="11" fontWeight="900" letterSpacing="0.08em">PEOPLE OPS</text>
-      <text x="100" y="188" textAnchor="middle" fill="#0056FF" fontFamily="Inter, system-ui" fontSize="7" fontWeight="700" letterSpacing="0.18em" opacity="0.6">DAT FREIGHT &amp; ANALYTICS</text>
+      {/* Road — wider spread, text lives inside */}
+      <path d="M30 192 L88 55 L112 55 L170 192" fill="none" stroke="#0056FF" strokeWidth="2" opacity="0.35"/>
+      <path d="M45 192 L91 55 L109 55 L155 192" fill="#0056FF" opacity="0.03"/>
+      {/* Center dashes */}
+      <line x1="96" y1="130" x2="102" y2="65" stroke="#FFFFFF" strokeWidth="0.8" strokeDasharray="3 5" opacity="0.3"/>
+      {/* Person */}
+      <circle cx="100" cy="28" r="13" fill="#0056FF"/>
+      <path d="M82 50 Q82 38, 100 38 Q118 38, 118 50" fill="#0056FF"/>
+      {/* Network nodes — 7 radiating from person */}
+      <line x1="86" y1="42" x2="48" y2="34" stroke="#0056FF" strokeWidth="0.8" opacity="0.5"/>
+      <circle cx="44" cy="33" r="3.5" fill="none" stroke="#0056FF" strokeWidth="0.8" opacity="0.6"/>
+      <circle cx="44" cy="33" r="1.2" fill="#0056FF" opacity="0.6"/>
+      <line x1="114" y1="42" x2="152" y2="34" stroke="#0056FF" strokeWidth="0.8" opacity="0.5"/>
+      <circle cx="156" cy="33" r="3.5" fill="none" stroke="#0056FF" strokeWidth="0.8" opacity="0.6"/>
+      <circle cx="156" cy="33" r="1.2" fill="#0056FF" opacity="0.6"/>
+      <line x1="82" y1="46" x2="34" y2="62" stroke="#0056FF" strokeWidth="0.6" opacity="0.35"/>
+      <circle cx="30" cy="64" r="3" fill="none" stroke="#0056FF" strokeWidth="0.7" opacity="0.45"/>
+      <circle cx="30" cy="64" r="1" fill="#0056FF" opacity="0.45"/>
+      <line x1="118" y1="46" x2="166" y2="62" stroke="#0056FF" strokeWidth="0.6" opacity="0.35"/>
+      <circle cx="170" cy="64" r="3" fill="none" stroke="#0056FF" strokeWidth="0.7" opacity="0.45"/>
+      <circle cx="170" cy="64" r="1" fill="#0056FF" opacity="0.45"/>
+      <line x1="84" y1="34" x2="56" y2="14" stroke="#0056FF" strokeWidth="0.5" opacity="0.25"/>
+      <circle cx="53" cy="12" r="2.5" fill="none" stroke="#0056FF" strokeWidth="0.6" opacity="0.35"/>
+      <circle cx="53" cy="12" r="0.8" fill="#0056FF" opacity="0.35"/>
+      <line x1="116" y1="34" x2="144" y2="14" stroke="#0056FF" strokeWidth="0.5" opacity="0.25"/>
+      <circle cx="147" cy="12" r="2.5" fill="none" stroke="#0056FF" strokeWidth="0.6" opacity="0.35"/>
+      <circle cx="147" cy="12" r="0.8" fill="#0056FF" opacity="0.35"/>
+      <line x1="100" y1="22" x2="100" y2="10" stroke="#0056FF" strokeWidth="0.5" opacity="0.3"/>
+      <circle cx="100" cy="7" r="2.5" fill="none" stroke="#0056FF" strokeWidth="0.6" opacity="0.4"/>
+      <circle cx="100" cy="7" r="0.8" fill="#0056FF" opacity="0.4"/>
+      {/* Text inside the road */}
+      <text x="100" y="136" textAnchor="middle" fill="#FFFFFF" fontFamily="Inter, system-ui" fontSize="16" fontWeight="900" letterSpacing="0.06em">PEOPLE</text>
+      <text x="100" y="156" textAnchor="middle" fill="#FFFFFF" fontFamily="Inter, system-ui" fontSize="16" fontWeight="900" letterSpacing="0.06em">OPS</text>
+      <text x="100" y="178" textAnchor="middle" fill="#0056FF" fontFamily="Inter, system-ui" fontSize="10" fontWeight="900" letterSpacing="0.1em" opacity="0.85">DAT FREIGHT &amp; ANALYTICS</text>
     </svg>
   );
 }
@@ -213,29 +218,31 @@ function PeopleOpsIcon({size=40}) {
 // ── SLIDES ──
 
 function TitleSlide() {
-  const [h1,setH1]=useState(false);
-  const [h2,setH2]=useState(false);
   return (
     <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",minHeight:"100%",textAlign:"center"}}>
       <div style={{maxWidth:800}}>
-        <h1 style={{...fadeUp(0.1),fontSize:"clamp(36px,5vw,58px)",fontWeight:900,color:C.blue,lineHeight:1.08,letterSpacing:"-0.03em",margin:0}}>AI Fluency as DAT's<br/>Competitive Edge</h1>
-        <p style={{...fadeUp(0.3),fontSize:16,color:C.textSecondary,marginTop:24,lineHeight:1.7,maxWidth:520,margin:"24px auto 0"}}>How the People Team is challenging the status quo, eliminating yesterwork, and building the AI muscle that makes DAT faster than everyone else.</p>
-        <div style={{...fadeUp(0.5),display:"flex",gap:16,justifyContent:"center",marginTop:36}}>
-          <div onMouseEnter={()=>setH1(true)} onMouseLeave={()=>setH1(false)}
-            style={{width:150,height:150,borderRadius:18,background:C.black,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",transition:"all 0.3s",transform:h1?"scale(1.04)":"scale(1)",boxShadow:h1?"0 12px 40px rgba(0,0,0,0.25)":"0 4px 16px rgba(0,0,0,0.12)"}}>
-            <img src="/img/dat-logo.png" alt="DAT Freight & Analytics" style={{width:"80%",height:"auto",objectFit:"contain"}}/>
+        {/* DAT logo next to headline, spanning both lines */}
+        <div style={{...fadeUp(0.1),display:"flex",alignItems:"center",justifyContent:"center",gap:24}}>
+          <div style={{width:100,height:100,borderRadius:16,background:C.black,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",flexShrink:0,boxShadow:"0 4px 20px rgba(0,0,0,0.15)"}}>
+            <img src="/img/dat-logo.png" alt="DAT" style={{width:"80%",height:"auto",objectFit:"contain"}}/>
           </div>
-          <div onMouseEnter={()=>setH2(true)} onMouseLeave={()=>setH2(false)}
-            style={{width:150,height:150,borderRadius:18,overflow:"hidden",transition:"all 0.3s",transform:h2?"scale(1.04)":"scale(1)",boxShadow:h2?"0 12px 40px rgba(0,70,221,0.2)":"0 4px 16px rgba(0,0,0,0.12)"}}>
-            <PeopleOpsIcon size={150}/>
+          <div style={{textAlign:"left"}}>
+            <h1 style={{fontSize:"clamp(34px,4.5vw,52px)",fontWeight:900,color:C.black,lineHeight:1.08,letterSpacing:"-0.03em",margin:0}}>AI Fluency as DAT's</h1>
+            <h1 style={{fontSize:"clamp(34px,4.5vw,52px)",fontWeight:900,color:C.blue,lineHeight:1.08,letterSpacing:"-0.03em",margin:0}}>Competitive Edge</h1>
           </div>
         </div>
-        <div style={{...fadeUp(0.65),marginTop:10,fontSize:11,color:C.textMuted,fontWeight:600,letterSpacing:"0.05em"}}>March 2026</div>
-        <div style={{...fadeUp(0.75),marginTop:24}}>
+        <p style={{...fadeUp(0.3),fontSize:16,color:C.textSecondary,marginTop:24,lineHeight:1.7,maxWidth:520,margin:"24px auto 0"}}>How the People Team is challenging the status quo, eliminating yesterwork, and building the AI muscle that makes DAT faster than everyone else.</p>
+        {/* People Ops icon standalone above date */}
+        <div style={{...fadeUp(0.5),marginTop:32,display:"flex",flexDirection:"column",alignItems:"center",gap:10}}>
+          <PeopleOpsIcon size={120}/>
+          <div style={{fontSize:11,color:C.textMuted,fontWeight:600,letterSpacing:"0.05em"}}>March 2026</div>
+        </div>
+        <div style={{...fadeUp(0.7),marginTop:24}}>
           <ImageBanner src="/img/network.jpg" height={86} overlay="linear-gradient(90deg,rgba(0,70,221,0.7),rgba(0,0,0,0.5))">
             <div style={{textAlign:"center",padding:"0 32px"}}>
               <div style={{fontSize:13,fontWeight:900,color:C.white,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:6}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
-              <div style={{fontSize:12,color:"rgba(255,255,255,0.8)",lineHeight:1.5,maxWidth:480}}>Now the People Team is taking the uncertainty out of how we work. Same mission. New frontier.</div>
+              <div style={{fontSize:12,color:"rgba(255,255,255,0.75)",lineHeight:1.5}}>Now the People Team is taking the uncertainty out of how we work.</div>
+              <div style={{fontSize:13,fontWeight:700,color:C.white,marginTop:4,whiteSpace:"nowrap"}}>Same mission. New frontier.</div>
             </div>
           </ImageBanner>
         </div>
@@ -607,12 +614,8 @@ function CloseSlide() {
               </div>
             </div>);})}
         </div>
-        {/* People Ops mark */}
-        <div style={{...fadeUp(0.5),marginTop:16,display:"flex",justifyContent:"center"}}>
-          <PeopleOpsIcon size={64}/>
-        </div>
         {/* Mission closing */}
-        <div style={{...fadeUp(0.55),marginTop:12}}>
+        <div style={{...fadeUp(0.5),marginTop:16}}>
           <ImageBanner src="/img/waves.jpg" height={110} overlay="linear-gradient(135deg,rgba(0,70,221,0.75),rgba(0,0,0,0.55))">
             <div style={{textAlign:"center",padding:"0 32px"}}>
               <div style={{fontSize:12,fontWeight:900,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:6}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
