@@ -178,36 +178,68 @@ function PeopleOpsIcon({size=40,variant="dark"}) {
   const fg=variant==="light"?"#0046DD":"#0056FF";
   const txt=variant==="light"?"#111827":"#FFFFFF";
   const dashC=variant==="light"?"#0046DD":"#FFFFFF";
-  const dashO=variant==="light"?0.2:0.4;
+  const meshO=variant==="light"?0.06:0.06;
+  const nodeO=variant==="light"?0.7:1;
+  const roadO=variant==="light"?0.6:0.9;
   return (
     <svg width={size} height={size} viewBox="0 0 200 200" style={{display:"block",flexShrink:0}}>
-      <rect x="0" y="0" width="200" height="200" rx="28" fill={bg}/>
-      {/* Road — wide, unbroken, edge to edge */}
-      <line x1="22" y1="200" x2="86" y2="40" stroke={fg} strokeWidth="3" opacity={variant==="light"?0.4:0.6}/>
-      <line x1="178" y1="200" x2="114" y2="40" stroke={fg} strokeWidth="3" opacity={variant==="light"?0.4:0.6}/>
-      <line x1="97" y1="148" x2="100" y2="52" stroke={dashC} strokeWidth="1.2" strokeDasharray="4 6" opacity={dashO}/>
-      {/* Person at apex */}
-      <circle cx="100" cy="22" r="14" fill={fg}/>
-      <path d="M80 44 Q80 32, 100 32 Q120 32, 120 44" fill={fg}/>
-      {/* Network nodes */}
-      <line x1="84" y1="36" x2="44" y2="24" stroke={fg} strokeWidth="1.5" opacity={variant==="light"?0.45:0.65}/>
-      <circle cx="40" cy="23" r="4" fill="none" stroke={fg} strokeWidth="1.2" opacity={variant==="light"?0.5:0.7}/>
-      <circle cx="40" cy="23" r="1.5" fill={fg} opacity={variant==="light"?0.5:0.7}/>
-      <line x1="116" y1="36" x2="156" y2="24" stroke={fg} strokeWidth="1.5" opacity={variant==="light"?0.45:0.65}/>
-      <circle cx="160" cy="23" r="4" fill="none" stroke={fg} strokeWidth="1.2" opacity={variant==="light"?0.5:0.7}/>
-      <circle cx="160" cy="23" r="1.5" fill={fg} opacity={variant==="light"?0.5:0.7}/>
-      <line x1="80" y1="40" x2="30" y2="56" stroke={fg} strokeWidth="1" opacity={variant==="light"?0.3:0.4}/>
-      <circle cx="26" cy="58" r="3" fill="none" stroke={fg} strokeWidth="1" opacity={variant==="light"?0.35:0.5}/>
-      <circle cx="26" cy="58" r="1" fill={fg} opacity={variant==="light"?0.35:0.5}/>
-      <line x1="120" y1="40" x2="170" y2="56" stroke={fg} strokeWidth="1" opacity={variant==="light"?0.3:0.4}/>
-      <circle cx="174" cy="58" r="3" fill="none" stroke={fg} strokeWidth="1" opacity={variant==="light"?0.35:0.5}/>
-      <circle cx="174" cy="58" r="1" fill={fg} opacity={variant==="light"?0.35:0.5}/>
-      {/* PEOPLE TEAM */}
-      <text x="100" y="100" textAnchor="middle" fill={txt} fontFamily="Inter, system-ui" fontSize="20" fontWeight="900" letterSpacing="0.06em">PEOPLE</text>
-      <text x="100" y="124" textAnchor="middle" fill={txt} fontFamily="Inter, system-ui" fontSize="20" fontWeight="900" letterSpacing="0.06em">TEAM</text>
-      {/* DAT logo at base */}
-      {variant==="light"&&<rect x="50" y="156" width="100" height="28" rx="6" fill="#000000"/>}
-      <image href="/img/dat-logo.png" x="55" y="158" width="90" height="24"/>
+      <defs>
+        <radialGradient id={`pglow-${variant}`} cx="100" cy="60" r="45" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor={fg} stopOpacity="0.25"/>
+          <stop offset="100%" stopColor={fg} stopOpacity="0"/>
+        </radialGradient>
+        <linearGradient id={`road-${variant}`} x1="100" y1="170" x2="100" y2="65" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor={variant==="light"?"#D0D0D0":"#1A1A1A"}/>
+          <stop offset="100%" stopColor={variant==="light"?"#E0E0E0":"#2A2A2A"}/>
+        </linearGradient>
+        <clipPath id="rsq"><rect width="200" height="200" rx="28"/></clipPath>
+      </defs>
+      <g clipPath="url(#rsq)">
+        <rect width="200" height="200" fill={bg}/>
+        {/* Faint network mesh */}
+        <line x1="0" y1="50" x2="200" y2="50" stroke={fg} strokeOpacity={meshO} strokeWidth="0.5"/>
+        <line x1="0" y1="75" x2="200" y2="75" stroke={fg} strokeOpacity={meshO} strokeWidth="0.5"/>
+        <line x1="0" y1="100" x2="200" y2="100" stroke={fg} strokeOpacity={meshO} strokeWidth="0.5"/>
+        <line x1="0" y1="125" x2="200" y2="125" stroke={fg} strokeOpacity={meshO} strokeWidth="0.5"/>
+        <line x1="0" y1="150" x2="200" y2="150" stroke={fg} strokeOpacity={meshO} strokeWidth="0.5"/>
+        {/* Glow behind person */}
+        <circle cx="100" cy="60" r="45" fill={`url(#pglow-${variant})`}/>
+        {/* Converging road */}
+        <line x1="0" y1="200" x2="92" y2="70" stroke={fg} strokeWidth="1.5" opacity={roadO}/>
+        <line x1="200" y1="200" x2="108" y2="70" stroke={fg} strokeWidth="1.5" opacity={roadO}/>
+        <polygon points="92,70 108,70 200,200 0,200" fill={`url(#road-${variant})`} opacity="0.5"/>
+        <line x1="100" y1="200" x2="100" y2="72" stroke={dashC} strokeWidth="1" strokeDasharray="5 3.5" opacity={variant==="light"?0.2:0.7}/>
+        {/* Network lines from person to nodes */}
+        <line x1="100" y1="55" x2="30" y2="40" stroke={fg} strokeWidth="1" opacity="0.6"/>
+        <line x1="100" y1="55" x2="170" y2="40" stroke={fg} strokeWidth="1" opacity="0.6"/>
+        <line x1="100" y1="55" x2="25" y2="80" stroke={fg} strokeWidth="1" opacity="0.6"/>
+        <line x1="100" y1="55" x2="175" y2="80" stroke={fg} strokeWidth="1" opacity="0.6"/>
+        {/* Network nodes */}
+        <circle cx="30" cy="40" r="3" fill={fg} opacity={nodeO}/>
+        <circle cx="170" cy="40" r="3" fill={fg} opacity={nodeO}/>
+        <circle cx="25" cy="80" r="3" fill={fg} opacity={nodeO}/>
+        <circle cx="175" cy="80" r="3" fill={fg} opacity={nodeO}/>
+        <circle cx="30" cy="40" r="1.2" fill="#FFFFFF" opacity="0.7"/>
+        <circle cx="170" cy="40" r="1.2" fill="#FFFFFF" opacity="0.7"/>
+        <circle cx="25" cy="80" r="1.2" fill="#FFFFFF" opacity="0.7"/>
+        <circle cx="175" cy="80" r="1.2" fill="#FFFFFF" opacity="0.7"/>
+        {/* Person silhouette */}
+        <circle cx="100" cy="48" r="8" fill={fg}/>
+        <path d="M90,60 Q90,56 93,56 L107,56 Q110,56 110,60 L111,70 Q111,71 110,71 L90,71 Q89,71 89,70 Z" fill={fg}/>
+        {/* PEOPLE TEAM text */}
+        <text x="100" y="110" textAnchor="middle" fill={txt} fontFamily="Inter, system-ui" fontSize="21" fontWeight="900" letterSpacing="0.05em">PEOPLE</text>
+        <text x="100" y="133" textAnchor="middle" fill={txt} fontFamily="Inter, system-ui" fontSize="21" fontWeight="900" letterSpacing="0.05em">TEAM</text>
+        {/* DAT logo at base */}
+        <rect x="50" y="156" width="100" height="28" rx="4" fill={bg}/>
+        <rect x="55" y="160" width="18" height="18" rx="2" fill={fg}/>
+        <text x="64" y="174" textAnchor="middle" fill="#FFF" fontFamily="Inter, system-ui" fontWeight="900" fontSize="12">D</text>
+        <rect x="76" y="160" width="18" height="18" rx="2" fill={fg}/>
+        <text x="85" y="174" textAnchor="middle" fill="#FFF" fontFamily="Inter, system-ui" fontWeight="900" fontSize="12">A</text>
+        <rect x="97" y="160" width="18" height="18" rx="2" fill={fg}/>
+        <text x="106" y="174" textAnchor="middle" fill="#FFF" fontFamily="Inter, system-ui" fontWeight="900" fontSize="12">T</text>
+        <text x="122" y="168" fill={txt} fontFamily="Inter, system-ui" fontSize="5" fontWeight="400">Freight</text>
+        <text x="122" y="175" fill={txt} fontFamily="Inter, system-ui" fontSize="5" fontWeight="400">&amp; Analytics</text>
+      </g>
     </svg>
   );
 }
