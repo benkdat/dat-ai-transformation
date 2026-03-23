@@ -22,9 +22,9 @@ const C = {
 const FW={engage:C.blue,enable:C.greyDark,redesign:C.red,focus:C.black};
 
 const slides=[
-  {id:"title",label:"Title"},{id:"cost",label:"Yesterwork"},{id:"flywheel",label:"The Flywheel"},
-  {id:"landscape",label:"Landscape"},{id:"proof",label:"Built & Planned"},{id:"roadmap",label:"Roadmap"},
-  {id:"fluency",label:"AI Fluency"},{id:"governance",label:"Governance"},{id:"metrics",label:"Metrics"},
+  {id:"title",label:"Title"},{id:"cost",label:"Yesterwork"},{id:"landscape",label:"Landscape"},
+  {id:"flywheel",label:"The Flywheel"},{id:"fluency",label:"AI Fluency"},{id:"proof",label:"Built & Planned"},
+  {id:"roadmap",label:"Roadmap"},{id:"governance",label:"Governance"},{id:"metrics",label:"Metrics"},
   {id:"risks",label:"Risks"},{id:"close",label:"Next Steps"},
 ];
 
