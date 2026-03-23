@@ -104,67 +104,83 @@ function PhaseCard({phase,title,quarter,items,delay=0,active=false}){
 
 // ── Flywheel with motion ──
 function FlywheelDiagram({activeStage,setActiveStage}) {
-  const cx=200,cy=200,R=115;
+  // 2×2 grid layout: Engage TL, Enable TR, Redesign BR, Focus BL
   const nodes=[
-    {id:"engage",label:"ENGAGE",sub:"Measure",color:FW.engage,x:cx,y:cy-R},
-    {id:"enable",label:"ENABLE",sub:"Fluency",color:FW.enable,x:cx+R,y:cy},
-    {id:"redesign",label:"REDESIGN",sub:"Automate",color:FW.redesign,x:cx,y:cy+R},
-    {id:"focus",label:"FOCUS",sub:"Elevate",color:FW.focus,x:cx-R,y:cy},
+    {id:"engage",  label:"ENGAGE",  sub:"Measure", color:FW.engage,  x:110,y:110},
+    {id:"enable",  label:"ENABLE",  sub:"Fluency",  color:FW.enable,  x:290,y:110},
+    {id:"redesign",label:"REDESIGN",sub:"Automate", color:FW.redesign,x:290,y:290},
+    {id:"focus",   label:"FOCUS",   sub:"Elevate",  color:FW.focus,   x:110,y:290},
   ];
-  const arrows=[
-    {from:"engage",to:"enable",color:FW.engage,d:"M 222 90 Q 315 75, 310 178"},
-    {from:"enable",to:"redesign",color:FW.enable,d:"M 310 222 Q 325 315, 222 310"},
-    {from:"redesign",to:"focus",color:FW.redesign,d:"M 178 310 Q 75 325, 90 222"},
-    {from:"focus",to:"engage",color:FW.focus,d:"M 90 178 Q 75 75, 178 90"},
+  // Primary sequential edges (clockwise): Engage→Enable→Redesign→Focus→Engage
+  const primary=[
+    {from:"engage",  to:"enable",   color:FW.engage,  x1:138,y1:110,x2:262,y2:110},
+    {from:"enable",  to:"redesign", color:FW.enable,  x1:290,y1:138,x2:290,y2:262},
+    {from:"redesign",to:"focus",    color:FW.redesign,x1:262,y1:290,x2:138,y2:290},
+    {from:"focus",   to:"engage",   color:FW.focus,   x1:110,y1:262,x2:110,y2:138},
   ];
   const mids=["ah-b","ah-g","ah-r","ah-k"];
+  // Cross-connections (diagonal): Engage↔Redesign, Enable↔Focus
+  const cross=[
+    {ids:["engage","redesign"],x1:132,y1:132,x2:268,y2:268,label:"Measurement drives automation priorities"},
+    {ids:["enable","focus"],   x1:268,y1:132,x2:132,y2:268,label:"Fluency makes high-value work possible"},
+  ];
 
   return (
     <svg viewBox="0 0 400 400" style={{width:"100%",maxWidth:380,display:"block",margin:"0 auto"}}>
       <defs>
         {[[FW.engage,"ah-b"],[FW.enable,"ah-g"],[FW.redesign,"ah-r"],[FW.focus,"ah-k"]].map(([c,id])=>(
-          <marker key={id} id={id} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <marker key={id} id={id} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M 0 1 L 9 5 L 0 9 z" fill={c}/></marker>
         ))}
+        <marker id="ah-cross" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill={C.blue} opacity="0.35"/>
+        </marker>
         <filter id="ns"><feDropShadow dx="0" dy="2" stdDeviation="6" floodOpacity="0.06"/></filter>
       </defs>
 
-      {/* Animated outer ring */}
-      <circle cx={cx} cy={cy} r={R+48} fill="none" stroke={C.border} strokeWidth="0.5" strokeDasharray="2 8"
-        style={{animation:"spinSlow 120s linear infinite",transformOrigin:`${cx}px ${cy}px`}}/>
-      {/* Pulse ring */}
-      <circle cx={cx} cy={cy} r={R+20} fill="none" stroke={C.blue} strokeWidth="0.5" opacity="0.08"
+      {/* Pulse ring behind center */}
+      <circle cx="200" cy="200" r="58" fill="none" stroke={C.blue} strokeWidth="0.5" opacity="0.08"
         style={{animation:"pulseGlow 4s ease-in-out infinite"}}/>
-      <circle cx={cx} cy={cy} r={R} fill="none" stroke={C.blue} strokeWidth="1" opacity="0.06"/>
 
-      {/* Arrows with flow animation */}
-      {arrows.map((a,i)=>{
+      {/* Cross-connections (diagonal, light dashed) */}
+      {cross.map((cr,i)=>{
+        const isA=cr.ids.some(id=>id===activeStage);
+        return <line key={i} x1={cr.x1} y1={cr.y1} x2={cr.x2} y2={cr.y2}
+          stroke={C.blue} strokeWidth={isA?1.5:1} strokeDasharray="4 6"
+          opacity={isA?0.45:0.18} markerEnd="url(#ah-cross)"
+          style={{transition:"all 0.3s"}}/>;
+      })}
+
+      {/* Primary sequential edges with flow animation */}
+      {primary.map((a,i)=>{
         const isA=activeStage===a.from||activeStage===a.to;
         return <g key={i}>
-          <path d={a.d} fill="none" stroke={isA?a.color:C.grey+"44"} strokeWidth={isA?3:1.5} strokeLinecap="round"
-            opacity={isA?0.9:0.25} markerEnd={`url(#${mids[i]})`} style={{transition:"all 0.3s"}}/>
-          <path d={a.d} fill="none" stroke={a.color} strokeWidth="2" strokeDasharray="3 21" strokeLinecap="round"
-            opacity={isA?0.6:0.08} style={{animation:"flowDash 2s linear infinite"}}/>
+          <line x1={a.x1} y1={a.y1} x2={a.x2} y2={a.y2}
+            stroke={isA?a.color:C.grey+"44"} strokeWidth={isA?2.5:1.5}
+            opacity={isA?0.9:0.3} markerEnd={`url(#${mids[i]})`} style={{transition:"all 0.3s"}}/>
+          <line x1={a.x1} y1={a.y1} x2={a.x2} y2={a.y2}
+            stroke={a.color} strokeWidth="2" strokeDasharray="3 18"
+            opacity={isA?0.55:0.07} style={{animation:"flowDash 2s linear infinite"}}/>
         </g>;
       })}
 
-      {/* Center */}
-      <circle cx={cx} cy={cy} r={42} fill={C.blue}/>
-      <circle cx={cx} cy={cy} r={42} fill="none" stroke={C.white} strokeWidth="0.5" opacity="0.2"/>
-      <text x={cx} y={cy-6} textAnchor="middle" fill={C.white} fontSize="14" fontWeight="900" fontFamily="Inter,system-ui" letterSpacing="0.08em">ONE</text>
-      <text x={cx} y={cy+12} textAnchor="middle" fill={C.white} fontSize="14" fontWeight="900" fontFamily="Inter,system-ui" letterSpacing="0.08em">DAT</text>
+      {/* Center hub */}
+      <circle cx="200" cy="200" r="38" fill={C.blue}/>
+      <circle cx="200" cy="200" r="38" fill="none" stroke={C.white} strokeWidth="0.5" opacity="0.2"/>
+      <text x="200" y="196" textAnchor="middle" fill={C.white} fontSize="13" fontWeight="900" fontFamily="Inter,system-ui" letterSpacing="0.08em">ONE</text>
+      <text x="200" y="212" textAnchor="middle" fill={C.white} fontSize="13" fontWeight="900" fontFamily="Inter,system-ui" letterSpacing="0.08em">DAT</text>
 
-      {/* Nodes with hover glow */}
+      {/* Nodes */}
       {nodes.map(n=>{
         const isA=activeStage===n.id;
-        const nr=isA?28:24;
+        const nr=isA?30:25;
         return <g key={n.id} style={{cursor:"pointer"}}
           onMouseEnter={()=>setActiveStage(n.id)} onMouseLeave={()=>setActiveStage(null)}>
-          {isA&&<circle cx={n.x} cy={n.y} r={nr+12} fill={n.color} opacity="0.08" style={{animation:"pulseGlow 2s ease-in-out infinite"}}/>}
+          {isA&&<circle cx={n.x} cy={n.y} r={nr+14} fill={n.color} opacity="0.07" style={{animation:"pulseGlow 2s ease-in-out infinite"}}/>}
           <circle cx={n.x} cy={n.y} r={nr} fill={C.white} stroke={isA?n.color:C.border} strokeWidth={isA?2.5:1.5} filter="url(#ns)" style={{transition:"all 0.3s"}}/>
           <text x={n.x} y={n.y-2} textAnchor="middle" dominantBaseline="middle" fill={isA?n.color:C.greyDark}
             fontSize={isA?"9":"8"} fontWeight="800" fontFamily="Inter,system-ui" letterSpacing="0.06em" style={{transition:"fill 0.3s"}}>{n.label}</text>
-          <text x={n.x} y={n.y+9} textAnchor="middle" dominantBaseline="middle" fill={C.textMuted}
+          <text x={n.x} y={n.y+10} textAnchor="middle" dominantBaseline="middle" fill={C.textMuted}
             fontSize="7" fontWeight="500" fontFamily="Inter,system-ui">{n.sub}</text>
         </g>;
       })}
@@ -172,9 +188,100 @@ function FlywheelDiagram({activeStage,setActiveStage}) {
   );
 }
 
-// ── People Ops Icon ──
+// ── People Ops Icon v2 (The Horizon Mark) ──
 function PeopleOpsIcon({size=40}) {
-  return <img src="/img/people-team-icon.svg" width={size} height={size} alt="People Team" style={{display:"block",flexShrink:0,borderRadius:size*0.125}}/>;
+  const css=`
+    @keyframes pt-pulse{0%,100%{opacity:var(--base-alpha)}50%{opacity:1}}
+    @keyframes pt-glow-pulse{0%,100%{opacity:0}50%{opacity:0.25}}
+    @keyframes pt-ring-pulse{0%,100%{stroke-opacity:var(--ring-alpha)}50%{stroke-opacity:calc(var(--ring-alpha) + 0.2)}}
+    .pt-nc{animation:pt-pulse calc(var(--dur,3s)*1.5) ease-in-out var(--delay,0s) infinite}
+    .pt-nr{animation:pt-ring-pulse calc(var(--dur,3s)*1.5) ease-in-out var(--delay,0s) infinite}
+    .pt-ng{animation:pt-glow-pulse calc(var(--dur,3s)*1.5) ease-in-out var(--delay,0s) infinite}
+    @keyframes pt-pg{0%,100%{opacity:0.3}50%{opacity:0.6}}
+    .pt-pg{animation:pt-pg 5s ease-in-out infinite}
+    @media(prefers-reduced-motion:reduce){.pt-nc,.pt-nr,.pt-ng,.pt-pg{animation:none}}
+  `;
+  const innerN=[
+    [510,300,"2.5s","0s"],[478,222,"3.2s","0.4s"],[400,190,"2.8s","0.8s"],[322,222,"3.5s","1.2s"],
+    [290,300,"2.6s","0.2s"],[322,378,"3.0s","1.6s"],[400,410,"2.4s","0.6s"],[478,378,"3.3s","1.0s"],
+  ];
+  const outerN=[
+    [585,300,"4.0s","0.3s"],[531,169,"3.8s","0.9s"],[400,115,"4.2s","1.5s"],[269,169,"3.6s","0.5s"],
+    [215,300,"4.5s","1.1s"],[269,431,"3.9s","1.7s"],[400,485,"4.1s","0.7s"],[531,431,"3.7s","1.3s"],
+  ];
+  const personN=[
+    [242,95,"3.0s","0.2s",8,3,18],[558,95,"3.4s","0.8s",8,3,18],
+    [185,175,"3.6s","1.4s",7,2.7,16],[615,175,"3.2s","0.5s",7,2.7,16],
+  ];
+  const spokes=[[510,300,585,300],[478,222,531,169],[400,190,400,115],[322,222,269,169],[290,300,215,300],[322,378,269,431],[400,410,400,485],[478,378,531,431]];
+  return (
+    <svg viewBox="0 0 800 800" width={size} height={size} xmlns="http://www.w3.org/2000/svg" style={{display:"block",flexShrink:0}}>
+      <style>{css}</style>
+      <defs>
+        <clipPath id="pt-rc"><rect width="800" height="800" rx="90" ry="90"/></clipPath>
+        <radialGradient id="pt-pgg" cx="50%" cy="45%" r="50%"><stop offset="0%" stopColor="#0056FF" stopOpacity="0.3"/><stop offset="100%" stopColor="#0056FF" stopOpacity="0"/></radialGradient>
+        <linearGradient id="pt-rg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="#000000" stopOpacity="1"/><stop offset="100%" stopColor="#0056FF" stopOpacity="0.15"/></linearGradient>
+        <filter id="pt-ts" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#000000" floodOpacity="0.6"/></filter>
+      </defs>
+      <g clipPath="url(#pt-rc)">
+        <rect width="800" height="800" fill="#080808"/>
+        {[110,185,270,370].map((r,i)=><circle key={i} cx="400" cy="300" r={r} fill="none" stroke="#0056FF" strokeWidth="0.7" strokeOpacity={[0.15,0.10,0.07,0.04][i]}/>)}
+        <line x1="400" y1="-150" x2="400" y2="750" stroke="#0056FF" strokeWidth="0.7" strokeOpacity="0.08"/>
+        <line x1="-50" y1="300" x2="850" y2="300" stroke="#0056FF" strokeWidth="0.7" strokeOpacity="0.08"/>
+        <line x1="-50" y1="-150" x2="850" y2="750" stroke="#0056FF" strokeWidth="0.8" strokeOpacity="0.06"/>
+        <line x1="850" y1="-150" x2="-50" y2="750" stroke="#0056FF" strokeWidth="0.8" strokeOpacity="0.06"/>
+        {spokes.map(([x1,y1,x2,y2],i)=><line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#0056FF" strokeWidth="0.5" strokeOpacity="0.10"/>)}
+        {innerN.map(([x,y,dur,delay],i)=>(
+          <g key={i} transform={`translate(${x},${y})`}>
+            <circle className="pt-ng" r="12" fill="#0056FF" opacity="0" style={{"--dur":dur,"--delay":delay}}/>
+            <circle className="pt-nr" r="5" fill="none" stroke="#0056FF" strokeWidth="1.8" style={{"--ring-alpha":"0.4","--dur":dur,"--delay":delay}}/>
+            <circle className="pt-nc" r="2" fill="#0056FF" style={{"--base-alpha":"0.65","--base-r":"2","--dur":dur,"--delay":delay}}/>
+          </g>
+        ))}
+        {outerN.map(([x,y,dur,delay],i)=>(
+          <g key={i} transform={`translate(${x},${y})`}>
+            <circle className="pt-ng" r="14" fill="#0056FF" opacity="0" style={{"--dur":dur,"--delay":delay}}/>
+            <circle className="pt-nr" r="6" fill="none" stroke="#0056FF" strokeWidth="1.8" style={{"--ring-alpha":"0.3","--dur":dur,"--delay":delay}}/>
+            <circle className="pt-nc" r="2.3" fill="#0056FF" style={{"--base-alpha":"0.55","--base-r":"2.3","--dur":dur,"--delay":delay}}/>
+          </g>
+        ))}
+        <polygon points="395,195 -50,860 850,860 405,195" fill="url(#pt-rg)"/>
+        <line x1="-50" y1="860" x2="395" y2="195" stroke="#0056FF" strokeWidth="3"/>
+        <line x1="850" y1="860" x2="405" y2="195" stroke="#0056FF" strokeWidth="3"/>
+        <line x1="400" y1="195" x2="400" y2="345" stroke="#4a4a4a" strokeWidth="3" strokeDasharray="16,14" strokeOpacity="0.6"/>
+        <line x1="400" y1="430" x2="400" y2="450" stroke="#4a4a4a" strokeWidth="3" strokeDasharray="16,14" strokeOpacity="0.6"/>
+        <line x1="400" y1="532" x2="400" y2="830" stroke="#4a4a4a" strokeWidth="3" strokeDasharray="16,14" strokeOpacity="0.6"/>
+        <circle className="pt-pg" cx="400" cy="140" r="120" fill="url(#pt-pgg)"/>
+        {[[400,140,242,95],[400,140,558,95],[400,140,185,175],[400,140,615,175]].map(([x1,y1,x2,y2],i)=>(
+          <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#0056FF" strokeWidth="1.5" strokeOpacity="0.7"/>
+        ))}
+        {personN.map(([x,y,dur,delay,r,rc,gr],i)=>(
+          <g key={i} transform={`translate(${x},${y})`}>
+            <circle className="pt-ng" r={gr} fill="#0056FF" opacity="0" style={{"--dur":dur,"--delay":delay}}/>
+            <circle className="pt-nr" r={r} fill="none" stroke="#0056FF" strokeWidth="2" style={{"--ring-alpha":"0.8","--dur":dur,"--delay":delay}}/>
+            <circle className="pt-nc" r={rc} fill="#0056FF" style={{"--base-alpha":"0.9","--base-r":String(rc),"--dur":dur,"--delay":delay}}/>
+          </g>
+        ))}
+        <circle cx="400" cy="115" r="25" fill="#080808"/>
+        <path d="M 358,190 C 358,145 375,128 400,128 C 425,128 442,145 442,190 Z" fill="#080808"/>
+        <circle cx="400" cy="115" r="24" fill="#0056FF"/>
+        <path d="M 358,190 C 358,148 375,130 400,130 C 425,130 442,148 442,190 Z" fill="#0056FF"/>
+        <text x="400" y="415" textAnchor="middle" fontFamily="Inter,sans-serif" fontWeight="900" fontSize="90" fill="#ffffff" letterSpacing="4" filter="url(#pt-ts)">PEOPLE</text>
+        <text x="400" y="515" textAnchor="middle" fontFamily="Inter,sans-serif" fontWeight="900" fontSize="90" fill="#ffffff" letterSpacing="4" filter="url(#pt-ts)">TEAM</text>
+        <g transform="translate(247,690)">
+          <rect x="0" y="0" width="48" height="48" fill="#0056FF"/>
+          <rect x="54" y="0" width="48" height="48" fill="#0056FF"/>
+          <rect x="108" y="0" width="48" height="48" fill="#0056FF"/>
+          <text x="24" y="34" textAnchor="middle" fontFamily="Inter,sans-serif" fontWeight="900" fontSize="30" fill="white">D</text>
+          <text x="78" y="34" textAnchor="middle" fontFamily="Inter,sans-serif" fontWeight="900" fontSize="30" fill="white">A</text>
+          <text x="132" y="34" textAnchor="middle" fontFamily="Inter,sans-serif" fontWeight="900" fontSize="30" fill="white">T</text>
+          <text x="162" y="0" fontFamily="Inter,sans-serif" fontWeight="700" fontSize="8" fill="rgba(255,255,255,0.6)">&#8482;</text>
+          <text x="166" y="19" fontFamily="Inter,sans-serif" fontWeight="700" fontSize="16" fill="white">Freight</text>
+          <text x="166" y="39" fontFamily="Inter,sans-serif" fontWeight="700" fontSize="16" fill="white">{"& Analytics"}</text>
+        </g>
+      </g>
+    </svg>
+  );
 }
 
 // ── SLIDES ──
@@ -198,7 +305,7 @@ function TitleSlide() {
               <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:20,marginBottom:24}}>
                 <img src="/img/dat-logo.png" alt="DAT Freight & Analytics" style={{height:28}}/>
                 <div style={{width:1,height:24,background:"rgba(255,255,255,0.15)"}}/>
-                <div style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:2,flexShrink:0}}><PeopleOpsIcon size={48}/></div>
+                <PeopleOpsIcon size={48}/>
               </div>
               <h1 style={{fontSize:"clamp(32px,4.5vw,50px)",fontWeight:900,color:C.white,lineHeight:1.1,letterSpacing:"-0.03em",margin:0}}>AI Fluency as DAT's</h1>
               <h1 style={{fontSize:"clamp(32px,4.5vw,50px)",fontWeight:900,color:"#0056FF",lineHeight:1.1,letterSpacing:"-0.03em",margin:"2px 0 0 0"}}>Competitive Edge</h1>
@@ -265,7 +372,7 @@ function FlywheelSlide() {
   const [activeStage,setActiveStage]=useState(null);
   const stages=[
     {id:"engage",icon:HeartPulse,color:FW.engage,label:"Engage",desc:"Measure what matters",detail:"Gallup Q12 tells us where teammates struggle. 70% of engagement variance traces to the manager. We measure so we know where to act.",evidence:"97% participation. Live dashboard. PBP coaching deployed."},
-    {id:"enable",icon:Brain,color:FW.enable,label:"Enable",desc:"Build fluency and confidence",detail:"Mollick called it: the apprenticeship model broke. AI absorbed the repetitive work juniors used to learn from. We're rebuilding it — three tiers, from Foundations to Builder — giving every teammate the skills to redesign their own work.",evidence:"Claude access backlog growing. Demand outpacing our ability to train."},
+    {id:"enable",icon:Brain,color:FW.enable,label:"Enable",desc:"Build fluency and confidence",detail:"AI training, approved tools, self-service. But fluency is only the start — new teammates learn domain knowledge by working through AI, not just alongside senior people. ENABLE rebuilds the learning scaffold the old apprenticeship model provided.",evidence:"Claude access backlog growing. Demand outpacing our ability to train."},
     {id:"redesign",icon:Hammer,color:FW.redesign,label:"Redesign",desc:"Hunt the yesterwork",detail:"Systematically eliminate pre-AI processes. Automated comp verification, intelligent routing, scheduling agents. This is where the 80 hrs/wk gets reclaimed.",evidence:"Targeting 80 hrs/wk. $110K in tool spend addressable."},
     {id:"focus",icon:Crosshair,color:FW.focus,label:"Focus",desc:"Redirect to high-value work",detail:"Freed capacity goes to what actually moves the business: better hiring decisions, deeper coaching, strategic workforce planning. 23% higher profitability in highly engaged orgs.",evidence:"Every tool built becomes a template for Eng, Product, Finance."},
   ];
@@ -301,10 +408,10 @@ function FlywheelSlide() {
         </div>
       </div>
       <div style={{...fadeUp(0.5),display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
-        {[{from:"Engage",to:"Enable",how:"Gallup data reveals capability gaps → shapes training",c:C.blue},
-          {from:"Enable",to:"Redesign",how:"Fluent teammates become yesterwork hunters",c:C.greyDark},
-          {from:"Redesign",to:"Focus",how:"Reclaimed hours shift to strategic, high-impact work",c:C.red},
-          {from:"Focus",to:"Engage",how:"Meaningful work → engagement rises → cycle accelerates",c:C.black},
+        {[{from:"Engage",to:"Enable",how:"Engagement data surfaces where learning gaps are — training targets those exactly",c:C.blue},
+          {from:"Enable",to:"Redesign",how:"Fluent teammates redesign the processes they used to execute — new hires learn by redesigning, not by repeating",c:C.greyDark},
+          {from:"Redesign",to:"Focus",how:"Automated work frees every level — new hires included — to do work that builds judgment, not just bandwidth",c:C.red},
+          {from:"Focus",to:"Engage",how:"Meaningful work is the engagement driver — the flywheel doesn't need a kickstart, it needs fuel",c:C.black},
         ].map((l,i)=>(
           <div key={i} style={{background:C.card,borderRadius:8,padding:"10px 12px",border:`1px solid ${C.border}`,borderTop:`2px solid ${l.c}`}}>
             <div style={{fontSize:9,fontWeight:800,color:l.c,marginBottom:2,display:"flex",alignItems:"center",gap:3,letterSpacing:"0.05em"}}>{l.from}<ArrowRight size={8}/>{l.to}</div>
@@ -322,8 +429,7 @@ function LandscapeSlide() {
     {source:"Gallup 2025",insight:"Global engagement fell to 21%, costing $8.9 trillion annually. 70% of that variance traces to the manager. Organizations investing in manager development see up to 28% improvement.",color:C.blue},
     {source:"Peter Hinssen",insight:"The People function needs a 'yesterwork hunter' mentality. Not adding new systems. Deciding which processes to drop entirely.",color:C.red},
     {source:"McKinsey 2026",insight:"Only 5% of organizations see measurable AI ROI. The difference: clear strategy, proper training, manager support. Tools without fluency fail.",color:C.greyDark},
-    {source:"Ethan Mollick",insight:"The apprenticeship model broke overnight. AI does the rote work juniors used to learn from. Organizations that don't rebuild their learning model will struggle to develop talent at any level.",color:C.blue},
-    {source:"DAT Signal",insight:"The Claude access backlog tells our story. Teammates are hungry for AI enablement. Demand is outpacing our ability to train.",color:C.blue},
+{source:"DAT Signal",insight:"The Claude access backlog tells our story. Teammates are hungry for AI enablement. Demand is outpacing our ability to train.",color:C.blue},
   ];
   return (
     <div>
@@ -440,7 +546,7 @@ function FluencySlide() {
       <div style={{...fadeUp(0.15),background:C.card,borderRadius:12,padding:"14px 18px",border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.blue}`,marginBottom:10}}>
         <div style={{fontSize:13,color:C.textPrimary,fontStyle:"italic",lineHeight:1.6}}>"The apprenticeship model is broken. Junior teammates used to learn by doing repetitive work alongside experienced people. AI compressed that cycle overnight."</div>
         <div style={{fontSize:11,color:C.textMuted,marginTop:6,fontWeight:600}}>&#8212; Ethan Mollick, <em>Co-Intelligence</em> (Wharton)</div>
-        <div style={{fontSize:12,color:C.textSecondary,marginTop:8,lineHeight:1.5}}>We can't just name it. We have to rebuild how people learn — and we have to do it now. That's what this program is.</div>
+        <div style={{fontSize:12,color:C.textSecondary,marginTop:8,lineHeight:1.5}}>We can't just name it. The new apprenticeship looks like this: junior teammates learn domain knowledge <em>through</em> AI — by using it on real work, building judgment in the process, not by doing rote tasks alone. That's what this program builds toward.</div>
       </div>
       <div style={{...fadeUp(0.18),display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14}}>
         <div style={{background:C.blueLight,borderRadius:10,padding:"12px 16px",border:`1px solid ${C.blue}12`,display:"flex",alignItems:"center",gap:10}}>
