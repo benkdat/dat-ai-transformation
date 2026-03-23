@@ -14,10 +14,10 @@ import {
 const C = {
   blue:"#0046DD",blueOnBlack:"#0056FF",blueLight:"#E8EEFF",blueMuted:"rgba(0,70,221,0.06)",
   black:"#000000",white:"#FFFFFF",bg:"#F8F9FA",bgAlt:"#F0F2F5",
-  card:"#FFFFFF",border:"#E2E5EA",borderLight:"#ECEEF1",
+  card:"#FFFFFF",border:"#E9ECEF",borderLight:"#F0F2F5",
   grey:"#8A8D8F",greyMed:"#6E6B68",greyDark:"#565657",
-  red:"#E10600",yellow:"#FFD700",yellowDark:"#C7A500",
-  textPrimary:"#111827",textSecondary:"#4B5563",textMuted:"#9CA3AF",
+  red:"#E10600",yellow:"#FFD700",
+  textPrimary:"#000000",textSecondary:"#565657",textMuted:"#8A8D8F",
 };
 const FW={engage:C.blue,enable:C.greyDark,redesign:C.red,focus:C.black};
 
@@ -340,7 +340,7 @@ function CostSlide() {
       </p>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:12}}>
         <BigStat value="80" suffix=" hrs" label="Admin work per week" sub="Across all People pillars" delay={0.2} accent={C.red}/>
-        <BigStat value="110" prefix="$" suffix="K" label="Annual tool spend at risk" sub="TalentWall, Crosschq, scheduling, recognition, reporting" delay={0.3} accent={C.yellowDark}/>
+        <BigStat value="110" prefix="$" suffix="K" label="Annual tool spend at risk" sub="TalentWall, Crosschq, scheduling, recognition, reporting" delay={0.3} accent={C.yellow}/>
         <BigStat value="40" suffix=" reqs" label="Supported by 3 recruiters" sub="Full-lifecycle. Admin eats capacity meant for candidates" delay={0.4} accent={C.blue}/>
       </div>
       <div style={{...fadeUp(0.45),marginBottom:10}}>
@@ -350,7 +350,7 @@ function CostSlide() {
       </div>
       <div style={{...fadeUp(0.5),background:C.card,borderRadius:12,padding:"16px 18px",border:`1px solid ${C.border}`}}>
         <div style={{fontSize:10,fontWeight:700,color:C.greyDark,marginBottom:10,textTransform:"uppercase",letterSpacing:"0.12em"}}>Where the 80 Hours Go</div>
-        {[{label:"Comp verification & offer matching",hours:25,color:C.blue},{label:"Recruiter scheduling & coordination",hours:20,color:C.red},{label:"Manual reporting & data pulls",hours:15,color:C.yellowDark},{label:"Routing questions to the right person",hours:12,color:C.grey},{label:"Onboarding process management",hours:8,color:C.greyDark}].map((item,i)=>(
+        {[{label:"Comp verification & offer matching",hours:25,color:C.blue},{label:"Recruiter scheduling & coordination",hours:20,color:C.red},{label:"Manual reporting & data pulls",hours:15,color:C.yellow},{label:"Routing questions to the right person",hours:12,color:C.grey},{label:"Onboarding process management",hours:8,color:C.greyDark}].map((item,i)=>(
           <div key={i} style={{display:"flex",alignItems:"center",gap:10,marginBottom:5}}>
             <div style={{width:70,fontSize:11,fontWeight:600,color:C.greyDark,textAlign:"right",flexShrink:0}}>{item.hours} hrs</div>
             <div style={{flex:1,height:24,background:C.bgAlt,borderRadius:6,overflow:"hidden",position:"relative"}}>
@@ -374,7 +374,7 @@ function FlywheelSlide() {
     {id:"engage",icon:HeartPulse,color:FW.engage,label:"Engage",desc:"Measure what matters",detail:"Gallup Q12 tells us where teammates struggle. 70% of engagement variance traces to the manager. We measure so we know where to act.",evidence:"97% participation. Live dashboard. PBP coaching deployed."},
     {id:"enable",icon:Brain,color:FW.enable,label:"Enable",desc:"Build fluency and confidence",detail:"Structured around four competencies — Delegate, Describe, Discern, Diligence — across three modes of interaction. New teammates learn domain knowledge by working through AI, not just alongside senior people. ENABLE rebuilds the learning scaffold the old apprenticeship model provided.",evidence:"Claude access backlog growing. Demand outpacing our ability to train."},
     {id:"redesign",icon:Hammer,color:FW.redesign,label:"Redesign",desc:"Hunt the yesterwork",detail:"Systematically eliminate pre-AI processes. Automated comp verification, intelligent routing, scheduling agents. This is where the 80 hrs/wk gets reclaimed.",evidence:"Targeting 80 hrs/wk. $110K in tool spend addressable."},
-    {id:"focus",icon:Crosshair,color:FW.focus,label:"Focus",desc:"Redirect to high-value work",detail:"Freed capacity goes to what actually moves the business: better hiring decisions, deeper coaching, strategic workforce planning. 23% higher profitability in highly engaged orgs.",evidence:"Every tool built becomes a template for Eng, Product, Finance."},
+    {id:"focus",icon:Crosshair,color:FW.focus,label:"Focus",desc:"Empower through job crafting",detail:"Freed capacity goes to what actually moves the business. Job crafting means teammates proactively redefine their roles around higher-order work — strategic business partnering, advisory support, deeper coaching. AI shifts the narrative from job insecurity to professional empowerment.",evidence:"Every tool built becomes a template for Eng, Product, Finance."},
   ];
   return (
     <div>
@@ -411,7 +411,7 @@ function FlywheelSlide() {
         {[{from:"Engage",to:"Enable",how:"Engagement data surfaces where learning gaps are — training targets those exactly",c:C.blue},
           {from:"Enable",to:"Redesign",how:"Fluent teammates redesign the processes they used to execute — new hires learn by redesigning, not by repeating",c:C.greyDark},
           {from:"Redesign",to:"Focus",how:"Automated work frees every level — new hires included — to do work that builds judgment, not just bandwidth",c:C.red},
-          {from:"Focus",to:"Engage",how:"Meaningful work is the engagement driver — the flywheel doesn't need a kickstart, it needs fuel",c:C.black},
+          {from:"Focus",to:"Engage",how:"Job crafting → meaningful work → engagement rises → the flywheel fuels itself",c:C.black},
         ].map((l,i)=>(
           <div key={i} style={{background:C.card,borderRadius:8,padding:"10px 12px",border:`1px solid ${C.border}`,borderTop:`2px solid ${l.c}`}}>
             <div style={{fontSize:9,fontWeight:800,color:l.c,marginBottom:2,display:"flex",alignItems:"center",gap:3,letterSpacing:"0.05em"}}>{l.from}<ArrowRight size={8}/>{l.to}</div>
@@ -475,9 +475,9 @@ function ProofSlide() {
   const [filter,setFilter]=useState("all");
   const proofs=[
     {name:"Engagement Intelligence Suite",desc:"Gallup Q12 dashboard (6 tabs, 97% participation) + PBP Coaching + Manager Actions.",status:"Live",accent:"#059669",icon:BarChart3,age:"Built in 3 weeks"},
-    {name:"Comp Verification Engine",desc:"Automated Radford matching. Targets 25 hrs/wk of manual process.",status:"Prototype",accent:C.yellowDark,icon:Target,age:"First concept < 1 month ago"},
-    {name:"Merit Cycle App",desc:"React app with role-based views. Replaced a 14-tab spreadsheet.",status:"Prototype",accent:C.yellowDark,icon:Monitor,age:"Designed and built in 2 weeks"},
-    {name:"#ask-people-team Bot",desc:"n8n + Claude Sonnet routing. Auto-classifies and routes questions. V2 adds self-training.",status:"Prototype",accent:C.yellowDark,icon:Bot,age:"Concept to working prototype in days"},
+    {name:"Comp Verification Engine",desc:"Automated Radford matching. Targets 25 hrs/wk of manual process.",status:"Prototype",accent:C.yellow,icon:Target,age:"First concept < 1 month ago"},
+    {name:"Merit Cycle App",desc:"React app with role-based views. Replaced a 14-tab spreadsheet.",status:"Prototype",accent:C.yellow,icon:Monitor,age:"Designed and built in 2 weeks"},
+    {name:"#ask-people-team Bot",desc:"n8n + Claude Sonnet routing. Auto-classifies and routes questions. V2 adds self-training.",status:"Prototype",accent:C.yellow,icon:Bot,age:"Concept to working prototype in days"},
     {name:"TA Sourcing Agent",desc:"AI pipeline building. Could replace TalentWall/Crosschq ($30K/yr).",status:"Planned",accent:C.blue,icon:Search,age:""},
     {name:"TA Scheduling Agent",desc:"Automated interview coordination. Targets 20 hrs/wk savings.",status:"Planned",accent:C.blue,icon:CalendarCheck,age:""},
     {name:"TA Analytics Dashboards",desc:"Real-time hiring velocity, pipeline health, source-of-hire.",status:"Planned",accent:C.blue,icon:TrendingUp,age:""},
@@ -495,7 +495,7 @@ function ProofSlide() {
           <button key={f} data-clickable="true" onClick={()=>setFilter(f)} style={{padding:"5px 14px",borderRadius:20,border:filter===f?"none":`1px solid ${C.border}`,background:filter===f?C.blue:C.white,color:filter===f?C.white:C.textMuted,fontSize:11,fontWeight:600,cursor:"pointer",transition:"all 0.2s",fontFamily:"'Inter',system-ui",textTransform:"capitalize"}}>{f==="all"?`All (${proofs.length})`:`${f} (${proofs.filter(p=>p.status.toLowerCase()===f).length})`}</button>))}
       </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
-        {filtered.map((p,i)=>{const Icon=p.icon;const sbg=p.accent==="#059669"?"#ECFDF5":p.accent===C.yellowDark?"#FFFBEB":C.blueLight;return(
+        {filtered.map((p,i)=>{const Icon=p.icon;const sbg=p.accent==="#059669"?"#ECFDF5":p.accent===C.yellow?"#FFFBEB":C.blueLight;return(
           <div key={p.name} style={{...fadeUp(0.2+i*0.04),background:C.card,borderRadius:12,padding:"16px 14px",border:`1px solid ${C.border}`,position:"relative",overflow:"hidden"}}>
             <div style={{position:"absolute",top:8,right:8,background:sbg,color:p.accent,fontSize:9,fontWeight:800,padding:"2px 7px",borderRadius:10,textTransform:"uppercase",display:"flex",alignItems:"center",gap:2}}>
               {p.status==="Live"?<CheckCircle2 size={9}/>:p.status==="Prototype"?<Clock size={9}/>:<Sparkles size={9}/>}{p.status}</div>
@@ -535,9 +535,9 @@ function RoadmapSlide() {
 function FluencySlide() {
   const [at,setAt]=useState(0);
   const tiers=[
-    {level:"Foundations",who:"All 700 teammates",hours:"2-4 hrs",color:C.blue,icon:Users,mode:"Automation",items:["Delegate: identify tasks AI handles vs. humans own","Describe: structured prompting (role, task, constraints)","Discern: spot hallucinations, check outputs before sharing","Diligence: data privacy rules and approved tools at DAT"]},
-    {level:"Practitioner",who:"Managers + domain ICs",hours:"8-12 hrs",color:C.greyDark,icon:Wrench,mode:"Augmentation",items:["Delegate: map full workflows for human/AI collaboration","Describe: multi-step instructions and chain-of-thought","Discern: evaluate AI reasoning, catch premature convergence","Diligence: bias testing in hiring, promotion, comp decisions"]},
-    {level:"Builder",who:"Power users + Talent Ops",hours:"20+ hrs",color:C.red,icon:Sparkles,mode:"Agency",items:["Delegate: design autonomous agents and multi-step workflows","Describe: system prompts, tool orchestration, API chaining","Discern: quality frameworks for AI-generated artifacts","Diligence: audit trails, governance, teaching others"]},
+    {level:"Foundations",who:"All 700 teammates (role-specific tracks)",hours:"2-4 hrs",color:C.blue,icon:Users,mode:"Automation",items:["Delegate: identify tasks AI handles vs. humans own","Describe: structured prompting (role, task, constraints)","Discern: spot hallucinations, check outputs before sharing","Diligence: data privacy rules and approved tools at DAT"]},
+    {level:"Practitioner",who:"Managers + domain ICs (persona-based pathways)",hours:"8-12 hrs",color:C.greyDark,icon:Wrench,mode:"Augmentation",items:["Delegate: map full workflows for human/AI collaboration","Describe: multi-step instructions and chain-of-thought","Discern: evaluate AI reasoning, catch premature convergence","Diligence: bias testing in hiring, promotion, comp decisions"]},
+    {level:"Builder",who:"Power users + Talent Ops (AI orchestrators)",hours:"20+ hrs",color:C.red,icon:Sparkles,mode:"Agency",items:["Delegate: design autonomous agents and multi-step workflows","Describe: system prompts, tool orchestration, API chaining","Discern: quality frameworks for AI-generated artifacts","Diligence: audit trails, governance, teaching others"]},
   ];
   return (
     <div>
@@ -562,8 +562,8 @@ function FluencySlide() {
           <div style={{fontSize:11,color:C.textSecondary}}><span style={{fontWeight:700,color:C.blue}}>Demand is real.</span> Claude access backlog keeps growing. Teammates asking for enablement now.</div>
         </div>
         <div style={{background:C.card,borderRadius:10,padding:"12px 16px",border:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:10}}>
-          <TrendingUp size={15} color="#059669" style={{flexShrink:0}}/>
-          <div style={{fontSize:11,color:C.textSecondary}}><span style={{fontWeight:700,color:"#059669"}}>ROI is proven.</span> Orgs with comprehensive training see 218% higher income per teammate. (McKinsey)</div>
+          <Database size={15} color="#059669" style={{flexShrink:0}}/>
+          <div style={{fontSize:11,color:C.textSecondary}}><span style={{fontWeight:700,color:"#059669"}}>Data literacy is the foundation.</span> You can't evaluate AI output without understanding data quality, bias, and governance. AI fluency extends data literacy.</div>
         </div>
       </div>
       <div style={{...fadeUp(0.25),display:"flex",gap:0,marginBottom:14,background:C.bgAlt,borderRadius:10,padding:3}}>
@@ -594,7 +594,7 @@ function GovernanceSlide() {
     <div>
       <SectionLabel>Responsible AI</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>Governance & Trust</h2>
-      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:12}}>Speed without trust is reckless. Diligence — the fourth D — means clear guardrails, transparency, and accountability for AI-assisted work.</p>
+      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:12}}>Speed without trust is reckless. Diligence — the fourth D — means clear guardrails, transparency, and accountability. DAT professionals are the independent assessors of digital environments — our governance has to be as rigorous as what we ask of others.</p>
       <div style={{...fadeUp(0.18),marginBottom:14}}>
         <ImageBanner src="/img/network.jpg" height={40} overlay="linear-gradient(90deg,rgba(0,0,0,0.6),rgba(0,70,221,0.5))">
           <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>Build fast. Build responsibly. Build trust.</div>
@@ -666,7 +666,7 @@ function RisksSlide() {
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
         {[{icon:UserX,title:"Concentration Risk",desc:"Built by one person. If unavailable, velocity drops to zero. Mitigation: Nat's team assumes ownership in Phase 2. Documentation built into every project.",color:C.red},
-          {icon:Building2,title:"Roper IT Access",desc:"UKG capabilities exist. Bottleneck is Roper admin. Hard blocker for onboarding, merit, integrations. Mitigation: Specific modules named in our ask.",color:C.yellowDark},
+          {icon:Building2,title:"Roper IT Access",desc:"UKG capabilities exist. Bottleneck is Roper admin. Hard blocker for onboarding, merit, integrations. Mitigation: Specific modules named in our ask.",color:C.yellow},
           {icon:Database,title:"Data Quality",desc:"Four acquisitions left inconsistent job codes, bands, and records. AI is only as good as the data. Mitigation: Cleanup in Phase 1-2 milestones.",color:C.blue},
           {icon:TrendingUp,title:"Sustainability",desc:"This pace needs capacity. Without team growth, Phase 2-3 stalls. Mitigation: Planned Talent Ops Analyst and WX Manager roles are Phase 3 prerequisites.",color:C.greyDark},
         ].map((risk,i)=>{const Icon=risk.icon;return(
