@@ -372,7 +372,7 @@ function FlywheelSlide() {
   const [activeStage,setActiveStage]=useState(null);
   const stages=[
     {id:"engage",icon:HeartPulse,color:FW.engage,label:"Engage",desc:"Measure what matters",detail:"Gallup Q12 tells us where teammates struggle. 70% of engagement variance traces to the manager. We measure so we know where to act.",evidence:"97% participation. Live dashboard. PBP coaching deployed."},
-    {id:"enable",icon:Brain,color:FW.enable,label:"Enable",desc:"Build fluency and confidence",detail:"AI training, approved tools, self-service. But fluency is only the start — new teammates learn domain knowledge by working through AI, not just alongside senior people. ENABLE rebuilds the learning scaffold the old apprenticeship model provided.",evidence:"Claude access backlog growing. Demand outpacing our ability to train."},
+    {id:"enable",icon:Brain,color:FW.enable,label:"Enable",desc:"Build fluency and confidence",detail:"Structured around four competencies — Delegate, Describe, Discern, Diligence — across three modes of interaction. New teammates learn domain knowledge by working through AI, not just alongside senior people. ENABLE rebuilds the learning scaffold the old apprenticeship model provided.",evidence:"Claude access backlog growing. Demand outpacing our ability to train."},
     {id:"redesign",icon:Hammer,color:FW.redesign,label:"Redesign",desc:"Hunt the yesterwork",detail:"Systematically eliminate pre-AI processes. Automated comp verification, intelligent routing, scheduling agents. This is where the 80 hrs/wk gets reclaimed.",evidence:"Targeting 80 hrs/wk. $110K in tool spend addressable."},
     {id:"focus",icon:Crosshair,color:FW.focus,label:"Focus",desc:"Redirect to high-value work",detail:"Freed capacity goes to what actually moves the business: better hiring decisions, deeper coaching, strategic workforce planning. 23% higher profitability in highly engaged orgs.",evidence:"Every tool built becomes a template for Eng, Product, Finance."},
   ];
@@ -525,8 +525,8 @@ function RoadmapSlide() {
       </div>
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
         <PhaseCard phase={1} title="Foundation & Quick Wins" quarter="Q2 2026 (Now → June)" active={true} delay={0.2} items={["Publish AI usage policy to People Hub","Formalize live tools: Engagement Suite + routing bot prototype","Launch 'AI at DAT' resource page","Pilot bot self-training loop (V2)","First cross-functional AI sprint: one impossible task, 6-week timebox","Milestone: 3 visible wins at All Hands. Trust established."]}/>
-        <PhaseCard phase={2} title="Scale & Integrate" quarter="Q3 2026 (July → Sept)" delay={0.35} items={["Comp verification engine live — 25 hrs/wk savings target","TA dashboards V1 — pipeline health and hiring velocity","AI fluency program launches: Foundations → Practitioner → Builder","Automated onboarding across all 6 locations","Milestone: 50% of repetitive processes automated."]}/>
-        <PhaseCard phase={3} title="Optimize & Extend" quarter="Q4 2026 (Oct → Dec)" delay={0.5} items={["Predictive retention modeling → proactive manager alerts","Skills inventory across all locations and acquired populations","Manager AI toolkit: coaching prompts, performance writing, team analysis","People data integrated with Finance forecasting","Milestone: 75% automation. Fluency embedded. Playbook for other functions."]}/>
+        <PhaseCard phase={2} title="Scale & Integrate" quarter="Q3 2026 (July → Sept)" delay={0.35} items={["Comp verification engine live — 25 hrs/wk savings target","TA dashboards V1 — pipeline health and hiring velocity","AI fluency program launches: 4Ds curriculum across Foundations → Practitioner → Builder","Automated onboarding across all 6 locations","Milestone: 50% of repetitive processes automated."]}/>
+        <PhaseCard phase={3} title="Optimize & Extend" quarter="Q4 2026 (Oct → Dec)" delay={0.5} items={["Predictive retention modeling → proactive manager alerts","Skills inventory across all locations and acquired populations","Manager AI toolkit: coaching prompts, performance writing, team analysis — managers as the translators who embed AI culture into daily workflows","People data integrated with Finance forecasting","Milestone: 75% automation. Fluency embedded. Playbook for other functions."]}/>
       </div>
     </div>
   );
@@ -535,9 +535,9 @@ function RoadmapSlide() {
 function FluencySlide() {
   const [at,setAt]=useState(0);
   const tiers=[
-    {level:"Foundations",who:"All 700 teammates",hours:"2-4 hrs",color:C.blue,icon:Users,items:["What AI can and can't do","Approved tools at DAT","Basic prompting skills","Data privacy essentials"]},
-    {level:"Practitioner",who:"Managers + ICs",hours:"8-12 hrs",color:C.greyDark,icon:Wrench,items:["Advanced prompting & workflows","AI-assisted writing, analysis, code","Building personal automations","Evaluating AI outputs critically"]},
-    {level:"Builder",who:"Power users + Talent Ops",hours:"20+ hrs",color:C.red,icon:Sparkles,items:["Prototyping tools and workflows","n8n / automation platforms","Data pipeline + dashboard creation","Teaching others — internal multiplier"]},
+    {level:"Foundations",who:"All 700 teammates",hours:"2-4 hrs",color:C.blue,icon:Users,mode:"Automation",items:["Delegate: identify tasks AI handles vs. humans own","Describe: structured prompting (role, task, constraints)","Discern: spot hallucinations, check outputs before sharing","Diligence: data privacy rules and approved tools at DAT"]},
+    {level:"Practitioner",who:"Managers + domain ICs",hours:"8-12 hrs",color:C.greyDark,icon:Wrench,mode:"Augmentation",items:["Delegate: map full workflows for human/AI collaboration","Describe: multi-step instructions and chain-of-thought","Discern: evaluate AI reasoning, catch premature convergence","Diligence: bias testing in hiring, promotion, comp decisions"]},
+    {level:"Builder",who:"Power users + Talent Ops",hours:"20+ hrs",color:C.red,icon:Sparkles,mode:"Agency",items:["Delegate: design autonomous agents and multi-step workflows","Describe: system prompts, tool orchestration, API chaining","Discern: quality frameworks for AI-generated artifacts","Diligence: audit trails, governance, teaching others"]},
   ];
   return (
     <div>
@@ -546,7 +546,15 @@ function FluencySlide() {
       <div style={{...fadeUp(0.15),background:C.card,borderRadius:12,padding:"14px 18px",border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.blue}`,marginBottom:10}}>
         <div style={{fontSize:13,color:C.textPrimary,fontStyle:"italic",lineHeight:1.6}}>"The apprenticeship model is broken. Junior teammates used to learn by doing repetitive work alongside experienced people. AI compressed that cycle overnight."</div>
         <div style={{fontSize:11,color:C.textMuted,marginTop:6,fontWeight:600}}>&#8212; Ethan Mollick, <em>Co-Intelligence</em> (Wharton)</div>
-        <div style={{fontSize:12,color:C.textSecondary,marginTop:8,lineHeight:1.5}}>We can't just name it. The new apprenticeship looks like this: junior teammates learn domain knowledge <em>through</em> AI — by using it on real work, building judgment in the process, not by doing rote tasks alone. That's what this program builds toward.</div>
+        <div style={{fontSize:12,color:C.textSecondary,marginTop:8,lineHeight:1.5}}>We can't just name it. The new apprenticeship is structured around four competencies — Delegate, Describe, Discern, Diligence — at three levels of depth. Junior teammates learn domain knowledge <em>through</em> AI, building judgment in the process.</div>
+      </div>
+      <div style={{...fadeUp(0.16),display:"flex",gap:6,marginBottom:10}}>
+        {[{d:"Delegate",desc:"What to hand AI",icon:ArrowLeftRight},{d:"Describe",desc:"How to instruct",icon:BookOpen},{d:"Discern",desc:"How to evaluate",icon:Search},{d:"Diligence",desc:"Ethics & trust",icon:Shield}].map((item,i)=>{const I=item.icon;return(
+          <div key={i} style={{flex:1,background:C.bgAlt,borderRadius:8,padding:"8px 10px",textAlign:"center",border:`1px solid ${C.border}`}}>
+            <I size={13} color={C.blue} style={{marginBottom:3,display:"inline-block"}}/>
+            <div style={{fontSize:11,fontWeight:800,color:C.textPrimary}}>{item.d}</div>
+            <div style={{fontSize:9,color:C.textMuted}}>{item.desc}</div>
+          </div>);})}
       </div>
       <div style={{...fadeUp(0.18),display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14}}>
         <div style={{background:C.blueLight,borderRadius:10,padding:"12px 16px",border:`1px solid ${C.blue}12`,display:"flex",alignItems:"center",gap:10}}>
@@ -565,7 +573,10 @@ function FluencySlide() {
       <div style={{background:C.card,borderRadius:14,padding:"20px 18px",border:`1px solid ${tiers[at].color}22`,transition:"all 0.3s"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
           <div><div style={{fontSize:20,fontWeight:900,color:tiers[at].color}}>{tiers[at].level}</div><div style={{fontSize:12,color:C.textMuted,marginTop:2}}>{tiers[at].who}</div></div>
-          <div style={{background:tiers[at].color+"10",color:tiers[at].color,fontSize:12,fontWeight:700,padding:"5px 12px",borderRadius:8,display:"flex",alignItems:"center",gap:4}}><Clock size={12}/>{tiers[at].hours}</div>
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <div style={{background:C.blue+"10",color:C.blue,fontSize:10,fontWeight:700,padding:"3px 8px",borderRadius:6}}>{tiers[at].mode}</div>
+            <div style={{background:tiers[at].color+"10",color:tiers[at].color,fontSize:12,fontWeight:700,padding:"5px 12px",borderRadius:8,display:"flex",alignItems:"center",gap:4}}><Clock size={12}/>{tiers[at].hours}</div>
+          </div>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
           {tiers[at].items.map((item,j)=>(
@@ -583,7 +594,7 @@ function GovernanceSlide() {
     <div>
       <SectionLabel>Responsible AI</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>Governance & Trust</h2>
-      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:12}}>Speed without trust is reckless. Clear guardrails that enable experimentation.</p>
+      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:12}}>Speed without trust is reckless. Diligence — the fourth D — means clear guardrails, transparency, and accountability for AI-assisted work.</p>
       <div style={{...fadeUp(0.18),marginBottom:14}}>
         <ImageBanner src="/img/network.jpg" height={40} overlay="linear-gradient(90deg,rgba(0,0,0,0.6),rgba(0,70,221,0.5))">
           <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>Build fast. Build responsibly. Build trust.</div>
