@@ -172,76 +172,9 @@ function FlywheelDiagram({activeStage,setActiveStage}) {
   );
 }
 
-// ── People Ops Icon (The Horizon) ──
-function PeopleOpsIcon({size=40,variant="dark"}) {
-  const bg=variant==="light"?"#F0F2F5":"#000000";
-  const fg=variant==="light"?"#0046DD":"#0056FF";
-  const txt=variant==="light"?"#111827":"#FFFFFF";
-  const dashC=variant==="light"?"#0046DD":"#FFFFFF";
-  const meshO=variant==="light"?0.06:0.06;
-  const nodeO=variant==="light"?0.7:1;
-  const roadO=variant==="light"?0.6:0.9;
-  return (
-    <svg width={size} height={size} viewBox="0 0 200 200" style={{display:"block",flexShrink:0}}>
-      <defs>
-        <radialGradient id={`pglow-${variant}`} cx="100" cy="60" r="45" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor={fg} stopOpacity="0.25"/>
-          <stop offset="100%" stopColor={fg} stopOpacity="0"/>
-        </radialGradient>
-        <linearGradient id={`road-${variant}`} x1="100" y1="170" x2="100" y2="65" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor={variant==="light"?"#D0D0D0":"#1A1A1A"}/>
-          <stop offset="100%" stopColor={variant==="light"?"#E0E0E0":"#2A2A2A"}/>
-        </linearGradient>
-        <clipPath id="rsq"><rect width="200" height="200" rx="28"/></clipPath>
-      </defs>
-      <g clipPath="url(#rsq)">
-        <rect width="200" height="200" fill={bg}/>
-        {/* Faint network mesh */}
-        <line x1="0" y1="50" x2="200" y2="50" stroke={fg} strokeOpacity={meshO} strokeWidth="0.5"/>
-        <line x1="0" y1="75" x2="200" y2="75" stroke={fg} strokeOpacity={meshO} strokeWidth="0.5"/>
-        <line x1="0" y1="100" x2="200" y2="100" stroke={fg} strokeOpacity={meshO} strokeWidth="0.5"/>
-        <line x1="0" y1="125" x2="200" y2="125" stroke={fg} strokeOpacity={meshO} strokeWidth="0.5"/>
-        <line x1="0" y1="150" x2="200" y2="150" stroke={fg} strokeOpacity={meshO} strokeWidth="0.5"/>
-        {/* Glow behind person */}
-        <circle cx="100" cy="60" r="45" fill={`url(#pglow-${variant})`}/>
-        {/* Converging road */}
-        <line x1="0" y1="200" x2="92" y2="70" stroke={fg} strokeWidth="1.5" opacity={roadO}/>
-        <line x1="200" y1="200" x2="108" y2="70" stroke={fg} strokeWidth="1.5" opacity={roadO}/>
-        <polygon points="92,70 108,70 200,200 0,200" fill={`url(#road-${variant})`} opacity="0.5"/>
-        <line x1="100" y1="200" x2="100" y2="72" stroke={dashC} strokeWidth="1" strokeDasharray="5 3.5" opacity={variant==="light"?0.2:0.7}/>
-        {/* Network lines from person to nodes */}
-        <line x1="100" y1="55" x2="30" y2="40" stroke={fg} strokeWidth="1" opacity="0.6"/>
-        <line x1="100" y1="55" x2="170" y2="40" stroke={fg} strokeWidth="1" opacity="0.6"/>
-        <line x1="100" y1="55" x2="25" y2="80" stroke={fg} strokeWidth="1" opacity="0.6"/>
-        <line x1="100" y1="55" x2="175" y2="80" stroke={fg} strokeWidth="1" opacity="0.6"/>
-        {/* Network nodes */}
-        <circle cx="30" cy="40" r="3" fill={fg} opacity={nodeO}/>
-        <circle cx="170" cy="40" r="3" fill={fg} opacity={nodeO}/>
-        <circle cx="25" cy="80" r="3" fill={fg} opacity={nodeO}/>
-        <circle cx="175" cy="80" r="3" fill={fg} opacity={nodeO}/>
-        <circle cx="30" cy="40" r="1.2" fill="#FFFFFF" opacity="0.7"/>
-        <circle cx="170" cy="40" r="1.2" fill="#FFFFFF" opacity="0.7"/>
-        <circle cx="25" cy="80" r="1.2" fill="#FFFFFF" opacity="0.7"/>
-        <circle cx="175" cy="80" r="1.2" fill="#FFFFFF" opacity="0.7"/>
-        {/* Person silhouette */}
-        <circle cx="100" cy="48" r="8" fill={fg}/>
-        <path d="M90,60 Q90,56 93,56 L107,56 Q110,56 110,60 L111,70 Q111,71 110,71 L90,71 Q89,71 89,70 Z" fill={fg}/>
-        {/* PEOPLE TEAM text */}
-        <text x="100" y="110" textAnchor="middle" fill={txt} fontFamily="Inter, system-ui" fontSize="21" fontWeight="900" letterSpacing="0.05em">PEOPLE</text>
-        <text x="100" y="133" textAnchor="middle" fill={txt} fontFamily="Inter, system-ui" fontSize="21" fontWeight="900" letterSpacing="0.05em">TEAM</text>
-        {/* DAT logo at base */}
-        <rect x="50" y="156" width="100" height="28" rx="4" fill={bg}/>
-        <rect x="55" y="160" width="18" height="18" rx="2" fill={fg}/>
-        <text x="64" y="174" textAnchor="middle" fill="#FFF" fontFamily="Inter, system-ui" fontWeight="900" fontSize="12">D</text>
-        <rect x="76" y="160" width="18" height="18" rx="2" fill={fg}/>
-        <text x="85" y="174" textAnchor="middle" fill="#FFF" fontFamily="Inter, system-ui" fontWeight="900" fontSize="12">A</text>
-        <rect x="97" y="160" width="18" height="18" rx="2" fill={fg}/>
-        <text x="106" y="174" textAnchor="middle" fill="#FFF" fontFamily="Inter, system-ui" fontWeight="900" fontSize="12">T</text>
-        <text x="122" y="168" fill={txt} fontFamily="Inter, system-ui" fontSize="5" fontWeight="400">Freight</text>
-        <text x="122" y="175" fill={txt} fontFamily="Inter, system-ui" fontSize="5" fontWeight="400">&amp; Analytics</text>
-      </g>
-    </svg>
-  );
+// ── People Ops Icon ──
+function PeopleOpsIcon({size=40}) {
+  return <img src="/img/people-team-icon.svg" width={size} height={size} alt="People Team" style={{display:"block",flexShrink:0,borderRadius:size*0.125}}/>;
 }
 
 // ── SLIDES ──
@@ -265,7 +198,7 @@ function TitleSlide() {
               <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:20,marginBottom:24}}>
                 <img src="/img/dat-logo.png" alt="DAT Freight & Analytics" style={{height:28}}/>
                 <div style={{width:1,height:24,background:"rgba(255,255,255,0.15)"}}/>
-                <PeopleOpsIcon size={48} variant="light"/>
+                <div style={{background:"rgba(255,255,255,0.1)",borderRadius:10,padding:2,flexShrink:0}}><PeopleOpsIcon size={48}/></div>
               </div>
               <h1 style={{fontSize:"clamp(32px,4.5vw,50px)",fontWeight:900,color:C.white,lineHeight:1.1,letterSpacing:"-0.03em",margin:0}}>AI Fluency as DAT's</h1>
               <h1 style={{fontSize:"clamp(32px,4.5vw,50px)",fontWeight:900,color:"#0056FF",lineHeight:1.1,letterSpacing:"-0.03em",margin:"2px 0 0 0"}}>Competitive Edge</h1>
@@ -332,7 +265,7 @@ function FlywheelSlide() {
   const [activeStage,setActiveStage]=useState(null);
   const stages=[
     {id:"engage",icon:HeartPulse,color:FW.engage,label:"Engage",desc:"Measure what matters",detail:"Gallup Q12 tells us where teammates struggle. 70% of engagement variance traces to the manager. We measure so we know where to act.",evidence:"97% participation. Live dashboard. PBP coaching deployed."},
-    {id:"enable",icon:Brain,color:FW.enable,label:"Enable",desc:"Build fluency and confidence",detail:"AI training, approved tools, self-service. The apprenticeship model broke. We're rebuilding it by giving teammates the skills to redesign their own work.",evidence:"Claude access backlog growing. Demand outpacing our ability to train."},
+    {id:"enable",icon:Brain,color:FW.enable,label:"Enable",desc:"Build fluency and confidence",detail:"Mollick called it: the apprenticeship model broke. AI absorbed the repetitive work juniors used to learn from. We're rebuilding it — three tiers, from Foundations to Builder — giving every teammate the skills to redesign their own work.",evidence:"Claude access backlog growing. Demand outpacing our ability to train."},
     {id:"redesign",icon:Hammer,color:FW.redesign,label:"Redesign",desc:"Hunt the yesterwork",detail:"Systematically eliminate pre-AI processes. Automated comp verification, intelligent routing, scheduling agents. This is where the 80 hrs/wk gets reclaimed.",evidence:"Targeting 80 hrs/wk. $110K in tool spend addressable."},
     {id:"focus",icon:Crosshair,color:FW.focus,label:"Focus",desc:"Redirect to high-value work",detail:"Freed capacity goes to what actually moves the business: better hiring decisions, deeper coaching, strategic workforce planning. 23% higher profitability in highly engaged orgs.",evidence:"Every tool built becomes a template for Eng, Product, Finance."},
   ];
@@ -389,6 +322,7 @@ function LandscapeSlide() {
     {source:"Gallup 2025",insight:"Global engagement fell to 21%, costing $8.9 trillion annually. 70% of that variance traces to the manager. Organizations investing in manager development see up to 28% improvement.",color:C.blue},
     {source:"Peter Hinssen",insight:"The People function needs a 'yesterwork hunter' mentality. Not adding new systems. Deciding which processes to drop entirely.",color:C.red},
     {source:"McKinsey 2026",insight:"Only 5% of organizations see measurable AI ROI. The difference: clear strategy, proper training, manager support. Tools without fluency fail.",color:C.greyDark},
+    {source:"Ethan Mollick",insight:"The apprenticeship model broke overnight. AI does the rote work juniors used to learn from. Organizations that don't rebuild their learning model will struggle to develop talent at any level.",color:C.blue},
     {source:"DAT Signal",insight:"The Claude access backlog tells our story. Teammates are hungry for AI enablement. Demand is outpacing our ability to train.",color:C.blue},
   ];
   return (
@@ -503,7 +437,11 @@ function FluencySlide() {
     <div>
       <SectionLabel>Capability Building</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>AI Fluency Program</h2>
-      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:10}}>The apprenticeship model is broken. Junior teammates used to learn by doing repetitive work alongside experienced people. AI compressed that cycle overnight. We can't just talk about it. We have to rebuild how people learn, and we have to do it now.</p>
+      <div style={{...fadeUp(0.15),background:C.card,borderRadius:12,padding:"14px 18px",border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.blue}`,marginBottom:10}}>
+        <div style={{fontSize:13,color:C.textPrimary,fontStyle:"italic",lineHeight:1.6}}>"The apprenticeship model is broken. Junior teammates used to learn by doing repetitive work alongside experienced people. AI compressed that cycle overnight."</div>
+        <div style={{fontSize:11,color:C.textMuted,marginTop:6,fontWeight:600}}>&#8212; Ethan Mollick, <em>Co-Intelligence</em> (Wharton)</div>
+        <div style={{fontSize:12,color:C.textSecondary,marginTop:8,lineHeight:1.5}}>We can't just name it. We have to rebuild how people learn — and we have to do it now. That's what this program is.</div>
+      </div>
       <div style={{...fadeUp(0.18),display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14}}>
         <div style={{background:C.blueLight,borderRadius:10,padding:"12px 16px",border:`1px solid ${C.blue}12`,display:"flex",alignItems:"center",gap:10}}>
           <Cpu size={15} color={C.blue} style={{flexShrink:0}}/>
