@@ -691,7 +691,7 @@ function HackathonSlide() {
   return (
     <div>
       <SectionLabel>Activation</SectionLabel>
-      <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>The DAT AI Fluency Hackathon</h2>
+      <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>Build Something Impossible</h2>
       <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,lineHeight:1.6,maxWidth:640,margin:"0 0 10px 0"}}>Reading about AI builds awareness. Building with AI builds fluency. The Hackathon is where the program becomes real.</p>
       <div style={{...fadeUp(0.2),background:C.card,borderRadius:12,padding:"14px 18px",border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.blue}`,marginBottom:14}}>
         <div style={{fontSize:13,color:C.textPrimary,fontStyle:"italic",lineHeight:1.6}}>{"\u201C"}The most successful teams I've seen implement AI are the ones given an impossible task \u2014 with no guarantee of success \u2014 and trusted to see how far they get.{"\u201D"}</div>
