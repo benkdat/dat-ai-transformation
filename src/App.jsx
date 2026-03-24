@@ -8,7 +8,8 @@ import {
   ArrowRight, Play, Minimize2, Clock, CheckCircle2, Wrench,
   TrendingUp, Users, Building2, Layers, AlertTriangle, Sparkles,
   ChevronLeft, Monitor, BookOpen, Search, CalendarCheck, Award, ArrowLeftRight,
-  DollarSign, UserX, Database, Cpu, Hammer, RefreshCcw, HeartPulse, Crosshair
+  DollarSign, UserX, Database, Cpu, Hammer, RefreshCcw, HeartPulse, Crosshair,
+  Terminal, Trophy
 } from "lucide-react";
 
 const C = {
@@ -22,10 +23,9 @@ const C = {
 const FW={engage:C.blue,enable:C.greyDark,redesign:C.red,focus:C.black};
 
 const slides=[
-  {id:"title",label:"Title"},{id:"cost",label:"Yesterwork"},{id:"landscape",label:"Landscape"},
-  {id:"flywheel",label:"The Flywheel"},{id:"fluency",label:"AI Fluency"},{id:"proof",label:"Built & Planned"},
-  {id:"roadmap",label:"Roadmap"},{id:"governance",label:"Governance"},{id:"metrics",label:"Metrics"},
-  {id:"risks",label:"Risks"},{id:"close",label:"Next Steps"},
+  {id:"title",label:"Cover"},{id:"landscape",label:"Landscape"},{id:"proof",label:"What's Built"},
+  {id:"fluency",label:"Fluency"},{id:"hackathon",label:"Hackathon"},{id:"roadmap",label:"Roadmap"},
+  {id:"close",label:"The Ask"},{id:"closing",label:"Closing"},
 ];
 
 const fadeUp=(d=0)=>({opacity:0,transform:"translateY(20px)",animation:`fadeUp 0.5s ease-out ${d}s forwards`});
@@ -681,6 +681,50 @@ function RisksSlide() {
   );
 }
 
+function HackathonSlide() {
+  const cards=[
+    {icon:Users,title:"Cross-Functional Teams",body:"Up to 5 teammates per team. Any function, any level. Intentionally mixed."},
+    {icon:Zap,title:"Open Goal",body:"Build something using AI that meaningfully changes how you or your team works. No prescribed output. Ambition is the metric."},
+    {icon:Terminal,title:"Claude Code Access",body:"All participating teams receive time-limited access to Claude Code for the duration of the event. No prior coding experience required."},
+    {icon:Trophy,title:"Real Reward",body:"First place wins [PRIZE TBD \u2014 options: team offsite budget, conference stipend, $X toward a professional development experience]. This is meaningful, not symbolic."},
+  ];
+  return (
+    <div>
+      <SectionLabel>Activation</SectionLabel>
+      <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>The DAT AI Fluency Hackathon</h2>
+      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,lineHeight:1.6,maxWidth:640,margin:"0 0 10px 0"}}>Reading about AI builds awareness. Building with AI builds fluency. The Hackathon is where the program becomes real.</p>
+      <div style={{...fadeUp(0.2),background:C.card,borderRadius:12,padding:"14px 18px",border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.blue}`,marginBottom:14}}>
+        <div style={{fontSize:13,color:C.textPrimary,fontStyle:"italic",lineHeight:1.6}}>{"\u201C"}The most successful teams I've seen implement AI are the ones given an impossible task \u2014 with no guarantee of success \u2014 and trusted to see how far they get.{"\u201D"}</div>
+        <div style={{fontSize:11,color:C.textMuted,marginTop:6,fontWeight:600}}>&#8212; Ethan Mollick, Wharton Professor</div>
+      </div>
+      <div style={{...fadeUp(0.25),display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:14}}>
+        {cards.map((c,i)=>{const I=c.icon;return(
+          <div key={i} style={{background:C.card,borderRadius:12,padding:"16px 14px",border:`1px solid ${C.border}`,textAlign:"center"}}>
+            <div style={{width:36,height:36,borderRadius:8,background:C.blueLight,display:"inline-flex",alignItems:"center",justifyContent:"center",marginBottom:8}}><I size={16} color={C.blue}/></div>
+            <div style={{fontSize:13,fontWeight:800,color:C.textPrimary,marginBottom:4}}>{c.title}</div>
+            <div style={{fontSize:11,color:C.textSecondary,lineHeight:1.5}}>{c.body}</div>
+          </div>);})}
+      </div>
+      <div style={{...fadeUp(0.3),fontSize:10,color:C.textMuted,textAlign:"center",lineHeight:1.5,fontStyle:"italic"}}>Teams present to a review panel of leaders and technical stakeholders. Judged on creativity, impact potential, and boldness of the attempt.</div>
+    </div>
+  );
+}
+
+function ClosingSlide() {
+  return (
+    <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",minHeight:"calc(100vh - 140px)",textAlign:"center",position:"relative",margin:"-32px -40px -48px -40px",padding:"80px 40px"}}>
+      <div style={{position:"absolute",inset:0,background:C.black}}/>
+      <div style={{position:"absolute",inset:0,overflow:"hidden"}}>
+        <img src="/img/network.jpg" alt="" style={{width:"100%",height:"100%",objectFit:"cover",opacity:0.08}}/>
+      </div>
+      <div style={{maxWidth:700,position:"relative",zIndex:1}}>
+        <h1 style={{...fadeUp(0.1),fontSize:"clamp(36px,5vw,52px)",fontWeight:900,color:C.white,lineHeight:1.1,letterSpacing:"-0.03em",margin:0}}>AI First Does Not Mean People Last.</h1>
+        <p style={{...fadeUp(0.3),fontSize:15,color:"rgba(255,255,255,0.6)",lineHeight:1.7,maxWidth:560,margin:"24px auto 0"}}>At DAT, AI fluency isn't about replacing people with tools. It's about giving our teammates more leverage, more capability, and more room to do work that actually matters. The future we're building is one where the technology handles the tedious and the people own the extraordinary.</p>
+      </div>
+    </div>
+  );
+}
+
 function CloseSlide() {
   const asks=[
     {ask:"Champion AI fluency from the top",detail:"Jana + Jeff at All Hands and ELT",icon:Users},
@@ -726,7 +770,7 @@ function CloseSlide() {
 }
 
 // ── Main App ──
-const SC={"title":TitleSlide,"cost":CostSlide,"flywheel":FlywheelSlide,"landscape":LandscapeSlide,"proof":ProofSlide,"roadmap":RoadmapSlide,"fluency":FluencySlide,"governance":GovernanceSlide,"metrics":MetricsSlide,"risks":RisksSlide,"close":CloseSlide};
+const SC={"title":TitleSlide,"cost":CostSlide,"flywheel":FlywheelSlide,"landscape":LandscapeSlide,"proof":ProofSlide,"roadmap":RoadmapSlide,"fluency":FluencySlide,"hackathon":HackathonSlide,"governance":GovernanceSlide,"metrics":MetricsSlide,"risks":RisksSlide,"close":CloseSlide,"closing":ClosingSlide};
 
 export default function DATAITransformation() {
   const [cur,setCur]=useState(0);const [sk,setSk]=useState(0);const [pres,setPres]=useState(false);const [hud,setHud]=useState(false);const [idle,setIdle]=useState(false);
