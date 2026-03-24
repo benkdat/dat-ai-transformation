@@ -686,7 +686,7 @@ function HackathonSlide() {
     {icon:Users,title:"Cross-Functional Teams",body:"Up to 5 teammates per team. Any function, any level. Intentionally mixed."},
     {icon:Zap,title:"Open Goal",body:"Build something using AI that meaningfully changes how you or your team works. No prescribed output. Ambition is the metric."},
     {icon:Terminal,title:"Claude Code Access",body:"All participating teams receive time-limited access to Claude Code for the duration of the event. No prior coding experience required."},
-    {icon:Trophy,title:"Real Reward",body:"First place wins [PRIZE TBD \u2014 options: team offsite budget, conference stipend, $X toward a professional development experience]. This is meaningful, not symbolic."},
+    {icon:Trophy,title:"Real Reward",body:"First place wins [PRIZE TBD — options: team offsite budget, conference stipend, $X toward a professional development experience]. This is meaningful, not symbolic."},
   ];
   return (
     <div>
@@ -694,7 +694,7 @@ function HackathonSlide() {
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>Build Something Impossible</h2>
       <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,lineHeight:1.6,maxWidth:640,margin:"0 0 10px 0"}}>Reading about AI builds awareness. Building with AI builds fluency. The Hackathon is where the program becomes real.</p>
       <div style={{...fadeUp(0.2),background:C.card,borderRadius:12,padding:"14px 18px",border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.blue}`,marginBottom:14}}>
-        <div style={{fontSize:13,color:C.textPrimary,fontStyle:"italic",lineHeight:1.6}}>{"\u201C"}The most successful teams I've seen implement AI are the ones given an impossible task \u2014 with no guarantee of success \u2014 and trusted to see how far they get.{"\u201D"}</div>
+        <div style={{fontSize:13,color:C.textPrimary,fontStyle:"italic",lineHeight:1.6}}>{"\u201C"}The most successful teams I've seen implement AI are the ones given an impossible task — with no guarantee of success — and trusted to see how far they get.{"\u201D"}</div>
         <div style={{fontSize:11,color:C.textMuted,marginTop:6,fontWeight:600}}>&#8212; Ethan Mollick, Wharton Professor</div>
       </div>
       <div style={{...fadeUp(0.25),display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:14}}>
