@@ -23,9 +23,11 @@ const C = {
 const FW={engage:C.blue,enable:C.greyDark,redesign:C.red,focus:C.black};
 
 const slides=[
-  {id:"title",label:"Cover"},{id:"landscape",label:"Landscape"},{id:"proof",label:"What's Built"},
-  {id:"fluency",label:"Fluency"},{id:"hackathon",label:"Hackathon"},{id:"roadmap",label:"Roadmap"},
-  {id:"close",label:"The Ask"},{id:"closing",label:"Closing"},
+  {id:"title",label:"Cover"},{id:"landscape",label:"Landscape"},{id:"cost",label:"Burning Platform"},
+  {id:"flywheel",label:"Flywheel"},{id:"proof",label:"What's Built"},{id:"fluency",label:"Fluency"},
+  {id:"hackathon",label:"Hackathon"},{id:"roadmap",label:"Roadmap"},{id:"metrics",label:"Metrics"},
+  {id:"risks",label:"Risks"},{id:"governance",label:"Governance"},{id:"close",label:"The Ask"},
+  {id:"closing",label:"Closing"},
 ];
 
 const fadeUp=(d=0)=>({opacity:0,transform:"translateY(20px)",animation:`fadeUp 0.5s ease-out ${d}s forwards`});
@@ -289,15 +291,12 @@ function PeopleOpsIcon({size=40}) {
 function TitleSlide() {
   return (
     <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",minHeight:"100%",textAlign:"center",position:"relative"}}>
-      {/* Full background image */}
       <div style={{position:"absolute",inset:0,overflow:"hidden",borderRadius:14}}>
         <img src="/img/waves.jpg" alt="" style={{width:"100%",height:"100%",objectFit:"cover",opacity:0.12}}/>
       </div>
       <div style={{maxWidth:800,position:"relative",zIndex:1}}>
-        {/* Black hero box with DAT logo + title */}
         <div style={{...fadeUp(0.1),borderRadius:20,overflow:"hidden",boxShadow:"0 8px 40px rgba(0,0,0,0.2)"}}>
           <div style={{background:C.black,padding:"40px 48px 36px",position:"relative"}}>
-            {/* Subtle image texture inside black box */}
             <div style={{position:"absolute",inset:0,overflow:"hidden"}}>
               <img src="/img/network.jpg" alt="" style={{width:"100%",height:"100%",objectFit:"cover",opacity:0.08}}/>
             </div>
@@ -312,7 +311,6 @@ function TitleSlide() {
               <p style={{fontSize:14,color:"rgba(255,255,255,0.6)",marginTop:18,lineHeight:1.6,maxWidth:480,margin:"18px auto 0"}}>How the People Team is challenging the status quo, eliminating yesterwork, and building the AI muscle that makes DAT faster than everyone else.</p>
             </div>
           </div>
-          {/* Mission banner — attached to bottom of black box */}
           <div style={{position:"relative",height:72,overflow:"hidden"}}>
             <img src="/img/network.jpg" alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
             <div style={{position:"absolute",inset:0,background:"linear-gradient(90deg,rgba(0,70,221,0.7),rgba(0,0,0,0.5))"}}/>
@@ -325,7 +323,7 @@ function TitleSlide() {
           </div>
         </div>
       </div>
-      <div style={{position:"absolute",bottom:12,left:0,right:0,textAlign:"center",fontSize:11,color:C.textMuted,fontWeight:600,letterSpacing:"0.05em",opacity:0,animation:"fadeUp 0.5s ease-out 0.6s forwards"}}>March 2026</div>
+      <div style={{position:"absolute",bottom:12,left:0,right:0,textAlign:"center",fontSize:11,color:C.textMuted,fontWeight:600,letterSpacing:"0.05em",opacity:0,animation:"fadeUp 0.5s ease-out 0.6s forwards"}}>April 2026</div>
     </div>
   );
 }
@@ -336,16 +334,16 @@ function CostSlide() {
       <SectionLabel>The Burning Platform</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>80 Hours of Yesterwork</h2>
       <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:16}}>
-        Peter Hinssen calls it <span style={{fontWeight:700,color:C.black}}>yesterwork</span>: outdated processes designed before AI existed that silently eat capacity. These are DAT's numbers.
+        Peter Hinssen calls it <span style={{fontWeight:700,color:C.black}}>yesterwork</span>: outdated processes designed before AI existed that silently eat capacity. These are DAT's estimated numbers based on team time studies and operational analysis.
       </p>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:12}}>
-        <BigStat value="80" suffix=" hrs" label="Admin work per week" sub="Across all People pillars" delay={0.2} accent={C.red}/>
+        <BigStat value="80" suffix=" hrs" label="Estimated admin work per week" sub="Across all People pillars" delay={0.2} accent={C.red}/>
         <BigStat value="110" prefix="$" suffix="K" label="Annual tool spend at risk" sub="TalentWall, Crosschq, scheduling, recognition, reporting" delay={0.3} accent={C.yellow}/>
         <BigStat value="40" suffix=" reqs" label="Supported by 3 recruiters" sub="Full-lifecycle. Admin eats capacity meant for candidates" delay={0.4} accent={C.blue}/>
       </div>
       <div style={{...fadeUp(0.45),marginBottom:10}}>
         <ImageBanner src="/img/waves.jpg" height={44} overlay="linear-gradient(90deg,rgba(225,6,0,0.55),rgba(0,0,0,0.5))">
-          <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>80 hours/week = 2 full-time teammates doing work AI can handle</div>
+          <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>80 hours/week ≈ 2 full-time teammates doing work AI can meaningfully reduce</div>
         </ImageBanner>
       </div>
       <div style={{...fadeUp(0.5),background:C.card,borderRadius:12,padding:"16px 18px",border:`1px solid ${C.border}`}}>
@@ -428,14 +426,14 @@ function LandscapeSlide() {
   const ins=[
     {source:"Gallup 2025",insight:"Global engagement fell to 21%, costing $8.9 trillion annually. 70% of that variance traces to the manager. Organizations investing in manager development see up to 28% improvement.",color:C.blue},
     {source:"Peter Hinssen",insight:"The People function needs a 'yesterwork hunter' mentality. Not adding new systems. Deciding which processes to drop entirely.",color:C.red},
-    {source:"McKinsey 2026",insight:"Only 5% of organizations see measurable AI ROI. The difference: clear strategy, proper training, manager support. Tools without fluency fail.",color:C.greyDark},
-{source:"DAT Signal",insight:"The Claude access backlog tells our story. Teammates are hungry for AI enablement. Demand is outpacing our ability to train.",color:C.blue},
+    {source:"McKinsey 2025",insight:"Only 5% of organizations see measurable AI ROI. The difference: clear strategy, proper training, manager support. Tools without fluency fail.",color:C.greyDark},
+    {source:"DAT Signal",insight:"The Claude access backlog tells our story. The GenAI Community of Practice (40+ attendees, bi-weekly) formed organically. Teammates are hungry for AI enablement. Demand is outpacing our ability to train.",color:C.blue},
   ];
   return (
     <div>
       <SectionLabel>Industry Context</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>Where We Stand</h2>
-      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:14}}>Self-assessed maturity vs. industry benchmarks. Ahead where we've built. Behind where we haven't invested yet.</p>
+      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:14}}>Self-assessed maturity vs. estimated industry averages. Ahead where we've built. Behind where we haven't invested yet.</p>
       <div style={{...fadeUp(0.18),marginBottom:14}}>
         <ImageBanner src="/img/waves.jpg" height={40} overlay="linear-gradient(90deg,rgba(0,70,221,0.65),rgba(0,0,0,0.5))">
           <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>92% of CHROs accelerating AI. Only 5% seeing ROI. The gap is fluency.</div>
@@ -443,7 +441,7 @@ function LandscapeSlide() {
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
         <div style={{...fadeUp(0.2),background:C.card,borderRadius:14,padding:20,border:`1px solid ${C.border}`}}>
-          <div style={{fontSize:10,fontWeight:700,color:C.greyDark,marginBottom:6,textTransform:"uppercase",letterSpacing:"0.12em"}}>DAT vs. Industry Avg</div>
+          <div style={{fontSize:10,fontWeight:700,color:C.greyDark,marginBottom:6,textTransform:"uppercase",letterSpacing:"0.12em"}}>DAT vs. Est. Industry Avg</div>
           <ResponsiveContainer width="100%" height={240}>
             <RadarChart data={rd}><PolarGrid stroke={C.border}/><PolarAngleAxis dataKey="subject" tick={{fill:C.textMuted,fontSize:10}}/><PolarRadiusAxis tick={false} domain={[0,100]} axisLine={false}/>
               <Radar name="DAT" dataKey="DAT" stroke={C.blue} fill={C.blue} fillOpacity={0.12} strokeWidth={2}/>
@@ -453,7 +451,7 @@ function LandscapeSlide() {
           </ResponsiveContainer>
           <div style={{display:"flex",gap:20,justifyContent:"center",marginTop:2}}>
             <div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:12,height:3,background:C.blue,borderRadius:2}}/><span style={{fontSize:10,color:C.textMuted}}>DAT</span></div>
-            <div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:12,height:3,background:C.grey,borderRadius:2}}/><span style={{fontSize:10,color:C.textMuted}}>Industry</span></div>
+            <div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:12,height:3,background:C.grey,borderRadius:2}}/><span style={{fontSize:10,color:C.textMuted}}>Est. Industry Avg</span></div>
           </div>
         </div>
         <div style={{...fadeUp(0.3),display:"flex",flexDirection:"column",gap:7}}>
@@ -571,14 +569,18 @@ function FluencySlide() {
                 <div style={{fontSize:9,color:C.textMuted}}>{item.desc}</div>
               </div>);})}
           </div>
-          <div style={{...fadeUp(0.18),display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14}}>
+          <div style={{...fadeUp(0.18),display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:14}}>
             <div style={{background:C.blueLight,borderRadius:10,padding:"12px 16px",border:`1px solid ${C.blue}12`,display:"flex",alignItems:"center",gap:10}}>
               <Cpu size={15} color={C.blue} style={{flexShrink:0}}/>
-              <div style={{fontSize:11,color:C.textSecondary}}><span style={{fontWeight:700,color:C.blue}}>Demand is real.</span> Claude access backlog keeps growing. Teammates asking for enablement now.</div>
+              <div style={{fontSize:11,color:C.textSecondary}}><span style={{fontWeight:700,color:C.blue}}>Demand is real.</span> Claude access backlog keeps growing. GenAI COP has 40+ attendees bi-weekly.</div>
             </div>
             <div style={{background:C.card,borderRadius:10,padding:"12px 16px",border:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:10}}>
               <Database size={15} color="#059669" style={{flexShrink:0}}/>
-              <div style={{fontSize:11,color:C.textSecondary}}><span style={{fontWeight:700,color:"#059669"}}>Data literacy is the foundation.</span> You can't evaluate AI output without understanding data quality, bias, and governance. AI fluency extends data literacy.</div>
+              <div style={{fontSize:11,color:C.textSecondary}}><span style={{fontWeight:700,color:"#059669"}}>Data literacy is the foundation.</span> AI fluency extends data literacy. Can't evaluate output without understanding data quality and bias.</div>
+            </div>
+            <div style={{background:C.card,borderRadius:10,padding:"12px 16px",border:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:10}}>
+              <BookOpen size={15} color={C.greyDark} style={{flexShrink:0}}/>
+              <div style={{fontSize:11,color:C.textSecondary}}><span style={{fontWeight:700,color:C.greyDark}}>Delivery model.</span> Foundations: async + COP sessions. Practitioner: cohort-based with managers. Builder: hands-on sprints with Talent Ops.</div>
             </div>
           </div>
           <div style={{...fadeUp(0.25),display:"flex",gap:0,marginBottom:14,background:C.bgAlt,borderRadius:10,padding:3}}>
@@ -778,13 +780,13 @@ function HackathonSlide() {
     {icon:Users,title:"Cross-Functional Teams",body:"Up to 5 teammates per team. Any function, any level. Intentionally mixed."},
     {icon:Zap,title:"Open Goal",body:"Build something using AI that meaningfully changes how you or your team works. No prescribed output. Ambition is the metric."},
     {icon:Terminal,title:"Claude Code Access",body:"All participating teams receive time-limited access to Claude Code for the duration of the event. No prior coding experience required."},
-    {icon:Trophy,title:"Real Reward",body:"First place wins [PRIZE TBD — options: team offsite budget, conference stipend, $X toward a professional development experience]. This is meaningful, not symbolic."},
+    {icon:Trophy,title:"Real Reward",body:"Winning team receives a meaningful reward: team experience budget, conference stipend, or professional development investment. This is not symbolic."},
   ];
   return (
     <div>
       <SectionLabel>Activation</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>Build Something Impossible</h2>
-      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,lineHeight:1.6,maxWidth:640,margin:"0 0 10px 0"}}>Reading about AI builds awareness. Building with AI builds fluency. The Hackathon is where the program becomes real.</p>
+      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,lineHeight:1.6,maxWidth:640,margin:"0 0 10px 0"}}>Reading about AI builds awareness. Building with AI builds fluency. The Hackathon is where the program becomes real. Amy Edmondson calls this <span style={{fontWeight:700,color:C.black}}>intelligent failure</span>: taking smart risks in new territory where the learning justifies the attempt.</p>
       <div style={{...fadeUp(0.2),background:C.card,borderRadius:12,padding:"14px 18px",border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.blue}`,marginBottom:14}}>
         <div style={{fontSize:13,color:C.textPrimary,fontStyle:"italic",lineHeight:1.6}}>{"\u201C"}The most successful teams I've seen implement AI are the ones given an impossible task — with no guarantee of success — and trusted to see how far they get.{"\u201D"}</div>
         <div style={{fontSize:11,color:C.textMuted,marginTop:6,fontWeight:600}}>&#8212; Ethan Mollick, Wharton Professor</div>
@@ -819,11 +821,11 @@ function ClosingSlide() {
 
 function CloseSlide() {
   const asks=[
-    {ask:"Champion AI fluency from the top",detail:"Jana + Jeff at All Hands and ELT",icon:Users},
-    {ask:"Approve UKG module access",detail:"Onboarding, Merit Planning, Performance, Reporting, Integrations",icon:Monitor},
-    {ask:"Add standing AI review to XLT or ELT",detail:"Monthly 15-min slot. Progress, blockers, decisions",icon:Clock},
-    {ask:"AI fluency in performance expectations",detail:"Company-wide capability, not a checkbox",icon:Brain},
-    {ask:"Sponsor one cross-functional AI sprint",detail:"Small team, impossible task, 6-week timebox",icon:Zap},
+    {ask:"Jana + Jeff: 2-min AI segment at next All Hands",detail:"Name the initiative, show one tool live, signal this is a priority",icon:Users,priority:"Now"},
+    {ask:"Approve UKG module access via Roper",detail:"Onboarding, Merit Planning, Performance, Reporting, Integrations",icon:Monitor,priority:"Now"},
+    {ask:"Standing 15-min AI review on XLT or ELT agenda",detail:"Monthly. Progress, blockers, decisions needed",icon:Clock,priority:"Q2"},
+    {ask:"Sponsor one cross-functional AI sprint",detail:"Small team, impossible task, 6-week timebox. First proof outside People Team",icon:Zap,priority:"Q2"},
+    {ask:"AI fluency in performance expectations",detail:"Company-wide capability standard, not a checkbox. Signals long-term commitment",icon:Brain,priority:"Q3"},
   ];
   return (
     <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",minHeight:"100%",textAlign:"center"}}>
@@ -842,9 +844,9 @@ function CloseSlide() {
                 <span style={{fontSize:13,fontWeight:800,color:C.textPrimary}}>{item.ask}</span>
                 <span style={{fontSize:11,color:C.textMuted}}>{item.detail}</span>
               </div>
+              <div style={{fontSize:9,fontWeight:800,color:item.priority==="Now"?C.red:C.blue,background:item.priority==="Now"?"#FEF2F2":C.blueLight,padding:"2px 8px",borderRadius:10,flexShrink:0}}>{item.priority}</div>
             </div>);})}
         </div>
-        {/* Mission closing */}
         <div style={{...fadeUp(0.5),marginTop:16}}>
           <ImageBanner src="/img/waves.jpg" height={140} overlay="linear-gradient(135deg,rgba(0,70,221,0.75),rgba(0,0,0,0.55))">
             <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:24,padding:"0 32px",width:"100%"}}>
