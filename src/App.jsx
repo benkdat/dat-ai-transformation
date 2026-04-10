@@ -534,56 +534,148 @@ function RoadmapSlide() {
 
 function FluencySlide() {
   const [at,setAt]=useState(0);
+  const [view,setView]=useState(0); // 0 = Program, 1 = Hiring Rubric
   const tiers=[
     {level:"Foundations",who:"All 700 teammates (role-specific tracks)",hours:"2-4 hrs",color:C.blue,icon:Users,mode:"Automation",items:["Delegate: identify tasks AI handles vs. humans own","Describe: structured prompting (role, task, constraints)","Discern: spot hallucinations, check outputs before sharing","Diligence: data privacy rules and approved tools at DAT"]},
     {level:"Practitioner",who:"Managers + domain ICs (persona-based pathways)",hours:"8-12 hrs",color:C.greyDark,icon:Wrench,mode:"Augmentation",items:["Delegate: map full workflows for human/AI collaboration","Describe: multi-step instructions and chain-of-thought","Discern: evaluate AI reasoning, catch premature convergence","Diligence: bias testing in hiring, promotion, comp decisions"]},
     {level:"Builder",who:"Power users + Talent Ops (AI orchestrators)",hours:"20+ hrs",color:C.red,icon:Sparkles,mode:"Agency",items:["Delegate: design autonomous agents and multi-step workflows","Describe: system prompts, tool orchestration, API chaining","Discern: quality frameworks for AI-generated artifacts","Diligence: audit trails, governance, teaching others"]},
   ];
+  const pillars=[
+    {title:"AI Mindset",icon:Brain,color:C.blue,bar:"Curiosity over caution. Experiments over excuses.",items:["Views AI as a thought partner, not just a shortcut — brings it into their core workflow","Actively experiments, learns, and shares what works across the team","Comfortable iterating — doesn't wait for the perfect prompt before trying","Understands the difference between delegation and abdication of judgment"]},
+    {title:"Strategy",icon:Target,color:C.greyDark,bar:"Applies AI to what actually moves DAT forward.",items:["Articulates specific, repeatable AI use cases tied to their role at DAT","Thinks beyond personal productivity — connects AI impact to team or customer outcomes","Knows when NOT to use AI: high-stakes decisions, sensitive data, regulated contexts","Understands DAT's freight and data domain well enough to evaluate AI output in context"]},
+    {title:"Building",icon:Wrench,color:C.red,bar:"Shows their work. Iterates in real time.",items:["Demonstrates real-time AI usage — strongest candidates show iteration, not polished output","Builds repeatable systems and workflows, not one-off prompts","Uses AI as a thought partner to deepen reasoning, not just to produce faster drafts","Elevates teammates — their fluency raises the floor for everyone around them"]},
+    {title:"Accountability",icon:Shield,color:C.black,bar:"You can delegate the work. Not the accountability.",items:["Defines quality standards before prompting — knows what good looks like before the AI runs","Critically evaluates AI output before sharing: catches errors, bias, and hallucinations","Owns the outcome regardless of how much AI contributed to producing it","Follows DAT's responsible AI and data privacy guidelines without exception or shortcut"]},
+  ];
   return (
     <div>
       <SectionLabel>Capability Building</SectionLabel>
-      <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>AI Fluency Program</h2>
-      <div style={{...fadeUp(0.15),background:C.card,borderRadius:12,padding:"14px 18px",border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.blue}`,marginBottom:10}}>
-        <div style={{fontSize:13,color:C.textPrimary,fontStyle:"italic",lineHeight:1.6}}>"The apprenticeship model is broken. Junior teammates used to learn by doing repetitive work alongside experienced people. AI compressed that cycle overnight."</div>
-        <div style={{fontSize:11,color:C.textMuted,marginTop:6,fontWeight:600}}>&#8212; Ethan Mollick, <em>Co-Intelligence</em> (Wharton)</div>
-        <div style={{fontSize:12,color:C.textSecondary,marginTop:8,lineHeight:1.5}}>We can't just name it. The new apprenticeship is structured around four competencies — Delegate, Describe, Discern, Diligence — at three levels of depth. Junior teammates learn domain knowledge <em>through</em> AI, building judgment in the process.</div>
+      <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 10px 0"}}>AI Fluency Program</h2>
+      <div style={{...fadeUp(0.12),display:"flex",gap:0,marginBottom:14,background:C.bgAlt,borderRadius:10,padding:3}}>
+        {["Capability Program","Hiring Rubric"].map((label,i)=>(
+          <button key={i} data-clickable="true" onClick={()=>setView(i)} style={{flex:1,padding:"9px 14px",borderRadius:8,border:"none",background:i===view?C.card:"transparent",color:i===view?C.blue:C.textMuted,fontSize:12,fontWeight:700,cursor:"pointer",boxShadow:i===view?"0 2px 8px rgba(0,0,0,0.06)":"none",transition:"all 0.25s",fontFamily:"'Inter',system-ui"}}>{label}</button>
+        ))}
       </div>
-      <div style={{...fadeUp(0.16),display:"flex",gap:6,marginBottom:10}}>
-        {[{d:"Delegate",desc:"What to hand AI",icon:ArrowLeftRight},{d:"Describe",desc:"How to instruct",icon:BookOpen},{d:"Discern",desc:"How to evaluate",icon:Search},{d:"Diligence",desc:"Ethics & trust",icon:Shield}].map((item,i)=>{const I=item.icon;return(
-          <div key={i} style={{flex:1,background:C.bgAlt,borderRadius:8,padding:"8px 10px",textAlign:"center",border:`1px solid ${C.border}`}}>
-            <I size={13} color={C.blue} style={{marginBottom:3,display:"inline-block"}}/>
-            <div style={{fontSize:11,fontWeight:800,color:C.textPrimary}}>{item.d}</div>
-            <div style={{fontSize:9,color:C.textMuted}}>{item.desc}</div>
-          </div>);})}
-      </div>
-      <div style={{...fadeUp(0.18),display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14}}>
-        <div style={{background:C.blueLight,borderRadius:10,padding:"12px 16px",border:`1px solid ${C.blue}12`,display:"flex",alignItems:"center",gap:10}}>
-          <Cpu size={15} color={C.blue} style={{flexShrink:0}}/>
-          <div style={{fontSize:11,color:C.textSecondary}}><span style={{fontWeight:700,color:C.blue}}>Demand is real.</span> Claude access backlog keeps growing. Teammates asking for enablement now.</div>
-        </div>
-        <div style={{background:C.card,borderRadius:10,padding:"12px 16px",border:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:10}}>
-          <Database size={15} color="#059669" style={{flexShrink:0}}/>
-          <div style={{fontSize:11,color:C.textSecondary}}><span style={{fontWeight:700,color:"#059669"}}>Data literacy is the foundation.</span> You can't evaluate AI output without understanding data quality, bias, and governance. AI fluency extends data literacy.</div>
-        </div>
-      </div>
-      <div style={{...fadeUp(0.25),display:"flex",gap:0,marginBottom:14,background:C.bgAlt,borderRadius:10,padding:3}}>
-        {tiers.map((t,i)=>{const TI=t.icon;return(
-          <button key={i} data-clickable="true" onClick={()=>setAt(i)} style={{flex:1,padding:"9px 14px",borderRadius:8,border:"none",background:i===at?C.card:"transparent",color:i===at?t.color:C.textMuted,fontSize:12,fontWeight:700,cursor:"pointer",boxShadow:i===at?"0 2px 8px rgba(0,0,0,0.06)":"none",transition:"all 0.25s",fontFamily:"'Inter',system-ui",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}><TI size={13}/>{t.level}</button>);})}
-      </div>
-      <div style={{background:C.card,borderRadius:14,padding:"20px 18px",border:`1px solid ${tiers[at].color}22`,transition:"all 0.3s"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-          <div><div style={{fontSize:20,fontWeight:900,color:tiers[at].color}}>{tiers[at].level}</div><div style={{fontSize:12,color:C.textMuted,marginTop:2}}>{tiers[at].who}</div></div>
-          <div style={{display:"flex",alignItems:"center",gap:6}}>
-            <div style={{background:C.blue+"10",color:C.blue,fontSize:10,fontWeight:700,padding:"3px 8px",borderRadius:6}}>{tiers[at].mode}</div>
-            <div style={{background:tiers[at].color+"10",color:tiers[at].color,fontSize:12,fontWeight:700,padding:"5px 12px",borderRadius:8,display:"flex",alignItems:"center",gap:4}}><Clock size={12}/>{tiers[at].hours}</div>
+
+      {view===0&&(
+        <div>
+          <div style={{...fadeUp(0.15),background:C.card,borderRadius:12,padding:"14px 18px",border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.blue}`,marginBottom:10}}>
+            <div style={{fontSize:13,color:C.textPrimary,fontStyle:"italic",lineHeight:1.6}}>"The apprenticeship model is broken. Junior teammates used to learn by doing repetitive work alongside experienced people. AI compressed that cycle overnight."</div>
+            <div style={{fontSize:11,color:C.textMuted,marginTop:6,fontWeight:600}}>&#8212; Ethan Mollick, <em>Co-Intelligence</em> (Wharton)</div>
+            <div style={{fontSize:12,color:C.textSecondary,marginTop:8,lineHeight:1.5}}>We can't just name it. The new apprenticeship is structured around four competencies — Delegate, Describe, Discern, Diligence — at three levels of depth. Junior teammates learn domain knowledge <em>through</em> AI, building judgment in the process.</div>
+          </div>
+          <div style={{...fadeUp(0.16),display:"flex",gap:6,marginBottom:10}}>
+            {[{d:"Delegate",desc:"What to hand AI",icon:ArrowLeftRight},{d:"Describe",desc:"How to instruct",icon:BookOpen},{d:"Discern",desc:"How to evaluate",icon:Search},{d:"Diligence",desc:"Ethics & trust",icon:Shield}].map((item,i)=>{const I=item.icon;return(
+              <div key={i} style={{flex:1,background:C.bgAlt,borderRadius:8,padding:"8px 10px",textAlign:"center",border:`1px solid ${C.border}`}}>
+                <I size={13} color={C.blue} style={{marginBottom:3,display:"inline-block"}}/>
+                <div style={{fontSize:11,fontWeight:800,color:C.textPrimary}}>{item.d}</div>
+                <div style={{fontSize:9,color:C.textMuted}}>{item.desc}</div>
+              </div>);})}
+          </div>
+          <div style={{...fadeUp(0.18),display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14}}>
+            <div style={{background:C.blueLight,borderRadius:10,padding:"12px 16px",border:`1px solid ${C.blue}12`,display:"flex",alignItems:"center",gap:10}}>
+              <Cpu size={15} color={C.blue} style={{flexShrink:0}}/>
+              <div style={{fontSize:11,color:C.textSecondary}}><span style={{fontWeight:700,color:C.blue}}>Demand is real.</span> Claude access backlog keeps growing. Teammates asking for enablement now.</div>
+            </div>
+            <div style={{background:C.card,borderRadius:10,padding:"12px 16px",border:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:10}}>
+              <Database size={15} color="#059669" style={{flexShrink:0}}/>
+              <div style={{fontSize:11,color:C.textSecondary}}><span style={{fontWeight:700,color:"#059669"}}>Data literacy is the foundation.</span> You can't evaluate AI output without understanding data quality, bias, and governance. AI fluency extends data literacy.</div>
+            </div>
+          </div>
+          <div style={{...fadeUp(0.25),display:"flex",gap:0,marginBottom:14,background:C.bgAlt,borderRadius:10,padding:3}}>
+            {tiers.map((t,i)=>{const TI=t.icon;return(
+              <button key={i} data-clickable="true" onClick={()=>setAt(i)} style={{flex:1,padding:"9px 14px",borderRadius:8,border:"none",background:i===at?C.card:"transparent",color:i===at?t.color:C.textMuted,fontSize:12,fontWeight:700,cursor:"pointer",boxShadow:i===at?"0 2px 8px rgba(0,0,0,0.06)":"none",transition:"all 0.25s",fontFamily:"'Inter',system-ui",display:"flex",alignItems:"center",justifyContent:"center",gap:5}}><TI size={13}/>{t.level}</button>);})}
+          </div>
+          <div style={{background:C.card,borderRadius:14,padding:"20px 18px",border:`1px solid ${tiers[at].color}22`,transition:"all 0.3s"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+              <div><div style={{fontSize:20,fontWeight:900,color:tiers[at].color}}>{tiers[at].level}</div><div style={{fontSize:12,color:C.textMuted,marginTop:2}}>{tiers[at].who}</div></div>
+              <div style={{display:"flex",alignItems:"center",gap:6}}>
+                <div style={{background:C.blue+"10",color:C.blue,fontSize:10,fontWeight:700,padding:"3px 8px",borderRadius:6}}>{tiers[at].mode}</div>
+                <div style={{background:tiers[at].color+"10",color:tiers[at].color,fontSize:12,fontWeight:700,padding:"5px 12px",borderRadius:8,display:"flex",alignItems:"center",gap:4}}><Clock size={12}/>{tiers[at].hours}</div>
+              </div>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+              {tiers[at].items.map((item,j)=>(
+                <div key={`${at}-${j}`} style={{fontSize:12,color:C.textSecondary,lineHeight:1.5,padding:"10px 12px",background:C.bgAlt,borderRadius:8,display:"flex",alignItems:"center",gap:8,opacity:0,animation:`slideIn 0.3s ease-out ${j*0.06}s forwards`}}>
+                  <CheckCircle2 size={13} color={tiers[at].color} style={{flexShrink:0}}/>{item}</div>))}
+            </div>
           </div>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-          {tiers[at].items.map((item,j)=>(
-            <div key={`${at}-${j}`} style={{fontSize:12,color:C.textSecondary,lineHeight:1.5,padding:"10px 12px",background:C.bgAlt,borderRadius:8,display:"flex",alignItems:"center",gap:8,opacity:0,animation:`slideIn 0.3s ease-out ${j*0.06}s forwards`}}>
-              <CheckCircle2 size={13} color={tiers[at].color} style={{flexShrink:0}}/>{item}</div>))}
+      )}
+
+      {view===1&&(
+        <div style={{...fadeUp(0.1)}}>
+          <div style={{background:C.black,borderRadius:12,padding:"16px 20px",marginBottom:12,position:"relative",overflow:"hidden"}}>
+            <div style={{position:"absolute",top:0,right:0,width:120,height:120,background:`radial-gradient(circle,${C.blue}22 0%,transparent 70%)`,pointerEvents:"none"}}/>
+            <div style={{fontSize:13,color:C.white,fontStyle:"italic",lineHeight:1.6,marginBottom:8}}>"We don't hire individual AI champions. We hire people who raise the floor for everyone around them."</div>
+            <div style={{fontSize:11,color:C.grey,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase"}}>One DAT AI Fluency Standard</div>
+          </div>
+
+          <div style={{background:C.blueLight,borderRadius:10,padding:"12px 16px",marginBottom:12,border:`1px solid ${C.blue}22`,display:"flex",gap:12,alignItems:"flex-start"}}>
+            <TrendingUp size={16} color={C.blue} style={{flexShrink:0,marginTop:2}}/>
+            <div>
+              <div style={{fontSize:12,fontWeight:800,color:C.blue,marginBottom:4}}>The Minimum Bar Has Moved</div>
+              <div style={{fontSize:11,color:C.textSecondary,lineHeight:1.6}}>We're no longer looking for occasional AI use. Candidates must demonstrate AI <em>embedded into their core workflow</em> — repeatable systems, not one-off prompts — with clear impact on quality, efficiency, or outcomes. One-time experiments don't clear the bar.</div>
+            </div>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}>
+            {pillars.map((p,i)=>{const PI=p.icon;return(
+              <div key={i} style={{background:C.card,borderRadius:12,padding:"14px 16px",border:`1px solid ${C.border}`,borderTop:`3px solid ${p.color}`}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+                  <div style={{width:28,height:28,borderRadius:8,background:p.color==="#000000"?C.bgAlt:p.color+"12",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                    <PI size={14} color={p.color==="#000000"?C.greyDark:p.color}/>
+                  </div>
+                  <div>
+                    <div style={{fontSize:12,fontWeight:800,color:C.textPrimary}}>{p.title}</div>
+                    <div style={{fontSize:10,color:C.textMuted,lineHeight:1.3,fontStyle:"italic"}}>{p.bar}</div>
+                  </div>
+                </div>
+                <div style={{display:"flex",flexDirection:"column",gap:5}}>
+                  {p.items.map((item,j)=>(
+                    <div key={j} style={{display:"flex",gap:7,alignItems:"flex-start"}}>
+                      <div style={{width:4,height:4,borderRadius:"50%",background:p.color==="#000000"?C.greyDark:p.color,flexShrink:0,marginTop:5}}/>
+                      <div style={{fontSize:10,color:C.textSecondary,lineHeight:1.5}}>{item}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );})}
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+            <div style={{background:C.card,borderRadius:10,padding:"12px 14px",border:`1px solid ${C.border}`}}>
+              <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:8}}>
+                <TrendingUp size={13} color={C.blue}/>
+                <div style={{fontSize:11,fontWeight:800,color:C.textPrimary}}>Growth Trajectory</div>
+              </div>
+              <div style={{fontSize:10,color:C.textSecondary,lineHeight:1.6,marginBottom:8}}>We assess forward momentum, not just current capability. Where were they six months ago? Is their fluency accelerating? Candidates who plateau early — regardless of current skill level — are a yellow flag.</div>
+              <div style={{display:"flex",flexDirection:"column",gap:4}}>
+                {["Evidence of experimentation and self-directed learning","Adaptability as tools and models evolve rapidly","Shares learnings — a One DAT multiplier, not a solo operator"].map((item,i)=>(
+                  <div key={i} style={{display:"flex",gap:6,alignItems:"flex-start"}}>
+                    <ArrowRight size={10} color={C.blue} style={{flexShrink:0,marginTop:3}}/>
+                    <div style={{fontSize:10,color:C.textSecondary,lineHeight:1.5}}>{item}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{background:C.card,borderRadius:10,padding:"12px 14px",border:`1px solid ${C.border}`}}>
+              <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:8}}>
+                <Users size={13} color={C.red}/>
+                <div style={{fontSize:11,fontWeight:800,color:C.textPrimary}}>Manager Standard</div>
+              </div>
+              <div style={{fontSize:10,color:C.textSecondary,lineHeight:1.6,marginBottom:8}}>Managers must clear a higher bar. Individual AI fluency is necessary but not sufficient — we assess whether they've actually led their team to adopt AI collectively.</div>
+              <div style={{display:"flex",flexDirection:"column",gap:4}}>
+                {["Created psychological safety for team experimentation","Redesigned at least one workflow so AI meaningfully changes how work gets done","Can point to team-level outcomes, not just personal productivity gains"].map((item,i)=>(
+                  <div key={i} style={{display:"flex",gap:6,alignItems:"flex-start"}}>
+                    <ArrowRight size={10} color={C.red} style={{flexShrink:0,marginTop:3}}/>
+                    <div style={{fontSize:10,color:C.textSecondary,lineHeight:1.5}}>{item}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
