@@ -2,6 +2,31 @@ AI Fluency Report — v3 (DAT org-wide, role-adaptive)
 You are assessing a DAT teammate's AI fluency based on their Claude conversation history. Use the recent_chats and conversation_search tools to pull a representative sample spanning as far back as history allows, up to 12 months. Paginate backward through recent_chats using the before parameter on each call until no earlier results are returned. Focus on conversations that tie to the person's stated day job (see ROLE BLOCK below). Apply the ROLE-RELEVANCE FILTER to screen out orthogonal work.
 
 
+HOW TO RUN THIS ASSESSMENT
+There are two paths. Pick the one that matches how you actually work.
+
+— Path A: Claude.ai only (recommended for most teammates) —
+Use this if most of your AI work happens in Claude.ai conversations.
+
+1. Open claude.ai and start a new conversation.
+2. Paste this entire prompt into the message box. Do not send yet.
+3. Scroll to the ROLE BLOCK below and replace every <<FILL IN: ...>> placeholder with your own details. If you've populated Claude memory with your role context, you can instead type "Use my Claude memory to propose a ROLE BLOCK, then confirm with me before scoring" at the top — Claude will draft and ask you to validate.
+4. Pick a MODE (INTERNAL for self-review, EXTERNAL if you want to publish anything).
+5. Send. Claude will pull your conversation history via recent_chats / conversation_search, apply the filters, and produce the written sections in chat plus the 11 output files (report, 7 LinkedIn slides, 2 standalone charts, 1 React dashboard).
+
+— Path B: Claude.ai + Claude Code Companion Bridge (for builders) —
+Use this if you also work heavily in Claude Code — you maintain custom skills in ~/.claude/, you've built MCP servers, you ship role-relevant repos, or you run scheduled agents. Without the bridge, none of that evidence reaches the assessment and your Workflow Integration (M3) and Execution on Insight (M5) scores will under-represent your actual fluency.
+
+1. Open Claude Code in any directory on your machine.
+2. Copy the companion prompt from APPENDIX C and paste it into Claude Code. Fill in the ROLE BLOCK at the top (or let Claude Code read it from your memory).
+3. Claude Code inspects your local environment — ~/.claude/skills/, ~/.claude/commands/, ~/.claude/plans/, memory entries, MCP configs, ~/Projects/, connected tools, scheduled tasks — and produces a structured markdown bundle titled "SUPPLEMENTAL ROLE-RELEVANT EVIDENCE".
+4. Copy that entire bundle to your clipboard.
+5. Open claude.ai and follow Path A steps 1–4. Before sending, paste the supplemental bundle directly after this prompt (in the same message) so Claude sees both: the assessment rubric and the local-infrastructure evidence.
+6. Send. The bundle augments chat-history evidence with persistent-infrastructure signals. Scores — especially M3 and M5 — reflect your full surface area.
+
+If you're not sure which path fits, start with Path A. You can always rerun with the bridge later.
+
+
 ORG BLOCK — DAT (stable, applies to everyone)
 This is the organizational lens. These facts are the same whether the person being assessed works in Engineering, People, Product, Sales, Finance, or Operations. Do not modify unless the org itself changes.
 
@@ -31,77 +56,54 @@ org_mandate_phrases_to_avoid:
 brand_system_reference: dat-asset-design skill (Pathfinder voice, DAT Blue, Inter font)
 
 
-ROLE BLOCK — swappable per person
-This block is what makes the assessment tied to someone's actual day job. Fill it out before running. If the user's Claude memory already contains role context (title, scope, team, recurring workflows), propose a pre-filled ROLE BLOCK at the start of the assessment and ask the user to confirm or correct before scoring.
+ROLE BLOCK — FILL IN BEFORE RUNNING
+This block is what makes the assessment tied to your actual day job. Replace every <<FILL IN: ...>> marker below with your own details. If your Claude memory already has role context (title, scope, team, recurring workflows), you can ask Claude to propose a pre-filled ROLE BLOCK and confirm before scoring.
 
-name: Ben Krupp
-role_title: Director, Talent Operations
-function: People Team
-level: Director
-scope: Talent Acquisition, Talent Operations & Analytics, and Workplace Experience across six offices (Seattle, Denver, Beaverton/Tigard, Springfield, Toronto, Bangalore)
-reports_to: Jana Galbraith, Chief People Officer
-direct_reports: 7 — Nathalia Migliorato (Sr Mgr, Talent Ops & Analytics), three recruiters (Becca Fernyhough, Darren Robinson, Paul Montague Jr.), three Workplace Experience managers (Matt Gaustad, Terresa Hill, Justine Cagle)
-team_shape: 7 directs spanning three sub-functions (TA, Talent Ops & Analytics, Workplace). Peer PBPs (Kate Westrin, Karishma Suhag) report to Jana, not to Ben
+Leave a field as "none" only when it genuinely doesn't apply (e.g., direct_reports: none for an IC). Do not delete fields — empty fields distort scoring.
+
+# ─── START ROLE BLOCK ────────────────────────────────────────────
+
+name: <<FILL IN: your full name>>
+role_title: <<FILL IN: e.g., Staff Software Engineer | Senior Product Manager | Director, Finance>>
+function: <<FILL IN: Engineering | Product | Sales | People | Finance | Operations | Marketing | ...>>
+level: <<FILL IN: IC | Manager | Director | VP | C-level>>
+scope: <<FILL IN: one to two sentence description of what you actually own and where it lives in the org>>
+reports_to: <<FILL IN: your manager's name + title>>
+direct_reports: <<FILL IN: count and rough composition, e.g., "5 engineers + 1 EM", or "none" if IC>>
+team_shape: <<FILL IN: team size, sub-function structure, peer context that matters for how you work>>
 
 recurring_workflows:
-  - Weekly recruiting pipeline reviews and hiring manager coaching across active searches
-  - Executive recruiting searches (Sr Director and above) where Ben leads as hiring partner
-  - Monthly People Team metrics prep for XLT and ELT decks
-  - Annual merit cycle end-to-end (file architecture, budget allocation, approvals, delivery)
-  - Annual Gallup engagement survey execution, dashboarding, and org-wide action planning
-  - Office transition and workplace operations (current: Tigard buildout for July go-live)
-  - Offer approval and comp exception routing with Finance and Jeff Clementz
-  - AI Fluency initiative execution and rollout to People Team and broader org
-  - Vendor management across Greenhouse, Radford, Gallup, Crosschq, UKG
-  - Post-acquisition integration work (comp harmonization, policy alignment)
+  - <<FILL IN: a workflow you run on a regular cadence — weekly, monthly, quarterly, or annually>>
+  - <<FILL IN: another recurring workflow>>
+  - <<FILL IN: aim for 5–10 total; be specific, not abstract>>
 
 role_success_metrics:
-  - Time to fill (all reqs, executive reqs tracked separately)
-  - Quality of hire
-  - Cost per hire and agency spend reduction
-  - Gallup grand mean engagement score and Roper percentile
-  - Gallup participation rate (currently 97%, 619 teammates)
-  - Teammate belonging and inclusion scores
-  - Workplace satisfaction by office
+  - <<FILL IN: a metric you're personally on the hook for — e.g., time to ship, win rate, forecast accuracy, engagement score>>
+  - <<FILL IN: another success metric>>
+  - <<FILL IN: aim for 3–7 total>>
 
 role_stakeholders:
-  - Jana Galbraith (CPO) — problem plus solution, direct, structured
-  - XLT members — exec-calibrated, problem first then solution, data-backed
-  - ELT — outcomes-forward, minimal exposition
-  - Hiring managers — warm and clear, coaching tone
-  - Direct reports (Nathalia, recruiters, Workplace managers) — warm and clear, coaching tone
-  - Teammates (org-wide) — inclusive, calm, purposeful
-  - Kate Westrin and Karishma Suhag (peer PBPs) — peer-to-peer, collaborative
-  - Cheryl Bullard (Chief of Staff, interviewer on senior searches)
+  - <<FILL IN: stakeholder name or group — tone expectation (e.g., "exec-calibrated, data-backed", "warm and coaching")>>
+  - <<FILL IN: another stakeholder with tone note>>
+  - <<FILL IN: aim for 4–8; this shapes M1 and M2 scoring>>
 
 role_systems_of_record:
-  - Greenhouse (ATS)
-  - UKG (HRIS)
-  - Gallup (engagement)
-  - 15Five (performance and feedback)
-  - Radford (compensation benchmarking)
-  - TalentWall and Crosschq (candidate workflow)
-  - Google Drive, Docs, Sheets
-  - Confluence (People Hub)
-  - Slack
-  - DocuSign and Adobe Sign (offers, NDAs)
+  - <<FILL IN: a system where your work lives — e.g., GitHub, Jira, Salesforce, Greenhouse, NetSuite, Snowflake>>
+  - <<FILL IN: another system of record>>
+  - <<FILL IN: aim for 4–10; include both internal tools and connected AI tools like MCP servers>>
 
 role_deliverable_types:
-  - Offer letters and comp recommendations
-  - XLT and ELT People Team decks
-  - Gallup dashboards, action plans, and org-wide engagement comms
-  - Merit cycle architecture (linked XLT and ELT sheets, bonus schedules, budget models)
-  - Hiring manager playbooks and search scorecards
-  - Org-wide comms (Slack, email, announcements)
-  - Office transition plans and teammate communications
-  - Policy documents (NDAs, confidentiality, non-solicit, non-compete, IP agreements)
-  - People Hub pages (Google Sites and Confluence)
-  - Custom skills, Claude memory entries, and n8n automations for the People Team
+  - <<FILL IN: a thing you ship — e.g., merged pull requests, signed contracts, offer letters, board pages, PRDs>>
+  - <<FILL IN: another deliverable type>>
+  - <<FILL IN: aim for 4–8>>
 
 self_authored_org_initiatives:
-  - AI Fluency initiative (tied to: ai_fluency) → EXCLUDED from personal ai_fluency scoring
+  - <<FILL IN: any org-level initiative you personally lead that maps to an ORG BLOCK stated_leadership_metric. Format: "Initiative name (tied to: metric_name) → EXCLUDED from personal metric_name scoring">>
+  - <<or write "none" if you don't personally own an org-level initiative>>
 
-See Appendix A at the end of this prompt for populated ROLE BLOCK examples across five common DAT functions.
+# ─── END ROLE BLOCK ──────────────────────────────────────────────
+
+See Appendix A at the end of this prompt for five populated ROLE BLOCK examples across common DAT functions (Engineering IC, Product Manager, Sales AE, Finance IC, People Director). Use those as reference shapes, not as copy-paste templates — your fields need to reflect your actual work.
 
 
 ROLE-RELEVANCE FILTER
@@ -280,6 +282,7 @@ Native: 8.0+ on most metrics with evidence of meta-prompting, persistent systems
 
 ORDER OF OPERATIONS
 Propose pre-filled ROLE BLOCK from memory if available. Ask user to confirm or correct.
+If the user has provided a SUPPLEMENTAL ROLE-RELEVANT EVIDENCE bundle (Path B), parse it and fold its signals into M3 and M5 scoring. Cite bundle evidence explicitly in Section 3 when it drives the strength call.
 Apply ROLE-RELEVANCE FILTER to pulled conversations. Report counts.
 Produce Sections 1–6.5 as a brief written summary in chat.
 Produce Section 7 downloadable files (markdown report, 7 carousel slides, 2 standalone charts).
@@ -312,6 +315,7 @@ Deep research runs
 Role-relevant documents produced
 Multi-session project arcs identified within ROLE BLOCK scope
 Meta-prompts or reusable prompt systems built
+If Path B bundle provided, also report: persistent infrastructure signals summarized (custom skills count, MCP servers, scheduled tasks, shipped role-relevant repos)
 SECTION 3 — What You're Actually Good At
 Two behavior patterns maximum. For each: name the behavior (not the topic), give one specific role-relevant example describing what was done and why it's skillful, explain why this behavior is not the default. Respect mode-specific privacy.
 SECTION 4 — Where You're Weakest
@@ -389,6 +393,7 @@ Role: (INTERNAL only) {{role_title}}, {{function}} from ROLE BLOCK
 Current Score: [most recent composite, one decimal] / 10 — Tier: [tier]
 Trajectory: [first composite] → [most recent composite] over [N] months
 Assessment date and coverage window
+Path used: A (chat only) or B (chat + Claude Code bundle)
 Files 2–8 — LinkedIn Carousel (1080×1080px PNGs)
 Canvas: fig, ax = plt.subplots(figsize=(7.2, 7.2), facecolor='#000000').
 
@@ -680,15 +685,15 @@ role_deliverable_types:
   - scenario analyses
 
 self_authored_org_initiatives: none
-Example 5 — People Team Director (reference: Ben's own, current role)
-name: Ben Krupp
+Example 5 — People Team Director
+name: [full name]
 role_title: Director, Talent Operations
 function: People
 level: Director
 scope: Talent Acquisition, Talent Operations & Analytics, Workplace Experience
-reports_to: Jana Galbraith, CPO
-direct_reports: Nathalia Migliorato (Sr Mgr, Talent Ops), 3 recruiters, 3 workplace managers
-team_shape: 7 direct reports across TA, Ops, Workplace
+reports_to: [CPO name], CPO
+direct_reports: [Sr Mgr, Talent Ops & Analytics], 3 recruiters, 3 workplace managers
+team_shape: 7 direct reports across TA, Ops, Workplace; peer PBPs report into the CPO
 
 recurring_workflows:
   - requisition intake and approval routing
@@ -707,7 +712,7 @@ role_success_metrics:
   - teammate belonging scores
 
 role_stakeholders:
-  - CPO (Jana) — problem + solution, direct
+  - CPO — problem + solution, direct
   - XLT — exec-calibrated, structured, data-backed
   - hiring managers — clear, warm, coaching tone
   - teammates (org-wide) — inclusive, calm, purposeful
@@ -738,3 +743,139 @@ If running this assessment against someone else's history, the role_stakeholders
 If running against your own history, memory should auto-populate most of the ROLE BLOCK. Confirm before scoring so errors don't propagate.
 The ROLE-RELEVANCE FILTER will exclude meaningful off-role AI work (side projects, learning, personal tooling). This is by design. If the person wants a "whole life AI fluency" view, run a second assessment with the filter disabled and label it distinctly.
 Swap the ORG BLOCK to repoint this entire prompt at a different company. The rubric, scoring rules, and file specs are portable. Only ORG and ROLE blocks are DAT-specific.
+
+
+APPENDIX C — Claude Code Companion Bridge (optional, Path B)
+Use this companion when your fluency shows up in persistent local infrastructure — custom skills, MCP servers, shipped repos, scheduled tasks, plan-mode artifacts, memory entries, deliberate permission grooming. Without it, M3 (Workflow Integration) and M5 (Execution on Insight) under-represent your actual surface area because Claude.ai can't see any of it.
+
+How the bridge works
+The companion prompt runs in Claude Code (not Claude.ai). Claude Code has filesystem access, which lets it inspect:
+- ~/.claude/skills/ — custom skills you've installed or authored
+- ~/.claude/commands/ — slash commands tied to recurring role work
+- ~/.claude/plans/ — plan-mode artifacts from multi-session design work
+- ~/.claude/projects/*/memory/ — persistent memory entries with role context
+- ~/.claude/settings.json and settings.local.json — custom MCP configs + permission list grooming
+- ~/.claude/history.jsonl — proxy for session volume
+- ~/Projects/ (or wherever your code lives) — git-tracked role-relevant repos
+- Connected MCP servers beyond defaults (custom integrations you've built)
+- Scheduled/autonomous AI workflows (cron jobs, GitHub Actions, Render schedulers, Apps Script triggers)
+
+It then produces a structured markdown bundle titled "SUPPLEMENTAL ROLE-RELEVANT EVIDENCE". You copy that bundle and paste it into your Claude.ai conversation right after the main assessment prompt. The assessment treats it as first-class evidence under the ROLE-RELEVANCE FILTER and SELF-AUTHORED METRIC RULE.
+
+Bundle output format (for reference)
+## SUPPLEMENTAL ROLE-RELEVANT EVIDENCE (Claude Code pass, YYYY-MM-DD)
+**Mode:** INTERNAL | EXTERNAL
+**ROLE BLOCK:** one-line role summary
+**Self-authored initiatives:** list or "none"
+
+### A. Persistent AI Infrastructure
+Custom skills, slash commands, plan artifacts, memory entries, MCP config, permission grooming, session volume, installed plugins. For each: name, date, line count where relevant, role tie.
+
+### B. Shipped Role-Relevant Artifacts
+Markdown table of deployed/prototype/local projects. Columns: project, stack, system-of-record tie, status, metric touched, self-authored flag.
+
+### C. Cross-Tool Activity (past 90 days, role-relevant)
+Drive, Confluence, Gmail, Calendar, Slack, connected DB activity. Brief, behavior-level — no raw content.
+
+### D. AI-Assisted Documents (past 60 days)
+Drive/filesystem list of AI-assisted outputs tied to role work. Self-authored org initiative docs flagged separately.
+
+### E. Scheduled / Autonomous AI Work
+Cron jobs, Apps Script triggers, GitHub Actions workflows, Render/Vercel scheduled deployments. Each with trigger cadence and role tie.
+
+### F. Off-Role Sophisticated AI Work (context only)
+Side projects, personal tooling, unrelated learning. Explicit "does not score" note per the ROLE-RELEVANCE FILTER.
+
+### Provisional Scores
+- M3 (Workflow Integration): score to one decimal + rationale + what would push to the next band
+- M5 (Execution on Insight): score to one decimal + rationale
+- M1, M2, M4: PENDING — require Claude.ai chat-history pass
+
+### Self-Authored Exclusions
+List of artifacts tied to self_authored_org_initiatives. These count for M3/M5 generally but are excluded from the relevant org-level metric alignment in Section 6.5b.
+
+The companion prompt (paste into Claude Code)
+Fill in the ROLE BLOCK at the top before sending. Claude Code can also read it from your memory if you've populated role context there.
+
+───────── BEGIN COMPANION PROMPT ─────────
+
+You are producing a SUPPLEMENTAL ROLE-RELEVANT EVIDENCE bundle for the DAT AI Fluency Assessment (v3). The main assessment runs in Claude.ai against conversation history. Your job is to capture the evidence that lives only on this machine: custom skills, MCP servers, shipped role-relevant repos, plan-mode artifacts, memory entries, scheduled tasks, and connected-tool activity.
+
+ROLE BLOCK (fill in before running, or use Claude memory if populated):
+
+name: <<FILL IN>>
+role_title: <<FILL IN>>
+function: <<FILL IN>>
+level: <<FILL IN>>
+scope: <<FILL IN>>
+recurring_workflows: <<FILL IN: 5-10 items>>
+role_success_metrics: <<FILL IN: 3-7 items>>
+role_systems_of_record: <<FILL IN: 4-10 items — this drives what counts as role-relevant infrastructure>>
+role_deliverable_types: <<FILL IN>>
+self_authored_org_initiatives: <<FILL IN, or "none">>
+
+MODE: INTERNAL (names OK in the bundle — user will paste into their own Claude.ai conversation)
+
+INSPECTION STEPS
+
+1. Persistent AI Infrastructure (~/.claude/)
+   - List custom skills in ~/.claude/skills/ — name, install date, approximate line count, which ROLE BLOCK item the skill ties to (or mark "generic" if none)
+   - List slash commands in ~/.claude/commands/ — name and role tie
+   - List plan artifacts in ~/.claude/plans/ — name, creation date, which project or workstream the plan designs (role-relevant only; note if plan is for off-role work)
+   - List memory entries in ~/.claude/projects/*/memory/ — brief description of each, flag any that encode ROLE BLOCK context
+   - Count lines in ~/.claude/history.jsonl as a session-volume proxy
+   - Count session files across Claude Code project directories as an activity proxy
+   - Read ~/.claude/settings.json and ~/.claude/settings.local.json:
+     * Identify any custom MCP server configs (cite the server name and its role tie)
+     * Count allowed-bash entries in settings.local.json — >20 = strong deliberate permission curation, call that out
+   - Note installed plugins/marketplaces (~/.claude/plugins/marketplaces/)
+   - For each custom MCP server referenced in settings, locate its source directory (usually ~/Projects/<name>). For each: path, language/framework, what it wraps, role tie, commit count and recency
+   - List connected MCP servers beyond custom ones (Drive, Gmail, Calendar, Slack, Atlassian, GitHub, Jira, Snowflake, Salesforce, Neon, etc.) — note which ROLE BLOCK role_systems_of_record they align to
+
+2. Shipped Role-Relevant Artifacts
+   Inspect ~/Projects/ (and ~/Documents/ if you keep code elsewhere). For each git-tracked or deployed project, record:
+   - Project name
+   - Stack (React/Vite, Python/FastAPI, Apps Script, etc.)
+   - System-of-record tie (map to ROLE BLOCK role_systems_of_record; mark "none" if off-role)
+   - Status (deployed to Vercel/Render/etc, prototype, local-only)
+   - Role success metric the artifact could plausibly move
+   - Self-authored flag (true if part of a self_authored_org_initiatives entry)
+   - Recent activity: commit count, last commit date
+   Produce a markdown table. Exclude projects that don't tie to the ROLE BLOCK at all — note those in Section F instead.
+
+3. Cross-Tool Activity (past 90 days, role-relevant)
+   If Drive, Gmail, Calendar, Slack, Confluence, or Atlassian MCP servers are connected, sample recent activity:
+   - Recently-authored or recently-edited documents in role_systems_of_record that match role_deliverable_types
+   - Pages authored in role-relevant Confluence spaces
+   - Active Slack channels tied to role_stakeholders
+   Describe at the behavior level. Do NOT dump raw content or verbatim messages.
+
+4. AI-Assisted Documents (past 60 days)
+   From Drive or local filesystem, list documents that appear to be AI-assisted outputs tied to role work. Separately flag self-authored org initiative documents.
+
+5. Scheduled / Autonomous AI Work
+   Check for scheduled tasks in:
+   - ~/.claude/scheduled-tasks/ or equivalent MCP configs
+   - ~/Documents/Claude/Scheduled/
+   - .github/workflows/ in each role-relevant repo
+   - Apps Script triggers, cron jobs, Render/Vercel scheduled deployments (look for render.yaml, vercel.json cron entries, triggers.json)
+   Each with trigger cadence and role tie.
+
+6. Off-Role Sophisticated AI Work (context only)
+   Note technically sophisticated AI projects that are NOT role-relevant. Mark explicitly as "does not score per ROLE-RELEVANCE FILTER" — they exist for narrative context only.
+
+7. Provisional Scores
+   Score to one decimal per DECIMAL PRECISION RULES:
+   - M3 (Workflow Integration): rationale + what observable change would push it to the next band. Apply foundation-building weight.
+   - M5 (Execution on Insight): rationale + which shipped artifacts moved role or org metrics vs. sat idle. Apply foundation-building weight.
+   - Mark M1 (Prompt Quality), M2 (Output Discipline), M4 (Cross-Session Context) as PENDING — they require the Claude.ai chat-history pass.
+
+8. Self-Authored Exclusions
+   List artifacts tied to self_authored_org_initiatives. Note they count for M3/M5 generally but are excluded from the relevant org-level metric alignment in Section 6.5b of the main report.
+
+OUTPUT FORMAT
+Produce one markdown block with the exact section headers shown in the "Bundle output format" section of Appendix C above. End with:
+
+"Paste this entire bundle into your Claude.ai conversation immediately after the main AI Fluency Report v3 prompt, in the same message, before sending."
+
+───────── END COMPANION PROMPT ─────────
