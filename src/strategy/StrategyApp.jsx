@@ -216,7 +216,7 @@ function TitleSlide() {
               </div>
               <h1 style={{fontSize:"clamp(32px,4.5vw,50px)",fontWeight:900,color:C.white,lineHeight:1.1,letterSpacing:"-0.03em",margin:0}}>AI Fluency as DAT's</h1>
               <h1 style={{fontSize:"clamp(32px,4.5vw,50px)",fontWeight:900,color:"#0056FF",lineHeight:1.1,letterSpacing:"-0.03em",margin:"2px 0 0 0"}}>Competitive Edge</h1>
-              <p style={{fontSize:14,color:"rgba(255,255,255,0.6)",marginTop:18,lineHeight:1.6,maxWidth:480,margin:"18px auto 0"}}>How the People Team is challenging the status quo, eliminating yesterwork, and building the AI muscle that makes DAT faster than everyone else.</p>
+              <p style={{fontSize:14,color:"rgba(255,255,255,0.6)",marginTop:18,lineHeight:1.6,maxWidth:480,margin:"18px auto 0"}}>How DAT is building the AI muscle to eliminate yesterwork and move faster than everyone else. Proven in the People Team. Designed for every function.</p>
             </div>
           </div>
           <div style={{position:"relative",height:72,overflow:"hidden"}}>
@@ -225,7 +225,7 @@ function TitleSlide() {
             <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",zIndex:1}}>
               <div style={{textAlign:"center",padding:"0 28px"}}>
                 <div style={{fontSize:12,fontWeight:900,color:C.white,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:3}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
-                <div style={{fontSize:11,color:"rgba(255,255,255,0.75)",lineHeight:1.5}}>Now the People Team is taking the uncertainty out of how we work. <span style={{fontWeight:700,color:C.white}}>Same mission. New frontier.</span></div>
+                <div style={{fontSize:11,color:"rgba(255,255,255,0.75)",lineHeight:1.5}}>Now we're taking the uncertainty out of how we work. <span style={{fontWeight:700,color:C.white}}>Same mission. New frontier.</span></div>
               </div>
             </div>
           </div>
@@ -242,10 +242,10 @@ function CostSlide() {
       <SectionLabel>The Burning Platform</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>80 Hours of Yesterwork</h2>
       <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:16}}>
-        Peter Hinssen calls it <span style={{fontWeight:700,color:C.black}}>yesterwork</span>: outdated processes designed before AI existed that silently eat capacity. These are DAT's estimated numbers based on team time studies and operational analysis.
+        Peter Hinssen calls it <span style={{fontWeight:700,color:C.black}}>yesterwork</span>: outdated processes designed before AI existed that silently eat capacity. Every function has it. The People Team measured theirs first.
       </p>
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:12}}>
-        <BigStat value="80" suffix=" hrs" label="Estimated admin work per week" sub="Across all People pillars" delay={0.2} accent={C.red}/>
+        <BigStat value="80" suffix=" hrs" label="Estimated admin work per week" sub="People Team measured. Every function carries its own." delay={0.2} accent={C.red}/>
         <BigStat value="110" prefix="$" suffix="K" label="Annual tool spend at risk" sub="TalentWall, Crosschq, scheduling, recognition, reporting" delay={0.3} accent={C.yellow}/>
         <BigStat value="40" suffix=" reqs" label="Supported by 3 recruiters" sub="Full-lifecycle. Admin eats capacity meant for candidates" delay={0.4} accent={C.blue}/>
       </div>
@@ -270,6 +270,23 @@ function CostSlide() {
           <div style={{fontSize:10,color:C.textMuted,marginTop:2}}>— Peter Hinssen, The Uncertainty Principle</div>
         </div>
       </div>
+      <div style={{...fadeUp(0.55),marginTop:10,background:C.blueLight,borderRadius:10,padding:"14px 16px",border:`1px solid ${C.blue}12`}}>
+        <div style={{fontSize:10,fontWeight:700,color:C.blue,marginBottom:6,textTransform:"uppercase",letterSpacing:"0.12em"}}>Yesterwork Exists Everywhere</div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
+          {[
+            {fn:"Engineering",ex:"Manual deployment checklists, code review coordination, incident postmortem assembly"},
+            {fn:"Sales",ex:"CRM data hygiene, proposal assembly, forecast reconciliation narratives"},
+            {fn:"Finance",ex:"Variance explanations, close support, ad hoc modeling requests from leadership"},
+            {fn:"Product",ex:"PRD first drafts, competitive research synthesis, sprint retro documentation"},
+          ].map((item,i)=>(
+            <div key={i} style={{background:C.card,borderRadius:8,padding:"10px 10px",border:`1px solid ${C.border}`}}>
+              <div style={{fontSize:11,fontWeight:800,color:C.textPrimary,marginBottom:3}}>{item.fn}</div>
+              <div style={{fontSize:10,color:C.textSecondary,lineHeight:1.5}}>{item.ex}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{fontSize:10,color:C.textMuted,marginTop:6,fontStyle:"italic"}}>The People Team quantified 80 hrs/wk. These functions haven't measured yet, but the pattern is the same.</div>
+      </div>
     </div>
   );
 }
@@ -277,17 +294,17 @@ function CostSlide() {
 function FlywheelSlide() {
   const [activeStage,setActiveStage]=useState(null);
   const stages=[
-    {id:"engage",icon:HeartPulse,color:FW.engage,label:"Engage",desc:"Measure what matters",detail:"Gallup Q12 tells us where teammates struggle. 70% of engagement variance traces to the manager. We measure so we know where to act.",evidence:"97% participation. Live dashboard. PBP coaching deployed."},
-    {id:"enable",icon:Brain,color:FW.enable,label:"Enable",desc:"Build fluency and confidence",detail:"Structured around four competencies — Delegate, Describe, Discern, Diligence — across three modes of interaction. New teammates learn domain knowledge by working through AI, not just alongside senior people. ENABLE rebuilds the learning scaffold the old apprenticeship model provided.",evidence:"Claude access backlog growing. Demand outpacing our ability to train."},
-    {id:"redesign",icon:Hammer,color:FW.redesign,label:"Redesign",desc:"Hunt the yesterwork",detail:"Systematically eliminate pre-AI processes. Automated comp verification, intelligent routing, scheduling agents. This is where the 80 hrs/wk gets reclaimed.",evidence:"Targeting 80 hrs/wk. $110K in tool spend addressable."},
-    {id:"focus",icon:Crosshair,color:FW.focus,label:"Focus",desc:"Empower through job crafting",detail:"Freed capacity goes to what actually moves the business. Job crafting means teammates proactively redefine their roles around higher-order work — strategic business partnering, advisory support, deeper coaching. AI shifts the narrative from job insecurity to professional empowerment.",evidence:"Every tool built becomes a template for Eng, Product, Finance."},
+    {id:"engage",icon:HeartPulse,color:FW.engage,label:"Engage",desc:"Measure what matters",detail:"Gallup Q12 tells us where teammates struggle. 70% of engagement variance traces to the manager. We measure so we know where to act.",evidence:"97% participation in People Team pilot. Live dashboards. Manager coaching deployed."},
+    {id:"enable",icon:Brain,color:FW.enable,label:"Enable",desc:"Build fluency and confidence",detail:"Structured around four competencies — Delegate, Describe, Discern, Diligence — across three modes of interaction. New teammates learn domain knowledge by working through AI, not just alongside senior people. ENABLE rebuilds the learning scaffold the old apprenticeship model provided.",evidence:"Claude access backlog growing across functions. GenAI COP: 40+ attendees from Eng, Product, Sales, People, Finance."},
+    {id:"redesign",icon:Hammer,color:FW.redesign,label:"Redesign",desc:"Hunt the yesterwork",detail:"Systematically eliminate pre-AI processes. Automated comp verification, intelligent routing, scheduling agents. This is where the 80 hrs/wk gets reclaimed.",evidence:"80 hrs/wk measured in People Team. $110K tool spend addressable. Pattern applies org-wide."},
+    {id:"focus",icon:Crosshair,color:FW.focus,label:"Focus",desc:"Empower through job crafting",detail:"Freed capacity goes to what actually moves the business. Job crafting means teammates proactively redefine their roles around higher-order work — strategic business partnering, advisory support, deeper coaching. AI shifts the narrative from job insecurity to professional empowerment.",evidence:"People Team tools become templates. Next: Engineering, Sales, Finance, Product."},
   ];
   return (
     <div>
       <SectionLabel>Strategic Model</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>The One DAT Flywheel</h2>
       <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:16}}>
-        One DAT is the destination. We get there through a cycle that compounds: measure engagement, enable fluency, hunt the yesterwork, and focus freed capacity on work that matters. Each turn makes the next one faster.
+        One DAT is the destination. We get there through a cycle that compounds across every function: measure engagement, enable fluency, hunt the yesterwork, and focus freed capacity on work that matters. Each turn makes the next one faster.
       </p>
       <div style={{...fadeUp(0.2),position:"relative",borderRadius:14,overflow:"hidden",marginBottom:14}}>
         <img src="/img/waves.jpg" alt="" style={{width:"100%",height:370,objectFit:"cover",display:"block",borderRadius:14}}/>
@@ -330,12 +347,12 @@ function FlywheelSlide() {
 
 function LandscapeSlide() {
   const [ai,setAi]=useState(0);
-  const rd=[{subject:"Self-Service",DAT:65,Industry:45},{subject:"Predictive Analytics",DAT:55,Industry:35},{subject:"Process Automation",DAT:70,Industry:50},{subject:"AI Routing & Triage",DAT:75,Industry:25},{subject:"Workforce Intelligence",DAT:60,Industry:40},{subject:"Teammate Experience",DAT:50,Industry:45}];
+  const rd=[{subject:"Self-Service",DAT:65,Industry:45},{subject:"Predictive Analytics",DAT:55,Industry:35},{subject:"Process Automation",DAT:70,Industry:50},{subject:"Intelligent Routing",DAT:75,Industry:25},{subject:"Workforce Intelligence",DAT:60,Industry:40},{subject:"AI-Enabled Experience",DAT:50,Industry:45}];
   const ins=[
     {source:"Gallup 2025",insight:"Global engagement fell to 21%, costing $8.9 trillion annually. 70% of that variance traces to the manager. Organizations investing in manager development see up to 28% improvement.",color:C.blue},
     {source:"Peter Hinssen",insight:"The People function needs a 'yesterwork hunter' mentality. Not adding new systems. Deciding which processes to drop entirely.",color:C.red},
     {source:"McKinsey 2025",insight:"Only 5% of organizations see measurable AI ROI. The difference: clear strategy, proper training, manager support. Tools without fluency fail.",color:C.greyDark},
-    {source:"DAT Signal",insight:"The Claude access backlog tells our story. The GenAI Community of Practice (40+ attendees, bi-weekly) formed organically. Teammates are hungry for AI enablement. Demand is outpacing our ability to train.",color:C.blue},
+    {source:"DAT Signal",insight:"The Claude access backlog tells our story. The GenAI Community of Practice (40+ attendees from across Engineering, Product, Sales, People, and Finance, bi-weekly) formed organically. Demand is outpacing our ability to train.",color:C.blue},
   ];
   return (
     <div>
@@ -344,7 +361,7 @@ function LandscapeSlide() {
       <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:14}}>Self-assessed maturity vs. estimated industry averages. Ahead where we've built. Behind where we haven't invested yet.</p>
       <div style={{...fadeUp(0.18),marginBottom:14}}>
         <ImageBanner src="/img/waves.jpg" height={40} overlay="linear-gradient(90deg,rgba(0,70,221,0.65),rgba(0,0,0,0.5))">
-          <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>92% of CHROs accelerating AI. Only 5% seeing ROI. The gap is fluency.</div>
+          <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>92% of executives accelerating AI. Only 5% seeing ROI. The gap is fluency.</div>
         </ImageBanner>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
@@ -395,7 +412,7 @@ function ProofSlide() {
     <div>
       <SectionLabel>Proof + Pipeline</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>Ideation to Action in Days</h2>
-      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:14}}>Every tool below moved from concept to working artifact in weeks, not quarters. The velocity is the proof.</p>
+      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:640,lineHeight:1.6,marginBottom:14}}>Every tool below was built in the People Team in weeks, not quarters. The velocity proves the model. The architecture scales to any function.</p>
       <div style={{...fadeUp(0.2),display:"flex",gap:8,marginBottom:14}}>
         {["all","live","prototype","planned"].map(f=>(
           <button key={f} data-clickable="true" onClick={()=>setFilter(f)} style={{padding:"5px 14px",borderRadius:20,border:filter===f?"none":`1px solid ${C.border}`,background:filter===f?C.blue:C.white,color:filter===f?C.white:C.textMuted,fontSize:11,fontWeight:600,cursor:"pointer",transition:"all 0.2s",fontFamily:"'Inter',system-ui",textTransform:"capitalize"}}>{f==="all"?`All (${proofs.length})`:`${f} (${proofs.filter(p=>p.status.toLowerCase()===f).length})`}</button>))}
@@ -414,6 +431,9 @@ function ProofSlide() {
       <div style={{...fadeUp(0.6),marginTop:10,padding:"8px 14px",background:"#ECFDF5",borderRadius:10,border:"1px solid #05966920",display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
         <DollarSign size={13} color="#059669"/><span style={{fontSize:11,color:C.textSecondary}}>Tool spend addressable: </span><span style={{fontSize:11,color:"#059669",fontWeight:800}}>$110K/year</span>
       </div>
+      <div style={{...fadeUp(0.65),marginTop:8,padding:"10px 14px",background:C.card,borderRadius:10,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.blue}`}}>
+        <div style={{fontSize:11,color:C.textSecondary,lineHeight:1.6}}><span style={{fontWeight:700,color:C.blue}}>Next functions:</span> Engineering (deployment automation, incident triage), Sales (proposal generation, forecast narratives), Finance (variance analysis, board deck drafts). Same build model. Different domain data.</div>
+      </div>
     </div>
   );
 }
@@ -423,7 +443,7 @@ function RoadmapSlide() {
     <div>
       <SectionLabel>Implementation</SectionLabel>
       <h2 style={{...fadeUp(0.1),fontSize:34,fontWeight:900,color:C.black,letterSpacing:"-0.02em",margin:"0 0 6px 0"}}>12-Month Roadmap</h2>
-      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:600,lineHeight:1.6,marginBottom:12}}>Quick wins first to build trust. Then scale with velocity.</p>
+      <p style={{...fadeUp(0.15),fontSize:13,color:C.textSecondary,maxWidth:600,lineHeight:1.6,marginBottom:12}}>Prove it in People Team. Scale it across DAT.</p>
       <div style={{...fadeUp(0.18),marginBottom:14}}>
         <ImageBanner src="/img/network.jpg" height={40} overlay="linear-gradient(90deg,rgba(0,0,0,0.55),rgba(0,70,221,0.5))">
           <div style={{fontSize:10,fontWeight:700,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase"}}>Q2 Foundation → Q3 Scale → Q4 Optimize · Phase 1 already underway</div>
@@ -431,8 +451,8 @@ function RoadmapSlide() {
       </div>
       <div style={{display:"flex",flexDirection:"column",gap:10}}>
         <PhaseCard phase={1} title="Foundation & Quick Wins" quarter="Q2 2026 (Now → June)" active={true} delay={0.2} items={["Publish AI usage policy to People Hub","Formalize live tools: Engagement Suite + routing bot prototype","Launch 'AI at DAT' resource page","Pilot bot self-training loop (V2)","First cross-functional AI sprint: one impossible task, 6-week timebox","Milestone: 3 visible wins at All Hands. Trust established."]}/>
-        <PhaseCard phase={2} title="Scale & Integrate" quarter="Q3 2026 (July → Sept)" delay={0.35} items={["Comp verification engine live — 25 hrs/wk savings target","TA dashboards V1 — pipeline health and hiring velocity","AI fluency program launches: 4Ds curriculum across Foundations → Practitioner → Builder","Automated onboarding across all 6 locations","Milestone: 50% of repetitive processes automated."]}/>
-        <PhaseCard phase={3} title="Optimize & Extend" quarter="Q4 2026 (Oct → Dec)" delay={0.5} items={["Predictive retention modeling → proactive manager alerts","Skills inventory across all locations and acquired populations","Manager AI toolkit: coaching prompts, performance writing, team analysis — managers as the translators who embed AI culture into daily workflows","People data integrated with Finance forecasting","Milestone: 75% automation. Fluency embedded. Playbook for other functions."]}/>
+        <PhaseCard phase={2} title="Scale & Integrate" quarter="Q3 2026 (July → Sept)" delay={0.35} items={["Comp verification engine live — 25 hrs/wk savings target","TA dashboards V1 — pipeline health and hiring velocity","AI fluency program launches: 4Ds curriculum across Foundations → Practitioner → Builder","First cross-functional AI sprint: one non-People team tackles their own yesterwork","Automated onboarding across all 6 locations","Milestone: 50% of People Team repetitive processes automated. First sprint outside People Team complete."]}/>
+        <PhaseCard phase={3} title="Optimize & Extend" quarter="Q4 2026 (Oct → Dec)" delay={0.5} items={["Predictive retention modeling → proactive manager alerts","Skills inventory across all locations and acquired populations","Manager AI toolkit: coaching prompts, performance writing, team analysis","AI fluency assessment available org-wide across all functions","Each function owns its own AI tool pipeline using the shared build model","Cross-function AI playbook published: how to identify yesterwork, build tools, measure impact","Milestone: 75% People Team automation. Fluency embedded org-wide. At least 3 functions running their own AI pipelines."]}/>
       </div>
     </div>
   );
@@ -649,7 +669,7 @@ function GovernanceSlide() {
 }
 
 function MetricsSlide() {
-  const bd=[{name:"Process Automation",current:20,target:75},{name:"Self-Service",current:35,target:80},{name:"AI Fluency",current:15,target:75},{name:"Dashboard Coverage",current:40,target:90},{name:"Admin Reclaimed",current:10,target:60}];
+  const bd=[{name:"Process Automation",current:20,target:75},{name:"Self-Service",current:35,target:80},{name:"AI Fluency",current:15,target:75},{name:"Dashboard Coverage",current:40,target:90},{name:"Admin Reclaimed",current:10,target:60},{name:"Cross-Function Adoption",current:5,target:60}];
   return (
     <div>
       <SectionLabel>Measurement</SectionLabel>
@@ -675,7 +695,7 @@ function MetricsSlide() {
         </div>
       </div>
       <div style={{...fadeUp(0.4),display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
-        {[{l:"Teammate Confidence",m:"75%",d:"Using AI tools by Q4 2026",c:C.blue,i:Brain},{l:"Decision Speed",m:"Real-time",d:"Quarterly PDF → live dashboards",c:C.greyDark,i:TrendingUp},{l:"Function Multiplier",m:"1→N",d:"Every tool becomes a template",c:C.black,i:Layers}].map((item,i)=>{
+        {[{l:"Teammate Confidence",m:"75%",d:"Across all functions by Q4 2026",c:C.blue,i:Brain},{l:"Decision Speed",m:"Real-time",d:"Quarterly PDF → live dashboards",c:C.greyDark,i:TrendingUp},{l:"Function Multiplier",m:"1→N",d:"People Team → Eng → Sales → Finance → Product",c:C.black,i:Layers}].map((item,i)=>{
           const Icon=item.i;return(
           <div key={i} style={{background:C.card,borderRadius:10,padding:"12px 12px",border:`1px solid ${C.border}`,borderTop:`2px solid ${item.c}`}}>
             <div style={{display:"flex",alignItems:"center",gap:5,marginBottom:4}}><Icon size={12} color={item.c}/><span style={{fontSize:9,fontWeight:700,color:item.c,textTransform:"uppercase",letterSpacing:"0.05em"}}>{item.l}</span></div>
@@ -699,10 +719,10 @@ function RisksSlide() {
         </ImageBanner>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-        {[{icon:UserX,title:"Concentration Risk",desc:"Built by one person. If unavailable, velocity drops to zero. Mitigation: Nat's team assumes ownership in Phase 2. Documentation built into every project.",color:C.red},
+        {[{icon:UserX,title:"Concentration Risk",desc:"Proof of concept built by one person in People Team. Scaling requires distributed ownership. Mitigation: each function nominates an AI champion in Phase 2. Documentation and playbook built into every project.",color:C.red},
           {icon:Building2,title:"Roper IT Access",desc:"UKG capabilities exist. Bottleneck is Roper admin. Hard blocker for onboarding, merit, integrations. Mitigation: Specific modules named in our ask.",color:C.yellow},
           {icon:Database,title:"Data Quality",desc:"Four acquisitions left inconsistent job codes, bands, and records. AI is only as good as the data. Mitigation: Cleanup in Phase 1-2 milestones.",color:C.blue},
-          {icon:TrendingUp,title:"Sustainability",desc:"This pace needs capacity. Without team growth, Phase 2-3 stalls. Mitigation: Planned Talent Ops Analyst and WX Manager roles are Phase 3 prerequisites.",color:C.greyDark},
+          {icon:TrendingUp,title:"Sustainability",desc:"Scaling across functions needs capacity beyond one team. Mitigation: AI fluency embedded in existing roles with time allocation. Each function's AI champion is an existing teammate, not a new hire.",color:C.greyDark},
         ].map((risk,i)=>{const Icon=risk.icon;return(
           <div key={i} style={{...fadeUp(0.2+i*0.08),background:C.card,borderRadius:14,padding:"18px 16px",border:`1px solid ${C.border}`,borderLeft:`3px solid ${risk.color}`}}>
             <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
@@ -761,10 +781,10 @@ function ClosingSlide() {
 
 function CloseSlide() {
   const asks=[
-    {ask:"Jana + Jeff: 2-min AI segment at next All Hands",detail:"Name the initiative, show one tool live, signal this is a priority",icon:Users,priority:"Now"},
+    {ask:"2-min AI segment at next All Hands",detail:"Name the org-wide initiative, show one tool live, signal this is a DAT priority",icon:Users,priority:"Now"},
     {ask:"Approve UKG module access via Roper",detail:"Onboarding, Merit Planning, Performance, Reporting, Integrations",icon:Monitor,priority:"Now"},
-    {ask:"Standing 15-min AI review on XLT or ELT agenda",detail:"Monthly. Progress, blockers, decisions needed",icon:Clock,priority:"Q2"},
-    {ask:"Sponsor one cross-functional AI sprint",detail:"Small team, impossible task, 6-week timebox. First proof outside People Team",icon:Zap,priority:"Q2"},
+    {ask:"Standing 15-min AI review on XLT or ELT agenda",detail:"Monthly. Progress across functions, blockers, decisions needed",icon:Clock,priority:"Q2"},
+    {ask:"Sponsor quarterly cross-functional AI sprints",detail:"One team per quarter, impossible task, 6-week timebox. First sprint outside People Team in Q3",icon:Zap,priority:"Q2"},
     {ask:"AI fluency in performance expectations",detail:"Company-wide capability standard, not a checkbox. Signals long-term commitment",icon:Brain,priority:"Q3"},
   ];
   return (
