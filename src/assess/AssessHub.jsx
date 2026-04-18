@@ -83,18 +83,18 @@ export default function AssessHub({ onSwitchMode }) {
   const TIERS = [
     {
       tier: "Foundations",
-      map: "Novice / Functional",
-      desc: "Learning to delegate, describe, discern, and apply diligence in AI use.",
+      map: "Novice / Functional (1-4)",
+      desc: "Learning to delegate, describe, discern, and apply diligence in AI use. AI mode: Automation.",
     },
     {
       tier: "Practitioner",
-      map: "Proficient / Advanced",
-      desc: "AI embedded in the workflow. Repeatable systems. Judgment on when not to use AI.",
+      map: "Proficient / Advanced (5-8)",
+      desc: "AI embedded in the workflow. Repeatable systems. Judgment on when not to use AI. AI mode: Augmentation.",
     },
     {
       tier: "Builder",
-      map: "Native",
-      desc: "Designs agents, orchestrates tools, and raises the floor for teammates.",
+      map: "Native (9-10)",
+      desc: "Designs agents, orchestrates tools, and raises the floor for teammates. AI mode: Agency.",
     },
   ];
 
@@ -219,11 +219,25 @@ export default function AssessHub({ onSwitchMode }) {
               color: C.textSecondary,
               lineHeight: 1.65,
               maxWidth: 560,
-              margin: "22px auto 30px",
+              margin: "22px auto 16px",
             }}
           >
-            A role-specific read on your AI fluency across five dimensions. Your Claude history
-            scored against a DAT rubric, with evidence, gaps, and recommendations you can act on.
+            A role-specific read on your Claude fluency across five dimensions. Your conversation
+            history scored against a rubric tied to your role and org, with evidence, gaps, and
+            recommendations you can act on.
+          </p>
+          <p
+            style={{
+              fontSize: 12,
+              color: C.textMuted,
+              lineHeight: 1.5,
+              maxWidth: 480,
+              margin: "0 auto 24px",
+              fontStyle: "italic",
+            }}
+          >
+            This assessment measures Claude fluency specifically. If your primary AI tool
+            is outside Claude, your score will underrepresent your full capability.
           </p>
           <div
             style={{

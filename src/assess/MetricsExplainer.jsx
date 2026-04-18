@@ -4,43 +4,43 @@ import { C, METRIC_COLORS, METRIC_LABELS, METRIC_ORDER, TIER_SCALE } from "../co
 
 const METRIC_COPY = {
   PQ: {
-    question: "Do you give the model what it needs to produce a useful first response?",
+    question: "Do you give the model enough structure, context, and constraints to produce a useful first response?",
     good: [
-      "Names specific audiences (XLT, hiring managers, teammates) rather than writing to the void.",
-      "Loads context from Greenhouse, UKG, or Radford instead of paraphrasing from memory.",
-      "Writes in Pathfinder voice natively and names likely failure modes upfront.",
+      "Front-loads audience, deliverable format, and constraints before asking the model to generate, so the first draft is 80%+ usable without follow-up rounds.",
+      "Loads source data directly (from your ATS, CRM, codebase, financial model, or analytics platform) rather than paraphrasing from memory, so the model works from real inputs.",
+      "Names specific failure modes upfront (\"don't fabricate data points,\" \"don't use jargon from our exclusion list,\" \"don't assume access to systems you're not connected to\") so the model avoids predictable mistakes.",
     ],
   },
   OD: {
-    question: "How often do you catch the model being wrong, and act on it?",
+    question: "Do you consistently evaluate, challenge, and refine what the model produces before using it?",
     good: [
-      "Rejects output that violates Pathfinder voice or uses banned corporate jargon.",
-      "Catches fabricated Radford codes, account names, or stakeholder titles.",
-      "Pushes back when AI recommendations bypass stakeholder tone expectations.",
+      "Treats first drafts as raw material for anything consequential. Checks claims against source data, validates tone for the target audience, and rejects structurally weak responses even when they sound plausible.",
+      "Catches domain-specific fabrications: invented data points, hallucinated system names, made-up API endpoints, nonexistent vendor names, or metrics that don't match your source of truth.",
+      "Pushes back when output drifts from the brief. If the audience expects problem-first framing or a specific brand voice, the output gets rejected or reworked until it matches.",
     ],
   },
   WI: {
-    question: "Is AI embedded in how you work, or a place you occasionally visit?",
+    question: "Is AI structurally embedded in how you work, or a place you occasionally visit?",
     good: [
-      "Custom skills maintained for role-specific work, not reused for unrelated asks.",
-      "Memory populated with role context that persists across conversations.",
-      "Connected tools aligned to your systems of record (Gmail, Calendar, Drive, Slack, Jira, Snowflake, Greenhouse).",
+      "Claude is a default step in multiple recurring workflows. Standing instructions, memory, or saved configurations mean the model already knows your role context when you start.",
+      "Connected tools are aligned to your actual systems of record (CRM, ATS, code repos, project management, data warehouse, email, calendar) rather than relying on generic web search or manual copy-paste.",
+      "At least one process runs with some automation: a scheduled trigger, a scripted pipeline, or an integration that feeds data to Claude without manual intervention each time.",
     ],
   },
   CSC: {
-    question: "Do conversations build on each other, or does each one reset?",
+    question: "Does your Claude usage compound over time, or does each interaction start from zero?",
     good: [
-      "Role-specific cycles accumulate continuity — comp cycle, engagement survey, product launches.",
-      "Work on one priority informs adjacent ones without re-briefing from scratch.",
-      "Cross-functional arcs are visible: People → Finance → Product threads connect.",
+      "Recurring work cycles (quarterly planning, annual reviews, product launches, financial close) build on prior rounds rather than re-explaining the same context each time.",
+      "Work on one priority informs adjacent work. Insights from a pipeline review surface in a hiring conversation. Data from a financial model feeds a board deck. Cross-pollination is visible.",
+      "Your Claude environment could be handed to someone else in your role and they'd be productive within a session. The accumulated context is transferable, not locked in your head.",
     ],
   },
   EoI: {
-    question: "Do you act on what AI produces, or does analysis accumulate without output?",
+    question: "Do you act on what AI produces, or does analysis accumulate without driving decisions?",
     good: [
-      "Outputs ship into your systems of record — committed code, sent offers, updated dashboards, published comms.",
-      "AI-accelerated work visibly moves your success metrics, not just your draft count.",
-      "Insights become decisions and artifacts, not bookmarked chats.",
+      "AI output regularly ships into production: merged code, sent communications, published dashboards, completed deliverables, updated systems of record. The gap between draft and live is hours, not days.",
+      "AI-accelerated work visibly moves your success metrics (cycle time, win rate, time to fill, forecast accuracy, deployment velocity). Impact is attributable, not speculative.",
+      "If an insight is worth generating, it's worth acting on. The \"good idea that goes nowhere\" pattern is the exception, not the norm.",
     ],
   },
 };
@@ -126,7 +126,7 @@ function MetricCard({ k, expanded, onToggle }) {
               marginBottom: 8,
             }}
           >
-            What good looks like at DAT
+            What good looks like
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {copy.good.map((g, i) => (

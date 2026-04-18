@@ -40,9 +40,9 @@ export const METRIC_LABELS = {
 export const METRIC_ORDER = ["PQ", "OD", "WI", "CSC", "EoI"];
 
 export const TIER_SCALE = [
-  { range: "1-3", label: "Novice", color: "#8A8D8F" },
-  { range: "4-5", label: "Functional", color: "#B3CCFF" },
-  { range: "6-7", label: "Proficient", color: "#4D84FF" },
+  { range: "1-2", label: "Novice", color: "#8A8D8F" },
+  { range: "3-4", label: "Functional", color: "#B3CCFF" },
+  { range: "5-6", label: "Proficient", color: "#4D84FF" },
   { range: "7-8", label: "Advanced", color: "#0046DD" },
-  { range: "8+", label: "Native", color: "#000000" },
+  { range: "9-10", label: "Native", color: "#000000" },
 ];

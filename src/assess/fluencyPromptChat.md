@@ -14,6 +14,10 @@ Optional evidence augmentation — for teammates who also work in Claude Code:
 Run the separate Claude Code Companion prompt first to inspect your local machine and produce a SUPPLEMENTAL ROLE-RELEVANT EVIDENCE bundle, then paste that bundle into this same claude.ai message directly after this prompt (but before you send). Without the bundle, Metric 3 (Workflow Integration) and Metric 5 (Execution on Insight) under-represent your fluency when meaningful evidence lives in custom skills, MCP servers, shipped repos, scheduled agents, memory entries, or plan artifacts rather than in chat. The companion prompt lives alongside this one on the DAT AI Fluency platform.
 
 
+CLAUDE SCOPE NOTE
+This assessment measures your fluency in Claude specifically. It analyzes your Claude conversation history, memory, connected tools, and (optionally) Claude Code artifacts. If your primary AI tool is something other than Claude (GitHub Copilot, Gemini, ChatGPT, domain-specific ML tools), your score will underrepresent your total AI capability. Take the score as a Claude-specific read, not an all-AI fluency measure. If Claude isn't your daily driver, expect the score to be directionally accurate but lower than your true ceiling.
+
+
 ORG BLOCK — FILL IN BEFORE RUNNING
 This block provides the organizational lens the assessment scores against. Every teammate's ROLE BLOCK sits inside this frame. Populate each field with the details most pertinent to how your organization actually operates — the stated metrics leadership tracks, the voice your brand uses, the internal language that signals "you're one of us," the exec audiences you write for, and the phrases your org deliberately avoids.
 
@@ -184,36 +188,38 @@ The headline score is the user's current state, not an average over time. Use th
 
 
 SCORING RUBRIC
-Each metric has two evidence layers: generic signals (universal) and ORG + ROLE context-aware signals (combines ORG BLOCK and ROLE BLOCK). Score 1.0–10.0 month-by-month to one decimal.
+Each metric has two evidence layers: generic signals (universal) and ORG + ROLE context-aware signals (combines ORG BLOCK and ROLE BLOCK). Score 1.0-10.0 month-by-month to one decimal.
+
 Metric 1 — Prompt Quality
 Does the user give the model what it needs to produce a useful first response?
 
 Generic signals:
 
-1–3: Vague questions, no context, accepts first output without evaluation.
-4–5: Multi-sentence prompts with some context. Basic role or format framing. Minimal iteration when output misses.
-6–7: Specific constraints stated upfront. Deliverable named clearly. Relevant context loaded before asking. Corrects drift mid-conversation with specifics.
-8: Preempts common failure modes. Names intended audience and success criteria in the prompt itself. Pushes back with evidence when output is wrong, not just preference.
-9: Prompts function as reusable artifacts, structured well enough that another person could run them and get comparable results without modification.
-10: Meta-prompting. Writes prompts that generate better prompts. Builds composable prompt systems. Designs prompt libraries used across sessions or shared with others.
+1-2: Vague questions, no context, no constraints. Accepts whatever the model returns. No iteration.
+3-4: Multi-sentence prompts with some context. Basic role or format framing. Minimal iteration when output misses.
+5-6: Specific constraints stated upfront. Deliverable named clearly. Relevant context loaded before asking. Corrects drift mid-conversation with specifics, not just "try again."
+7-8: Preempts common failure modes. Names intended audience and success criteria in the prompt itself. Pushes back with evidence when output is wrong, not just preference. Prompts function as reusable structures.
+9: Prompts are artifacts: structured well enough that another person could run them and get comparable results without modification. Shared prompt libraries or templates exist.
+10: Meta-prompting. Writes prompts that generate better prompts. Builds composable prompt systems. Designs prompt architectures others adopt.
 
 ORG + ROLE context-aware signals:
 
 Names specific audiences from ROLE BLOCK role_stakeholders (or ORG BLOCK common_exec_audiences) and applies their tone expectations (not just a generic "make it exec-ready")
-Loads context from ROLE BLOCK role_systems_of_record (e.g., ATS req data, GitHub PR, Snowflake query result, Salesforce opportunity) rather than paraphrasing
+Loads context from ROLE BLOCK role_systems_of_record (e.g., ATS req data, GitHub PR, data warehouse query result, CRM opportunity, financial model) rather than paraphrasing
 Prompts in the voice defined by ORG BLOCK's `voice` field natively. Uses ORG BLOCK `internal_language` without correction. Avoids ORG BLOCK `org_mandate_phrases_to_avoid`
-Names role- and org-specific failure modes (e.g., "do not suggest a library we can't use in this repo", "do not generate numbers outside our Radford bands", "do not use banned phrases from the ORG BLOCK")
+Names role- and org-specific failure modes (e.g., "do not suggest a library we can't use in this repo," "do not generate numbers outside our comp bands," "do not use banned phrases from the ORG BLOCK")
+
 Metric 2 — Output Discipline
-How often does the user catch the model being wrong, and act on it?
+Does the user consistently evaluate, challenge, and refine what the model produces before using it?
 
 Generic signals:
 
-1–3: Accepts outputs at face value.
-4–5: Occasionally pushes back on tone or format. Rarely challenges factual claims or reasoning.
-6–7: Routinely challenges outputs that miss the brief. Asks for sources on claims that matter. Rejects structurally weak responses even if they sound plausible.
-8: Treats first answers as drafts for anything consequential. Requests counterarguments or alternative framings before acting.
-9: Runs adversarial checks. Actively red-teams conclusions and stress-tests assumptions before publishing, shipping, or acting.
-10: Standing critique protocol for externally published work. Claude's output is always raw material, never the final product.
+1-2: Accepts outputs at face value. No editing, no pushback, no validation.
+3-4: Occasionally pushes back on tone or format. Rarely challenges factual claims or reasoning.
+5-6: Routinely challenges outputs that miss the brief. Asks for sources on claims that matter. Rejects structurally weak responses even if they sound plausible.
+7-8: Treats first answers as drafts for anything consequential. Requests counterarguments or alternative framings before acting. Knows the model's failure patterns for their domain and checks proactively.
+9: Runs adversarial checks. Actively red-teams conclusions and stress-tests assumptions before publishing, shipping, or acting. Has built evaluation frameworks for recurring output types.
+10: Standing critique protocol for externally published or high-stakes work. Quality gates are structural, not just manual. Teaches others what to look for.
 
 ORG + ROLE context-aware signals:
 
@@ -221,56 +227,59 @@ Rejects output that violates ORG BLOCK `voice` or `internal_language` without ne
 Catches violations of the ORG BLOCK `brand_system_reference` in AI-generated visuals (wrong colors, wrong font, wrong logo usage)
 Pushes back when AI recommendations would bypass ROLE BLOCK stakeholder tone expectations (e.g., an exec-bound message that isn't problem-then-solution, a customer-facing email that isn't in the org's voice)
 Catches fabricated role- or org-domain specifics (invented comp bands, invented revenue numbers, invented API endpoints, invented account names)
+
 Metric 3 — Workflow Integration
-Is AI embedded in how the user works, or a place they occasionally visit?
+Is AI structurally embedded in how the user works, or a place they occasionally visit?
 
 Generic signals:
 
-1–3: Sporadic, one-off use. Each session starts from scratch.
-4–5: Regular use but each session re-explains context. No saved prompts, no persistent setup, no Projects.
-6–7: Uses Projects or standing instructions. Repeat workflows exist for recurring task types. Still re-contextualizes manually often.
-8: Standing context is actively maintained (custom skills, memory, Claude Projects, CLAUDE.md equivalents). AI is the default first step for named recurring workflows.
-9: Built persistent systems. Custom Projects per workstream, connected tools via MCPs, saved prompt libraries reused deliberately.
-10: Running agents or automated workflows. AI executes on a schedule or trigger without manual kickoff.
+1-2: Sporadic, one-off use. Each session starts from scratch. AI is a novelty, not a tool.
+3-4: Regular use but each session re-explains context. No saved prompts, no persistent setup, no structured projects.
+5-6: Uses projects, standing instructions, or persistent configurations. Repeat workflows exist for recurring task types. Still re-contextualizes manually often.
+7-8: Standing context is actively maintained (custom skills, memory, project workspaces, saved configurations). AI is the default first step for named recurring workflows. Connected tools provide live data access.
+9: Built persistent systems. Dedicated workspaces per workstream, connected tools via integrations, saved prompt libraries reused deliberately. At least one automation runs without manual kickoff.
+10: Running agents or automated workflows. AI executes on a schedule or trigger. The user's workflow is a reference model for their function.
 
 ORG + ROLE context-aware signals:
 
-Custom skills maintained for the person's role-specific work (brand, code style, comp analysis, sales enablement, etc.)
-Memory populated with ORG BLOCK + ROLE BLOCK context that persists across sessions
-Connected tool use aligned to role_systems_of_record rather than generic web search (e.g., Gmail/Calendar/Drive/Slack/Atlassian/Snowflake for People work, GitHub/Jira for engineering, Salesforce for sales)
+Custom skills or saved configurations maintained for the person's role-specific work (brand voice, code style, comp analysis, sales enablement, financial modeling, etc.)
+Memory populated with ORG BLOCK + ROLE BLOCK context that persists across sessions and compounds over time
+Connected tool use aligned to role_systems_of_record rather than generic web search (e.g., Gmail/Calendar/Drive/Slack/Atlassian/Snowflake for operations work, GitHub/Jira for engineering, Salesforce for sales, HRIS for people ops)
 Apply FOUNDATION-BUILDING STAGE WEIGHT if ORG BLOCK `org_stage` warrants it: reusable systems score above ad-hoc volume
+
 Metric 4 — Cross-Session Context
 Do conversations build on each other, or does each one reset?
 
 Generic signals:
 
-1–3: Every conversation is standalone.
-4–5: Context accumulates within a single session but resets each time.
-6–7: References prior sessions in later ones. Uses conversation search or explicit recaps. Multi-session project threads exist.
-8: Multi-session arcs are deliberate and structural. Research in one session feeds building in the next.
-9: Treats AI as a persistent collaborator. Outputs from one workstream feed adjacent ones.
-10: Context orchestration across projects, domains, and months. Knowledge compounds visibly.
+1-2: Every conversation is standalone. No reference to prior work.
+3-4: Context accumulates within a single session but resets each time. Some manual carry-forward (copy-pasting context blocks).
+5-6: References prior sessions in later ones. Uses conversation search, explicit recaps, or persistent memory. Multi-session project threads exist.
+7-8: Multi-session arcs are deliberate and structural. Research in one session feeds building in the next. Adjacent workstreams cross-pollinate.
+9: Treats AI as a persistent collaborator. Outputs from one workstream feed adjacent ones. Context architecture is maintained and pruned deliberately.
+10: Context orchestration across projects, domains, and months. Knowledge compounds visibly. Configuration is transferable to another person in the same role.
 
 ORG + ROLE context-aware signals:
 
 Role-specific annual or quarterly cycles accumulate continuity (performance cycle, comp cycle, planning, product launches, sales kickoffs, engagement surveys, financial close)
-Work on one ORG BLOCK `stated_leadership_metrics` informs work on another (e.g., engagement data feeds retention strategy feeds recruiting pitch)
-Cross-functional arcs visible when role demands it (a PM's product work pulling from Sales CRM data pulling from Finance forecasts)
+Work on one ORG BLOCK `stated_leadership_metric` informs work on another (e.g., engagement data feeds retention strategy feeds recruiting pitch, product usage data feeds churn analysis feeds renewal strategy)
+Cross-functional arcs visible when role demands it (a PM's product work pulling from sales CRM data pulling from finance forecasts, a people ops director's engagement work informing hiring manager coaching informing comp decisions)
+
 Metric 5 — Execution on Insight
 Does the user act on what AI produces, or does analysis accumulate without output?
 
 Generic signals:
 
-1–3: Uses AI to think. Rarely acts on what the thinking produces.
-4–5: Occasionally ships or acts on outputs. Most analysis goes unused.
-6–7: Acts on roughly half of significant output. "Good idea → nothing" pattern visible but not dominant.
-8: Most significant outputs get used, shipped, published, or built on within a reasonable timeframe. Follow-through is the norm.
-9: Rapid insight-to-execution cycle. Recommendations become real within days to weeks, visibly and verifiably.
-10: Nothing sits. If it is worth generating, it is worth executing.
+1-2: Uses AI to think. Rarely acts on what the thinking produces. Output lives in chat history.
+3-4: Occasionally ships or acts on outputs. Most analysis goes unused. Heavy manual bridge between AI draft and final product.
+5-6: Acts on roughly half of significant output. "Good idea that goes nowhere" pattern visible but not dominant. AI-assisted work ships but with significant editing overhead.
+7-8: Most significant outputs get used, shipped, published, or built on within a reasonable timeframe. Follow-through is the norm. AI-accelerated work moves at a measurably different speed than unassisted work.
+9: Rapid insight-to-execution cycle. Recommendations become real within days to weeks, visibly and verifiably. Impact on role success metrics is attributable.
+10: Nothing sits. If it is worth generating, it is worth executing. Pipelines exist where AI-generated artifacts deploy through established channels with minimal friction.
 
 ORG + ROLE context-aware signals:
 
-Outputs ship into ROLE BLOCK role_systems_of_record (committed code, merged PRs, sent offers, updated dashboards, closed deals, published comms)
+Outputs ship into ROLE BLOCK role_systems_of_record (committed code, merged PRs, sent offers, updated dashboards, closed deals, published comms, filed compliance documents)
 AI-accelerated work visibly moves ROLE BLOCK role_success_metrics or ORG BLOCK stated_leadership_metrics (subject to SELF-AUTHORED METRIC RULE)
 Apply FOUNDATION-BUILDING STAGE WEIGHT if ORG BLOCK `org_stage` warrants it: production infrastructure counts more than the same volume of one-off deliverables
 
@@ -278,11 +287,11 @@ Apply FOUNDATION-BUILDING STAGE WEIGHT if ORG BLOCK `org_stage` warrants it: pro
 TIER DEFINITIONS
 Assign one tier based on the pattern of scores in the most recent month only. Do not average across the full window.
 
-Novice: Mostly 1.0–4.0. Sporadic use, little iteration, outputs rarely acted on.
-Functional: Mostly 4.0–6.0. Regular use with some sophistication, but sessions largely reset.
-Proficient: Mostly 6.0–7.0. Clear workflows exist, context builds across sessions, outputs used consistently. One or two metrics still weak.
-Advanced: Mix of 7.0–8.0 across most metrics. Multi-session arcs, strong prompt construction, adversarial checking on consequential work. Execution on insight is reliable.
-Native: 8.0+ on most metrics with evidence of meta-prompting, persistent systems, or agent use. AI is infrastructure, not a tool.
+Novice: Mostly 1-4. Sporadic use, little iteration, outputs rarely acted on. 4D stage: early Delegate and Describe developing. Strategy tier: Foundations.
+Functional: Mostly 3-6. Regular use with some sophistication, but sessions largely reset. Delegate and Describe developing, early Discern. Strategy tier: Foundations (upper end).
+Proficient: Mostly 5-7. Clear workflows exist, context builds across sessions, outputs used consistently. One or two metrics still weak. Mature Describe, Discern, and Delegate. Strategy tier: Practitioner.
+Advanced: Mix of 7-8 across most metrics. Multi-session arcs, strong prompt construction, adversarial checking on consequential work. Execution on insight is reliable. All 4Ds strong, approaching scale. Strategy tier: Practitioner (upper end).
+Native: 9+ on most metrics with evidence of meta-prompting, persistent systems, or agent use. AI is infrastructure, not a tool. 4Ds at scale, teaching others. Strategy tier: Builder.
 
 
 ORDER OF OPERATIONS
