@@ -1,5 +1,5 @@
-AI Fluency Report — v3 (DAT org-wide, role-adaptive)
-You are assessing a DAT teammate's AI fluency based on their Claude conversation history. Use the recent_chats and conversation_search tools to pull a representative sample spanning as far back as history allows, up to 12 months. Paginate backward through recent_chats using the before parameter on each call until no earlier results are returned. Focus on conversations that tie to the person's stated day job (see ROLE BLOCK below). Apply the ROLE-RELEVANCE FILTER to screen out orthogonal work.
+AI Fluency Report — v3 (org-adaptive, role-adaptive)
+You are assessing a teammate's AI fluency based on their Claude conversation history. Use the recent_chats and conversation_search tools to pull a representative sample spanning as far back as history allows, up to 12 months. Paginate backward through recent_chats using the before parameter on each call until no earlier results are returned. Focus on conversations that tie to the person's stated day job (see ROLE BLOCK below) within the organizational context they work in (see ORG BLOCK below). Apply the ROLE-RELEVANCE FILTER to screen out orthogonal work.
 
 
 HOW TO RUN THIS ASSESSMENT
@@ -27,33 +27,51 @@ Use this if you also work heavily in Claude Code — you maintain custom skills 
 If you're not sure which path fits, start with Path A. You can always rerun with the bridge later.
 
 
-ORG BLOCK — DAT (stable, applies to everyone)
-This is the organizational lens. These facts are the same whether the person being assessed works in Engineering, People, Product, Sales, Finance, or Operations. Do not modify unless the org itself changes.
+ORG BLOCK — FILL IN BEFORE RUNNING
+This block provides the organizational lens the assessment scores against. Every teammate's ROLE BLOCK sits inside this frame. Populate each field with the details most pertinent to how your organization actually operates — the stated metrics leadership tracks, the voice your brand uses, the internal language that signals "you're one of us," the exec audiences you write for, and the phrases your org deliberately avoids.
 
-org: DAT Freight & Analytics
-industry: freight technology and analytics
-org_stage: foundation-building, post-4-acquisitions (Convoy, Outgo, Trucker Tools, LoadLink)
-office_footprint: Seattle, Denver, Beaverton/Tigard, Springfield, Toronto, Bangalore
+Two ways to fill this in:
+- If your org already maintains this context anywhere (a brand hub, a culture doc, a leadership off-site readout), copy from there rather than re-inventing.
+- If Claude memory already has org context from prior conversations, ask Claude to propose a pre-filled ORG BLOCK and confirm before scoring.
+
+If a field genuinely doesn't apply, write "n/a" rather than deleting it — empty fields distort the "context-aware signals" portion of every rubric metric. A populated reference example (DAT) appears in Appendix D if you want a worked version to calibrate against.
+
+# ─── START ORG BLOCK ─────────────────────────────────────────────
+
+org: <<FILL IN: organization name>>
+industry: <<FILL IN: industry or primary domain you operate in>>
+org_stage: <<FILL IN: e.g., "early startup", "scaling post-Series B", "mature public company", "foundation-building post-acquisition">>
+office_footprint: <<FILL IN: cities, regions, or "remote-first">>
+
 stated_leadership_metrics:
-  - engagement
-  - automation
-  - efficiency
-  - quality_of_hire
-  - belonging
-  - ai_fluency
-voice: Pathfinder — intelligent, uniting, empowering, brave, trusted
+  - <<FILL IN: a metric leadership actively measures and talks about (e.g., engagement, NPS, revenue growth, efficiency, quality_of_hire)>>
+  - <<FILL IN: another leadership metric>>
+  - <<FILL IN: aim for 3–7 total — these drive Section 6.5b alignment scoring>>
+
+voice: <<FILL IN: your org's brand voice descriptors, e.g., "direct, customer-first, optimistic" — or the name of a codified voice system if you have one>>
+
 internal_language:
-  - teammates (never "employees")
-  - People Team (never "HR")
+  - <<FILL IN: a term your org uses that differs from convention (e.g., "teammates" instead of "employees", "crew" instead of "staff"), or write "none">>
+  - <<FILL IN: another internal-language convention, or omit>>
+
 common_exec_audiences:
-  CEO: direct, data-forward, outcomes over activity
-  ELT: exec-calibrated, problem first then solution
-  XLT: exec-calibrated, problem first then solution, data-backed
-  org_wide: inclusive, calm, purposeful
-  slack: punchy, conversational
+  <<FILL IN: audience_name (e.g., CEO)>>: <<FILL IN: tone expectations for this audience>>
+  <<FILL IN: audience_name (e.g., exec_team)>>: <<FILL IN: tone expectations>>
+  <<FILL IN: 2–5 audiences you regularly write for, each with their tone calibration>>
+
 org_mandate_phrases_to_avoid:
-  - leverage, synergy, dive deep, unpack, landscape, move the needle
-brand_system_reference: dat-asset-design skill (Pathfinder voice, DAT Blue, Inter font)
+  - <<FILL IN: jargon or corporate-speak your org explicitly rejects (e.g., "leverage", "synergy", "move the needle"), or "none">>
+
+brand_system_reference: <<FILL IN: pointer to your brand guidelines — a URL, a Claude skill name, a Google Doc, a Figma library, or "none">>
+
+# ─── END ORG BLOCK ───────────────────────────────────────────────
+
+Why each field matters for scoring:
+- stated_leadership_metrics → drives Section 6.5b (Org-level priority alignment). The fluency lift should compound with what your leadership already cares about.
+- voice + internal_language → drives Metric 1 (Prompt Quality): does the user prompt in your org's voice natively? And Metric 2 (Output Discipline): do they catch outputs that violate it?
+- common_exec_audiences → drives Metric 1 (Prompt Quality) tone calibration: does the user name the right audience with the right tone expectations?
+- org_mandate_phrases_to_avoid → drives Metric 2 (Output Discipline): does the user reject outputs that use banned jargon?
+- brand_system_reference → drives Metric 2 (Output Discipline) for AI-generated visuals.
 
 
 ROLE BLOCK — FILL IN BEFORE RUNNING
@@ -110,10 +128,10 @@ ROLE-RELEVANCE FILTER
 Before a conversation counts as evidence for any metric, it must pass this filter:
 
 Role-relevant: The conversation addresses work inside the person's ROLE BLOCK scope, uses one of their role_systems_of_record, produces one of their role_deliverable_types, or directly serves one of their role_stakeholders.
-Org-relevant: The conversation addresses DAT-internal work (org initiatives, cross-functional projects, comms to DAT audiences), even if slightly outside the person's core scope.
-Excluded: Personal life, personal side projects unrelated to DAT work, job searches, unrelated learning, entertainment, shopping, relationships, health, finance.
+Org-relevant: The conversation addresses internal work at the ORG BLOCK's `org` (org initiatives, cross-functional projects, comms to internal audiences), even if slightly outside the person's core scope.
+Excluded: Personal life, personal side projects unrelated to the org's work, job searches, unrelated learning, entertainment, shopping, relationships, health, finance.
 
-Work that is sophisticated but orthogonal to the ROLE BLOCK (e.g. a Finance teammate building a personal React app) is acknowledged in Section 6 as context but does not contribute to metric scores. A DAT AI fluency assessment measures DAT AI fluency, not general AI skill.
+Work that is sophisticated but orthogonal to the ROLE BLOCK (e.g. a Finance teammate building a personal React app) is acknowledged in Section 6 as context but does not contribute to metric scores. This assessment measures AI fluency as it shows up in the person's actual role at their actual org — not general AI skill.
 
 Report the count of conversations pulled, role-relevant, org-relevant, and excluded in Section 2.
 
@@ -121,12 +139,12 @@ Report the count of conversations pulled, role-relevant, org-relevant, and exclu
 MODE SELECTION
 Choose one before running. State the selected mode at the top of the generated report.
 
-INTERNAL (default for self-review): DAT names, project names, stakeholder names, and tool names may appear in the written sections. Not for external sharing.
+INTERNAL (default for self-review): Org names, project names, stakeholder names, and tool names may appear in the written sections. Not for external sharing.
 EXTERNAL (LinkedIn-publishable): Apply the PRIVACY RULES block below in full. All org, project, product, client, stakeholder, and collaborator names stripped. Describe by type and domain only.
 
 
 PRIVACY RULES — apply in EXTERNAL mode only
-In EXTERNAL mode, do not name any specific product, project, company, employer, client, collaborator, or DAT-internal tool. Describe by type and domain only. Do not reproduce verbatim quotes. Standout examples must describe behavior and why it demonstrates skill, not what the work was about. Do not make comparative claims about the user relative to other users or populations. Tier labels are behavioral classifications only, not rankings.
+In EXTERNAL mode, do not name any specific product, project, company, employer, client, collaborator, or internal tool. Describe by type and domain only. Do not reproduce verbatim quotes. Standout examples must describe behavior and why it demonstrates skill, not what the work was about. Do not make comparative claims about the user relative to other users or populations. Tier labels are behavioral classifications only, not rankings.
 
 Pre-publish sanity check: Re-read every descriptor as if a competitor were trying to identify the user's projects or employer. Genericize further until identification is not possible.
 
@@ -157,7 +175,7 @@ Sophisticated AI work outside the ROLE BLOCK's scope
 
 A single example does not earn a score above 6. Repeated evidence across multiple role-relevant sessions is required to reach 7+.
 FOUNDATION-BUILDING STAGE WEIGHT
-DAT is a foundation-building org. Weight reusable systems higher than one-off output inside Workflow Integration and Execution on Insight. A deployed custom skill, a saved prompt template, or a production agent counts more heavily than the same volume of ad-hoc session output. This applies to everyone at DAT regardless of function.
+If the ORG BLOCK's `org_stage` indicates a foundation-building, scaling, or post-acquisition state, weight reusable systems higher than one-off output inside Workflow Integration and Execution on Insight. A deployed custom skill, a saved prompt template, or a production agent counts more heavily than the same volume of ad-hoc session output. For mature, stable orgs, weighting is closer to parity — scoring still favors durability over volume but less aggressively.
 DECIMAL PRECISION RULES
 Score each metric to one decimal place. The integer portion is the rubric band. The decimal portion is the within-band position, and it must encode something real.
 
@@ -179,7 +197,7 @@ The headline score is the user's current state, not an average over time. Use th
 
 
 SCORING RUBRIC
-Each metric has two evidence layers: generic signals (universal) and DAT context-aware signals (combines ORG BLOCK and ROLE BLOCK). Score 1.0–10.0 month-by-month to one decimal.
+Each metric has two evidence layers: generic signals (universal) and ORG + ROLE context-aware signals (combines ORG BLOCK and ROLE BLOCK). Score 1.0–10.0 month-by-month to one decimal.
 Metric 1 — Prompt Quality
 Does the user give the model what it needs to produce a useful first response?
 
@@ -192,12 +210,12 @@ Generic signals:
 9: Prompts function as reusable artifacts, structured well enough that another person could run them and get comparable results without modification.
 10: Meta-prompting. Writes prompts that generate better prompts. Builds composable prompt systems. Designs prompt libraries used across sessions or shared with others.
 
-DAT context-aware signals:
+ORG + ROLE context-aware signals:
 
-Names specific audiences from ROLE BLOCK role_stakeholders and applies their tone expectations (not just a generic "make it exec-ready")
-Loads context from ROLE BLOCK role_systems_of_record (Greenhouse req data, GitHub PR, Snowflake query result, Salesforce opportunity) rather than paraphrasing
-Prompts in Pathfinder voice natively. Uses "teammates" and "People Team" without correction. Avoids org_mandate_phrases_to_avoid
-Names role-specific failure modes ("do not suggest Python library we can't use in this repo", "do not generate comp numbers outside our Radford bands")
+Names specific audiences from ROLE BLOCK role_stakeholders (or ORG BLOCK common_exec_audiences) and applies their tone expectations (not just a generic "make it exec-ready")
+Loads context from ROLE BLOCK role_systems_of_record (e.g., ATS req data, GitHub PR, Snowflake query result, Salesforce opportunity) rather than paraphrasing
+Prompts in the voice defined by ORG BLOCK's `voice` field natively. Uses ORG BLOCK `internal_language` without correction. Avoids ORG BLOCK `org_mandate_phrases_to_avoid`
+Names role- and org-specific failure modes (e.g., "do not suggest a library we can't use in this repo", "do not generate numbers outside our Radford bands", "do not use banned phrases from the ORG BLOCK")
 Metric 2 — Output Discipline
 How often does the user catch the model being wrong, and act on it?
 
@@ -210,12 +228,12 @@ Generic signals:
 9: Runs adversarial checks. Actively red-teams conclusions and stress-tests assumptions before publishing, shipping, or acting.
 10: Standing critique protocol for externally published work. Claude's output is always raw material, never the final product.
 
-DAT context-aware signals:
+ORG + ROLE context-aware signals:
 
-Rejects output that violates Pathfinder voice or internal language without needing to be told each session
-Catches violations of the DAT brand system in AI-generated visuals (wrong colors, wrong font, wrong logo usage)
-Pushes back when AI recommendations would bypass ROLE BLOCK stakeholder tone expectations (an XLT-bound message that isn't problem-then-solution, a customer-facing email that isn't DAT voice)
-Catches fabricated role-domain specifics (invented Radford codes, invented revenue numbers, invented API endpoints, invented account names)
+Rejects output that violates ORG BLOCK `voice` or `internal_language` without needing to be told each session
+Catches violations of the ORG BLOCK `brand_system_reference` in AI-generated visuals (wrong colors, wrong font, wrong logo usage)
+Pushes back when AI recommendations would bypass ROLE BLOCK stakeholder tone expectations (e.g., an exec-bound message that isn't problem-then-solution, a customer-facing email that isn't in the org's voice)
+Catches fabricated role- or org-domain specifics (invented comp bands, invented revenue numbers, invented API endpoints, invented account names)
 Metric 3 — Workflow Integration
 Is AI embedded in how the user works, or a place they occasionally visit?
 
@@ -228,12 +246,12 @@ Generic signals:
 9: Built persistent systems. Custom Projects per workstream, connected tools via MCPs, saved prompt libraries reused deliberately.
 10: Running agents or automated workflows. AI executes on a schedule or trigger without manual kickoff.
 
-DAT context-aware signals:
+ORG + ROLE context-aware signals:
 
 Custom skills maintained for the person's role-specific work (brand, code style, comp analysis, sales enablement, etc.)
-Memory populated with ROLE BLOCK context that persists across sessions
-Connected tool use aligned to role_systems_of_record rather than generic web search (e.g. Gmail/Calendar/Drive/Slack/Atlassian/Snowflake for People work, GitHub/Jira for engineering, Salesforce for sales)
-Apply foundation-building weight: reusable systems score above ad-hoc volume
+Memory populated with ORG BLOCK + ROLE BLOCK context that persists across sessions
+Connected tool use aligned to role_systems_of_record rather than generic web search (e.g., Gmail/Calendar/Drive/Slack/Atlassian/Snowflake for People work, GitHub/Jira for engineering, Salesforce for sales)
+Apply FOUNDATION-BUILDING STAGE WEIGHT if ORG BLOCK `org_stage` warrants it: reusable systems score above ad-hoc volume
 Metric 4 — Cross-Session Context
 Do conversations build on each other, or does each one reset?
 
@@ -246,10 +264,10 @@ Generic signals:
 9: Treats AI as a persistent collaborator. Outputs from one workstream feed adjacent ones.
 10: Context orchestration across projects, domains, and months. Knowledge compounds visibly.
 
-DAT context-aware signals:
+ORG + ROLE context-aware signals:
 
 Role-specific annual or quarterly cycles accumulate continuity (performance cycle, comp cycle, planning, product launches, sales kickoffs, engagement surveys, financial close)
-Work on one ORG BLOCK priority metric informs work on another (engagement data feeds retention strategy feeds recruiting pitch)
+Work on one ORG BLOCK `stated_leadership_metrics` informs work on another (e.g., engagement data feeds retention strategy feeds recruiting pitch)
 Cross-functional arcs visible when role demands it (a PM's product work pulling from Sales CRM data pulling from Finance forecasts)
 Metric 5 — Execution on Insight
 Does the user act on what AI produces, or does analysis accumulate without output?
@@ -263,11 +281,11 @@ Generic signals:
 9: Rapid insight-to-execution cycle. Recommendations become real within days to weeks, visibly and verifiably.
 10: Nothing sits. If it is worth generating, it is worth executing.
 
-DAT context-aware signals:
+ORG + ROLE context-aware signals:
 
 Outputs ship into ROLE BLOCK role_systems_of_record (committed code, merged PRs, sent offers, updated dashboards, closed deals, published comms)
 AI-accelerated work visibly moves ROLE BLOCK role_success_metrics or ORG BLOCK stated_leadership_metrics (subject to SELF-AUTHORED METRIC RULE)
-Apply foundation-building weight: production infrastructure counts more than the same volume of one-off deliverables
+Apply FOUNDATION-BUILDING STAGE WEIGHT if ORG BLOCK `org_stage` warrants it: production infrastructure counts more than the same volume of one-off deliverables
 
 
 TIER DEFINITIONS
@@ -324,7 +342,7 @@ SECTION 5 — Three Recommendations
 Each must be specific enough to act on this week, testable within 7 days, and tied to the lowest-scoring metric.
 
 At least one recommendation must tie to a ROLE BLOCK role_success_metric or recurring_workflow — the fluency lift needs to show up in their actual day job.
-At least one recommendation must tie to an ORG BLOCK stated_leadership_metric — the fluency lift needs to compound with what DAT already cares about.
+At least one recommendation must tie to an ORG BLOCK stated_leadership_metric — the fluency lift needs to compound with what leadership already cares about.
 These can be the same recommendation if it hits both layers. They can also be different.
 
 Format for each:
@@ -503,11 +521,11 @@ Score strictly. Default is 5.0. Do not move up without evidence. Do not soften f
 
 Apply the ROLE-RELEVANCE FILTER before any evidence counts. Apply the SELF-AUTHORED METRIC RULE. Apply foundation-building weight. Apply mode-appropriate privacy handling.
 
-Lead with current state, not average. The progression chart tells the trajectory story. The current score tells where the person is today in the context of their actual DAT job. A cross-month average tells neither.
+Lead with current state, not average. The progression chart tells the trajectory story. The current score tells where the person is today in the context of their actual job and org. A cross-month average tells neither.
 
 
-APPENDIX A — Example ROLE BLOCKs across DAT functions
-Use these as templates. Adapt the specifics to the actual person.
+APPENDIX A — Example ROLE BLOCKs across common functions
+Use these as shape references, not copy-paste templates. Adapt the specifics to the actual person.
 Example 1 — Engineering IC (Staff level)
 name: [full name]
 role_title: Staff Software Engineer
@@ -799,9 +817,9 @@ Fill in the ROLE BLOCK at the top before sending. Claude Code can also read it f
 
 ───────── BEGIN COMPANION PROMPT ─────────
 
-You are producing a SUPPLEMENTAL ROLE-RELEVANT EVIDENCE bundle for the DAT AI Fluency Assessment (v3). The main assessment runs in Claude.ai against conversation history. Your job is to capture the evidence that lives only on this machine: custom skills, MCP servers, shipped role-relevant repos, plan-mode artifacts, memory entries, scheduled tasks, and connected-tool activity.
+You are producing a SUPPLEMENTAL ROLE-RELEVANT EVIDENCE bundle for the AI Fluency Assessment (v3). The main assessment runs in Claude.ai against conversation history. Your job is to capture the evidence that lives only on this machine: custom skills, MCP servers, shipped role-relevant repos, plan-mode artifacts, memory entries, scheduled tasks, and connected-tool activity.
 
-ROLE BLOCK (fill in before running, or use Claude memory if populated):
+ORG BLOCK and ROLE BLOCK (fill in before running, or use Claude memory if populated — copy from the populated versions in your Claude.ai assessment so both sides match):
 
 name: <<FILL IN>>
 role_title: <<FILL IN>>
@@ -879,3 +897,46 @@ Produce one markdown block with the exact section headers shown in the "Bundle o
 "Paste this entire bundle into your Claude.ai conversation immediately after the main AI Fluency Report v3 prompt, in the same message, before sending."
 
 ───────── END COMPANION PROMPT ─────────
+
+
+APPENDIX D — Populated ORG BLOCK reference (DAT)
+This is the canonical DAT ORG BLOCK as used by DAT's AI Fluency platform. Copy it as-is if you're a DAT teammate running this assessment. If you're at a different org, use it as a shape reference for your own ORG BLOCK — note how the fields work together rather than copying values.
+
+# ─── START ORG BLOCK (DAT reference) ─────────────────────────────
+
+org: DAT Freight & Analytics
+industry: freight technology and analytics
+org_stage: foundation-building, post-4-acquisitions (Convoy, Outgo, Trucker Tools, LoadLink)
+office_footprint: Seattle, Denver, Beaverton/Tigard, Springfield, Toronto, Bangalore
+
+stated_leadership_metrics:
+  - engagement
+  - automation
+  - efficiency
+  - quality_of_hire
+  - belonging
+  - ai_fluency
+
+voice: Pathfinder — intelligent, uniting, empowering, brave, trusted
+
+internal_language:
+  - teammates (never "employees")
+  - People Team (never "HR")
+
+common_exec_audiences:
+  CEO: direct, data-forward, outcomes over activity
+  ELT: exec-calibrated, problem first then solution
+  XLT: exec-calibrated, problem first then solution, data-backed
+  org_wide: inclusive, calm, purposeful
+  slack: punchy, conversational
+
+org_mandate_phrases_to_avoid:
+  - leverage, synergy, dive deep, unpack, landscape, move the needle
+
+brand_system_reference: dat-asset-design skill (Pathfinder voice, DAT Blue, Inter font)
+
+# ─── END ORG BLOCK (DAT reference) ───────────────────────────────
+
+How to use this reference:
+- DAT teammates: copy this block into the main ORG BLOCK section of your assessment. Update any field that has drifted (e.g., new offices, additional leadership metrics) before running.
+- Non-DAT teammates: do not copy the values. Study how each field is populated — specific enough to shape scoring, concise enough to fit in a prompt — and write your own ORG BLOCK at that same fidelity.
