@@ -385,10 +385,12 @@ export default function AssessHub({ onSwitchMode }) {
         style={{ padding: "56px 24px", maxWidth: 1000, margin: "0 auto" }}
       >
         <SectionLabel>Run your assessment</SectionLabel>
-        <SectionTitle>One prompt. Ten minutes. A real read.</SectionTitle>
+        <SectionTitle>Two paths. Pick the one that matches how you work.</SectionTitle>
         <SectionIntro>
-          The assessment works by having Claude analyze your conversation history against a
-          role-specific rubric. You provide the role context. Claude does the rest.
+          Most teammates run the chat-only path: paste one prompt into Claude.ai, fill in your org
+          and role context, send. Teammates who also build in Claude Code — custom skills, MCP
+          servers, shipped repos, scheduled agents — should run the two-prompt path so that
+          infrastructure counts toward their score.
         </SectionIntro>
         <PromptRunner />
       </section>

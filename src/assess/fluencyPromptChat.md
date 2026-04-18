@@ -2,29 +2,16 @@ AI Fluency Report — v3 (org-adaptive, role-adaptive)
 You are assessing a teammate's AI fluency based on their Claude conversation history. Use the recent_chats and conversation_search tools to pull a representative sample spanning as far back as history allows, up to 12 months. Paginate backward through recent_chats using the before parameter on each call until no earlier results are returned. Focus on conversations that tie to the person's stated day job (see ROLE BLOCK below) within the organizational context they work in (see ORG BLOCK below). Apply the ROLE-RELEVANCE FILTER to screen out orthogonal work.
 
 
-HOW TO RUN THIS ASSESSMENT
-There are two paths. Pick the one that matches how you actually work.
+HOW TO RUN THIS PROMPT (quick reference)
+This is the chat-based AI Fluency assessment prompt. It runs in Claude.ai and analyzes your conversation history against the rubric below.
 
-— Path A: Claude.ai only (recommended for most teammates) —
-Use this if most of your AI work happens in Claude.ai conversations.
+Three things to do before sending:
+1. Fill in the ORG BLOCK with your organization's context. DAT teammates can paste the populated reference from Appendix C as-is.
+2. Fill in the ROLE BLOCK with your own role details. If Claude memory already has role context, ask Claude to draft a ROLE BLOCK from memory and confirm before scoring.
+3. Pick a MODE. INTERNAL for self-review (names and projects allowed). EXTERNAL for LinkedIn-publishable (all identifying names stripped per PRIVACY RULES).
 
-1. Open claude.ai and start a new conversation.
-2. Paste this entire prompt into the message box. Do not send yet.
-3. Scroll to the ROLE BLOCK below and replace every <<FILL IN: ...>> placeholder with your own details. If you've populated Claude memory with your role context, you can instead type "Use my Claude memory to propose a ROLE BLOCK, then confirm with me before scoring" at the top — Claude will draft and ask you to validate.
-4. Pick a MODE (INTERNAL for self-review, EXTERNAL if you want to publish anything).
-5. Send. Claude will pull your conversation history via recent_chats / conversation_search, apply the filters, and produce the written sections in chat plus the 11 output files (report, 7 LinkedIn slides, 2 standalone charts, 1 React dashboard).
-
-— Path B: Claude.ai + Claude Code Companion Bridge (for builders) —
-Use this if you also work heavily in Claude Code — you maintain custom skills in ~/.claude/, you've built MCP servers, you ship role-relevant repos, or you run scheduled agents. Without the bridge, none of that evidence reaches the assessment and your Workflow Integration (M3) and Execution on Insight (M5) scores will under-represent your actual fluency.
-
-1. Open Claude Code in any directory on your machine.
-2. Copy the companion prompt from APPENDIX C and paste it into Claude Code. Fill in the ROLE BLOCK at the top (or let Claude Code read it from your memory).
-3. Claude Code inspects your local environment — ~/.claude/skills/, ~/.claude/commands/, ~/.claude/plans/, memory entries, MCP configs, ~/Projects/, connected tools, scheduled tasks — and produces a structured markdown bundle titled "SUPPLEMENTAL ROLE-RELEVANT EVIDENCE".
-4. Copy that entire bundle to your clipboard.
-5. Open claude.ai and follow Path A steps 1–4. Before sending, paste the supplemental bundle directly after this prompt (in the same message) so Claude sees both: the assessment rubric and the local-infrastructure evidence.
-6. Send. The bundle augments chat-history evidence with persistent-infrastructure signals. Scores — especially M3 and M5 — reflect your full surface area.
-
-If you're not sure which path fits, start with Path A. You can always rerun with the bridge later.
+Optional evidence augmentation — for teammates who also work in Claude Code:
+Run the separate Claude Code Companion prompt first to inspect your local machine and produce a SUPPLEMENTAL ROLE-RELEVANT EVIDENCE bundle, then paste that bundle into this same claude.ai message directly after this prompt (but before you send). Without the bundle, Metric 3 (Workflow Integration) and Metric 5 (Execution on Insight) under-represent your fluency when meaningful evidence lives in custom skills, MCP servers, shipped repos, scheduled agents, memory entries, or plan artifacts rather than in chat. The companion prompt lives alongside this one on the DAT AI Fluency platform.
 
 
 ORG BLOCK — FILL IN BEFORE RUNNING
@@ -34,7 +21,7 @@ Two ways to fill this in:
 - If your org already maintains this context anywhere (a brand hub, a culture doc, a leadership off-site readout), copy from there rather than re-inventing.
 - If Claude memory already has org context from prior conversations, ask Claude to propose a pre-filled ORG BLOCK and confirm before scoring.
 
-If a field genuinely doesn't apply, write "n/a" rather than deleting it — empty fields distort the "context-aware signals" portion of every rubric metric. A populated reference example (DAT) appears in Appendix D if you want a worked version to calibrate against.
+If a field genuinely doesn't apply, write "n/a" rather than deleting it — empty fields distort the "context-aware signals" portion of every rubric metric. A populated reference example (DAT) appears in Appendix C if you want a worked version to calibrate against.
 
 # ─── START ORG BLOCK ─────────────────────────────────────────────
 
@@ -763,143 +750,9 @@ The ROLE-RELEVANCE FILTER will exclude meaningful off-role AI work (side project
 Swap the ORG BLOCK to repoint this entire prompt at a different company. The rubric, scoring rules, and file specs are portable. Only ORG and ROLE blocks are DAT-specific.
 
 
-APPENDIX C — Claude Code Companion Bridge (optional, Path B)
-Use this companion when your fluency shows up in persistent local infrastructure — custom skills, MCP servers, shipped repos, scheduled tasks, plan-mode artifacts, memory entries, deliberate permission grooming. Without it, M3 (Workflow Integration) and M5 (Execution on Insight) under-represent your actual surface area because Claude.ai can't see any of it.
-
-How the bridge works
-The companion prompt runs in Claude Code (not Claude.ai). Claude Code has filesystem access, which lets it inspect:
-- ~/.claude/skills/ — custom skills you've installed or authored
-- ~/.claude/commands/ — slash commands tied to recurring role work
-- ~/.claude/plans/ — plan-mode artifacts from multi-session design work
-- ~/.claude/projects/*/memory/ — persistent memory entries with role context
-- ~/.claude/settings.json and settings.local.json — custom MCP configs + permission list grooming
-- ~/.claude/history.jsonl — proxy for session volume
-- ~/Projects/ (or wherever your code lives) — git-tracked role-relevant repos
-- Connected MCP servers beyond defaults (custom integrations you've built)
-- Scheduled/autonomous AI workflows (cron jobs, GitHub Actions, Render schedulers, Apps Script triggers)
-
-It then produces a structured markdown bundle titled "SUPPLEMENTAL ROLE-RELEVANT EVIDENCE". You copy that bundle and paste it into your Claude.ai conversation right after the main assessment prompt. The assessment treats it as first-class evidence under the ROLE-RELEVANCE FILTER and SELF-AUTHORED METRIC RULE.
-
-Bundle output format (for reference)
-## SUPPLEMENTAL ROLE-RELEVANT EVIDENCE (Claude Code pass, YYYY-MM-DD)
-**Mode:** INTERNAL | EXTERNAL
-**ROLE BLOCK:** one-line role summary
-**Self-authored initiatives:** list or "none"
-
-### A. Persistent AI Infrastructure
-Custom skills, slash commands, plan artifacts, memory entries, MCP config, permission grooming, session volume, installed plugins. For each: name, date, line count where relevant, role tie.
-
-### B. Shipped Role-Relevant Artifacts
-Markdown table of deployed/prototype/local projects. Columns: project, stack, system-of-record tie, status, metric touched, self-authored flag.
-
-### C. Cross-Tool Activity (past 90 days, role-relevant)
-Drive, Confluence, Gmail, Calendar, Slack, connected DB activity. Brief, behavior-level — no raw content.
-
-### D. AI-Assisted Documents (past 60 days)
-Drive/filesystem list of AI-assisted outputs tied to role work. Self-authored org initiative docs flagged separately.
-
-### E. Scheduled / Autonomous AI Work
-Cron jobs, Apps Script triggers, GitHub Actions workflows, Render/Vercel scheduled deployments. Each with trigger cadence and role tie.
-
-### F. Off-Role Sophisticated AI Work (context only)
-Side projects, personal tooling, unrelated learning. Explicit "does not score" note per the ROLE-RELEVANCE FILTER.
-
-### Provisional Scores
-- M3 (Workflow Integration): score to one decimal + rationale + what would push to the next band
-- M5 (Execution on Insight): score to one decimal + rationale
-- M1, M2, M4: PENDING — require Claude.ai chat-history pass
-
-### Self-Authored Exclusions
-List of artifacts tied to self_authored_org_initiatives. These count for M3/M5 generally but are excluded from the relevant org-level metric alignment in Section 6.5b.
-
-The companion prompt (paste into Claude Code)
-Fill in the ROLE BLOCK at the top before sending. Claude Code can also read it from your memory if you've populated role context there.
-
-───────── BEGIN COMPANION PROMPT ─────────
-
-You are producing a SUPPLEMENTAL ROLE-RELEVANT EVIDENCE bundle for the AI Fluency Assessment (v3). The main assessment runs in Claude.ai against conversation history. Your job is to capture the evidence that lives only on this machine: custom skills, MCP servers, shipped role-relevant repos, plan-mode artifacts, memory entries, scheduled tasks, and connected-tool activity.
-
-ORG BLOCK and ROLE BLOCK (fill in before running, or use Claude memory if populated — copy from the populated versions in your Claude.ai assessment so both sides match):
-
-name: <<FILL IN>>
-role_title: <<FILL IN>>
-function: <<FILL IN>>
-level: <<FILL IN>>
-scope: <<FILL IN>>
-recurring_workflows: <<FILL IN: 5-10 items>>
-role_success_metrics: <<FILL IN: 3-7 items>>
-role_systems_of_record: <<FILL IN: 4-10 items — this drives what counts as role-relevant infrastructure>>
-role_deliverable_types: <<FILL IN>>
-self_authored_org_initiatives: <<FILL IN, or "none">>
-
-MODE: INTERNAL (names OK in the bundle — user will paste into their own Claude.ai conversation)
-
-INSPECTION STEPS
-
-1. Persistent AI Infrastructure (~/.claude/)
-   - List custom skills in ~/.claude/skills/ — name, install date, approximate line count, which ROLE BLOCK item the skill ties to (or mark "generic" if none)
-   - List slash commands in ~/.claude/commands/ — name and role tie
-   - List plan artifacts in ~/.claude/plans/ — name, creation date, which project or workstream the plan designs (role-relevant only; note if plan is for off-role work)
-   - List memory entries in ~/.claude/projects/*/memory/ — brief description of each, flag any that encode ROLE BLOCK context
-   - Count lines in ~/.claude/history.jsonl as a session-volume proxy
-   - Count session files across Claude Code project directories as an activity proxy
-   - Read ~/.claude/settings.json and ~/.claude/settings.local.json:
-     * Identify any custom MCP server configs (cite the server name and its role tie)
-     * Count allowed-bash entries in settings.local.json — >20 = strong deliberate permission curation, call that out
-   - Note installed plugins/marketplaces (~/.claude/plugins/marketplaces/)
-   - For each custom MCP server referenced in settings, locate its source directory (usually ~/Projects/<name>). For each: path, language/framework, what it wraps, role tie, commit count and recency
-   - List connected MCP servers beyond custom ones (Drive, Gmail, Calendar, Slack, Atlassian, GitHub, Jira, Snowflake, Salesforce, Neon, etc.) — note which ROLE BLOCK role_systems_of_record they align to
-
-2. Shipped Role-Relevant Artifacts
-   Inspect ~/Projects/ (and ~/Documents/ if you keep code elsewhere). For each git-tracked or deployed project, record:
-   - Project name
-   - Stack (React/Vite, Python/FastAPI, Apps Script, etc.)
-   - System-of-record tie (map to ROLE BLOCK role_systems_of_record; mark "none" if off-role)
-   - Status (deployed to Vercel/Render/etc, prototype, local-only)
-   - Role success metric the artifact could plausibly move
-   - Self-authored flag (true if part of a self_authored_org_initiatives entry)
-   - Recent activity: commit count, last commit date
-   Produce a markdown table. Exclude projects that don't tie to the ROLE BLOCK at all — note those in Section F instead.
-
-3. Cross-Tool Activity (past 90 days, role-relevant)
-   If Drive, Gmail, Calendar, Slack, Confluence, or Atlassian MCP servers are connected, sample recent activity:
-   - Recently-authored or recently-edited documents in role_systems_of_record that match role_deliverable_types
-   - Pages authored in role-relevant Confluence spaces
-   - Active Slack channels tied to role_stakeholders
-   Describe at the behavior level. Do NOT dump raw content or verbatim messages.
-
-4. AI-Assisted Documents (past 60 days)
-   From Drive or local filesystem, list documents that appear to be AI-assisted outputs tied to role work. Separately flag self-authored org initiative documents.
-
-5. Scheduled / Autonomous AI Work
-   Check for scheduled tasks in:
-   - ~/.claude/scheduled-tasks/ or equivalent MCP configs
-   - ~/Documents/Claude/Scheduled/
-   - .github/workflows/ in each role-relevant repo
-   - Apps Script triggers, cron jobs, Render/Vercel scheduled deployments (look for render.yaml, vercel.json cron entries, triggers.json)
-   Each with trigger cadence and role tie.
-
-6. Off-Role Sophisticated AI Work (context only)
-   Note technically sophisticated AI projects that are NOT role-relevant. Mark explicitly as "does not score per ROLE-RELEVANCE FILTER" — they exist for narrative context only.
-
-7. Provisional Scores
-   Score to one decimal per DECIMAL PRECISION RULES:
-   - M3 (Workflow Integration): rationale + what observable change would push it to the next band. Apply foundation-building weight.
-   - M5 (Execution on Insight): rationale + which shipped artifacts moved role or org metrics vs. sat idle. Apply foundation-building weight.
-   - Mark M1 (Prompt Quality), M2 (Output Discipline), M4 (Cross-Session Context) as PENDING — they require the Claude.ai chat-history pass.
-
-8. Self-Authored Exclusions
-   List artifacts tied to self_authored_org_initiatives. Note they count for M3/M5 generally but are excluded from the relevant org-level metric alignment in Section 6.5b of the main report.
-
-OUTPUT FORMAT
-Produce one markdown block with the exact section headers shown in the "Bundle output format" section of Appendix C above. End with:
-
-"Paste this entire bundle into your Claude.ai conversation immediately after the main AI Fluency Report v3 prompt, in the same message, before sending."
-
-───────── END COMPANION PROMPT ─────────
 
 
-APPENDIX D — Populated ORG BLOCK reference (DAT)
+APPENDIX C — Populated ORG BLOCK reference (DAT)
 This is the canonical DAT ORG BLOCK as used by DAT's AI Fluency platform. Copy it as-is if you're a DAT teammate running this assessment. If you're at a different org, use it as a shape reference for your own ORG BLOCK — note how the fields work together rather than copying values.
 
 # ─── START ORG BLOCK (DAT reference) ─────────────────────────────
