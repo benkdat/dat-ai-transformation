@@ -112,7 +112,7 @@ self_authored_org_initiatives:
 
 # ─── END ROLE BLOCK ──────────────────────────────────────────────
 
-See Appendix A at the end of this prompt for five populated ROLE BLOCK examples across common DAT functions (Engineering IC, Product Manager, Sales AE, Finance IC, People Director). Use those as reference shapes, not as copy-paste templates — your fields need to reflect your actual work.
+See Appendix A at the end of this prompt for five populated ROLE BLOCK examples across common SaaS functions (Engineering IC, Product Manager, Sales AE, Finance IC, People Operations Director). Use those as reference shapes, not as copy-paste templates — your fields need to reflect your actual work.
 
 
 ROLE-RELEVANCE FILTER
@@ -521,13 +521,13 @@ Lead with current state, not average. The progression chart tells the trajectory
 
 
 APPENDIX A — Example ROLE BLOCKs across common functions
-Use these as shape references, not copy-paste templates. Adapt the specifics to the actual person.
+These represent typical roles at a mid-size SaaS company (500-1500 employees). Use them as shape references for populating your own ROLE BLOCK, not as copy-paste templates. Adapt the specifics to your actual role, team, and systems.
 Example 1 — Engineering IC (Staff level)
 name: [full name]
 role_title: Staff Software Engineer
 function: Engineering
 level: IC
-scope: Platform services and back-end infrastructure for DAT One
+scope: Platform services, API infrastructure, and backend systems for the core product
 reports_to: [EM name], Engineering Manager
 direct_reports: none
 team_shape: 6-person platform team (5 engineers + EM)
@@ -553,10 +553,10 @@ role_stakeholders:
 
 role_systems_of_record:
   - GitHub (PRs, issues, actions)
-  - Jira (tickets, sprint boards)
-  - DataDog (metrics, alerts)
-  - AWS console (infrastructure)
-  - Confluence (docs)
+  - Jira or Linear (tickets, sprint boards)
+  - Datadog or Grafana (metrics, alerts)
+  - AWS / GCP console (infrastructure)
+  - Confluence or Notion (docs)
 
 role_deliverable_types:
   - merged pull requests
@@ -571,7 +571,7 @@ name: [full name]
 role_title: Senior Product Manager
 function: Product
 level: Manager (IC)
-scope: DAT iQ analytics product line
+scope: Core analytics product line or a major product area
 reports_to: [Director name], Director of Product
 direct_reports: none
 team_shape: pod of 2 designers, 4 engineers, 1 analyst
@@ -593,14 +593,14 @@ role_stakeholders:
   - Engineering pod — clear specs, rationale-forward
   - Design — problem framing, not solution prescribing
   - Sales — enablement-focused, plain language
-  - customers — DAT Pathfinder voice, problem-first
+  - customers — org brand voice, problem-first
 
 role_systems_of_record:
-  - Jira / Linear
+  - Jira or Linear
   - Figma
-  - Gong or Chorus
-  - Amplitude or Mixpanel
-  - Confluence
+  - Gong or Chorus (call recordings)
+  - Amplitude, Mixpanel, or Pendo (product analytics)
+  - Confluence or Notion
 
 role_deliverable_types:
   - PRDs
@@ -610,12 +610,12 @@ role_deliverable_types:
   - pricing proposals
 
 self_authored_org_initiatives: none
-Example 3 — Sales AE (mid-market)
+Example 3 — Sales AE (Mid-Market)
 name: [full name]
 role_title: Account Executive, Mid-Market
 function: Sales
 level: IC
-scope: Mid-market brokerage accounts, freight brokerage segment
+scope: Mid-market accounts in a primary customer segment
 reports_to: [Manager name], Regional Sales Manager
 direct_reports: none
 team_shape: 8-person regional AE team + 2 SDRs
@@ -635,13 +635,13 @@ role_success_metrics:
   - sales cycle length
 
 role_stakeholders:
-  - prospects — DAT Pathfinder voice, outcomes-focused
+  - prospects — org brand voice, outcomes-focused
   - Sales Manager — forecast-accurate, pipeline-honest
-  - SE/solution partner — technical collaboration
+  - SE / solution partner — technical collaboration
   - CS handoff — clean account briefs
 
 role_systems_of_record:
-  - Salesforce (opportunities, accounts, contacts)
+  - Salesforce or HubSpot (CRM)
   - Outreach or Salesloft (sequences)
   - Gong (call recordings)
   - Slack (deal rooms)
@@ -685,11 +685,11 @@ role_stakeholders:
   - Accounting — reconciliation-focused, tie-out ready
 
 role_systems_of_record:
-  - NetSuite or Sage Intacct
-  - Adaptive or Pigment
+  - NetSuite, Sage Intacct, or Workday Financials (ERP)
+  - Adaptive, Pigment, or Anaplan (planning)
   - Excel / Google Sheets (models)
-  - Snowflake or Looker (data)
-  - Confluence (analysis writeups)
+  - Snowflake, Looker, or Sigma (data / BI)
+  - Confluence or Notion (analysis writeups)
 
 role_deliverable_types:
   - financial models
@@ -699,57 +699,58 @@ role_deliverable_types:
   - scenario analyses
 
 self_authored_org_initiatives: none
-Example 5 — People Team Director
+Example 5 — People Operations Director
 name: [full name]
-role_title: Director, Talent Operations
+role_title: Director, People Operations
 function: People
 level: Director
-scope: Talent Acquisition, Talent Operations & Analytics, Workplace Experience
-reports_to: [CPO name], CPO
-direct_reports: [Sr Mgr, Talent Ops & Analytics], 3 recruiters, 3 workplace managers
-team_shape: 7 direct reports across TA, Ops, Workplace; peer PBPs report into the CPO
+scope: People operations, talent acquisition, and workplace programs across multiple offices
+reports_to: [CPO or VP People name], CPO
+direct_reports: 1 senior manager, 3-4 recruiters, 2-3 workplace or office managers
+team_shape: 6-8 direct reports spanning recruiting, people ops/analytics, and workplace; peer HRBPs report into the CPO
 
 recurring_workflows:
   - requisition intake and approval routing
-  - recruiting pipeline reviews
-  - annual merit cycle
-  - annual engagement survey (Gallup)
-  - office transitions and workplace operations
-  - hiring manager coaching
-  - XLT and ELT People Team updates
+  - recruiting pipeline reviews (weekly)
+  - annual or semi-annual compensation cycle
+  - annual engagement survey
+  - office operations and workplace transitions
+  - hiring manager coaching and enablement
+  - leadership team people updates (monthly or quarterly)
 
 role_success_metrics:
   - time to fill
-  - quality of hire
+  - quality of hire (hiring manager satisfaction or new hire performance)
   - recruiting cost per hire
-  - engagement (Gallup grand mean, participation)
-  - teammate belonging scores
+  - engagement score (survey grand mean and participation rate)
+  - employee belonging or inclusion scores
 
 role_stakeholders:
-  - CPO — problem + solution, direct
-  - XLT — exec-calibrated, structured, data-backed
+  - CPO / VP People — problem + solution framing, direct
+  - executive team — exec-calibrated, structured, data-backed
   - hiring managers — clear, warm, coaching tone
-  - teammates (org-wide) — inclusive, calm, purposeful
-  - recruiters (direct reports) — warm, clear, coaching tone
+  - all employees (org-wide comms) — inclusive, calm, purposeful
+  - direct reports — warm, clear, supportive
 
 role_systems_of_record:
-  - Greenhouse (ATS)
-  - UKG (HRIS)
-  - Gallup (engagement)
-  - 15Five (performance)
-  - Radford (comp)
-  - Confluence, Google Drive, Slack
+  - ATS (Greenhouse, Lever, or Ashby)
+  - HRIS (Workday, UKG, Rippling, or BambooHR)
+  - engagement platform (Glint, Culture Amp, Lattice, or Gallup)
+  - performance management (15Five, Lattice, or Culture Amp)
+  - comp data (Radford, Pave, Carta Total Comp, or Mercer)
+  - collaboration tools (Confluence, Google Drive, Slack, Notion)
 
 role_deliverable_types:
-  - offer letters and comp recommendations
-  - XLT / ELT decks
-  - Gallup dashboards and action plans
-  - merit cycle files
-  - org-wide comms
-  - hiring manager playbooks
+  - offer letters and compensation recommendations
+  - executive and leadership team decks
+  - engagement dashboards and action plans
+  - compensation cycle files and guidance
+  - org-wide communications
+  - hiring manager playbooks and enablement materials
 
-self_authored_org_initiatives:
-  - AI Fluency initiative (tied to: ai_fluency) → EXCLUDED from personal ai_fluency scoring
+self_authored_org_initiatives: none
+
+
 
 
 APPENDIX B — Operator notes
