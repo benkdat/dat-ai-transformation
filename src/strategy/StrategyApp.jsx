@@ -12,6 +12,7 @@ import {
   Terminal, Trophy, Gauge
 } from "lucide-react";
 import OneDATTruck from "../components/OneDATTruck";
+import OneDATSkyline from "../components/OneDATSkyline";
 import ModeToggle from "../components/ModeToggle";
 import { METRIC_COLORS, METRIC_LABELS, METRIC_ORDER } from "../components/DATokens";
 
@@ -786,16 +787,12 @@ function CloseSlide() {
               <div style={{fontSize:9,fontWeight:800,color:item.priority==="Now"?C.red:C.blue,background:item.priority==="Now"?"#FEF2F2":C.blueLight,padding:"2px 8px",borderRadius:10,flexShrink:0}}>{item.priority}</div>
             </div>);})}
         </div>
-        <div style={{...fadeUp(0.5),marginTop:16}}>
-          <ImageBanner src="/img/waves.jpg" height={140} overlay="linear-gradient(135deg,rgba(0,70,221,0.75),rgba(0,0,0,0.55))">
-            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:24,padding:"0 32px",width:"100%"}}>
-              <div style={{textAlign:"center",flex:1}}>
-                <div style={{fontSize:12,fontWeight:900,color:C.white,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:6}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
-                <div style={{fontSize:18,fontWeight:900,color:C.white,lineHeight:1.3,letterSpacing:"-0.01em"}}>Now we take the uncertainty out of how we work.</div>
-              </div>
-              <OneDATTruck size={72} style={{filter:"brightness(1.1)"}}/>
-            </div>
-          </ImageBanner>
+        <div style={{...fadeUp(0.5),marginTop:16,background:C.white,border:`1px solid ${C.border}`,borderRadius:14,padding:"20px 28px 16px",display:"flex",flexDirection:"column",alignItems:"center",gap:12}}>
+          <div style={{textAlign:"center"}}>
+            <div style={{fontSize:11,fontWeight:900,color:C.blue,letterSpacing:"0.14em",textTransform:"uppercase",marginBottom:4}}>WE TAKE THE UNCERTAINTY OUT OF FREIGHT</div>
+            <div style={{fontSize:16,fontWeight:800,color:C.black,lineHeight:1.3,letterSpacing:"-0.01em"}}>Now we take the uncertainty out of how we work.</div>
+          </div>
+          <OneDATSkyline height={88}/>
         </div>
       </div>
     </div>

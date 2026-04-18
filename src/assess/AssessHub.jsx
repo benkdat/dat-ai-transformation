@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { Gauge, ArrowRight, BookOpen, Terminal, Sparkles, BarChart3 } from "lucide-react";
 import { C } from "../components/DATokens";
 import OneDATTruck from "../components/OneDATTruck";
+import OneDATSkyline from "../components/OneDATSkyline";
 import ModeToggle from "../components/ModeToggle";
 import MetricsExplainer from "./MetricsExplainer";
 import PromptRunner from "./PromptRunner";
@@ -412,72 +413,17 @@ export default function AssessHub({ onSwitchMode }) {
         </div>
       </section>
 
-      {/* Footer CTA */}
-      <section style={{ padding: "48px 24px 80px", maxWidth: 1000, margin: "0 auto" }}>
-        <div
-          style={{
-            background: C.black,
-            borderRadius: 14,
-            padding: "32px 32px",
-            color: C.white,
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              top: -40,
-              right: -40,
-              width: 220,
-              height: 220,
-              background: `radial-gradient(circle, ${C.blueOnBlack}33 0%, transparent 70%)`,
-              pointerEvents: "none",
-            }}
-          />
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 24,
-              flexWrap: "wrap",
-              position: "relative",
-              zIndex: 1,
-            }}
-          >
-            <div style={{ maxWidth: 560 }}>
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 800,
-                  color: C.blueOnBlack,
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  marginBottom: 10,
-                }}
-              >
-                Same mission. New frontier.
-              </div>
-              <div
-                style={{
-                  fontSize: 22,
-                  fontWeight: 900,
-                  lineHeight: 1.2,
-                  letterSpacing: "-0.02em",
-                  marginBottom: 10,
-                }}
-              >
-                We take the uncertainty out of freight.
-              </div>
-              <div style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", lineHeight: 1.55 }}>
-                Now we take the uncertainty out of how we work. This assessment is how each of us
-                measures progress against that.
-              </div>
-            </div>
-            <OneDATTruck size={72} style={{ filter: "brightness(1.1)" }} />
-          </div>
-        </div>
+      {/* Skyline footer */}
+      <section
+        style={{
+          padding: "56px 24px 72px",
+          display: "flex",
+          justifyContent: "center",
+          background: `linear-gradient(180deg, ${C.bg} 0%, ${C.white} 100%)`,
+          borderTop: `1px solid ${C.borderLight}`,
+        }}
+      >
+        <OneDATSkyline height={160} />
       </section>
     </div>
   );
